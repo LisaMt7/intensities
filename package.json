@@ -1,0 +1,9 @@
+{
+  "name": "suspire",
+  "version": "0.0.0",
+  "description": "Just breathe",
+  "main": "src/index.js",
+  "author": "Garrett Flynn <garrettmflynn@gmail.com>",
+  "license": "AGPL-3.0-or-later",
+  "private": false
+}
