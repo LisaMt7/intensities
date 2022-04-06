@@ -1,6 +1,5 @@
-# suspire
- Just breathe
-
+# conspire
+Breathe together
 
 ## Roadmap
 1. Adapt Josh's [Breathcapture.js](https://github.com/moothyknight/BreathCapture.js) library
