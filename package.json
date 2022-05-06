@@ -4,6 +4,26 @@
   "description": "Breathe together",
   "main": "src/index.js",
   "author": "Garrett Flynn <garrettmflynn@gmail.com>",
+  "contributors": [
+    "Joshua Brewster <brewster.joshua1@gmail.com>"
+  ],
+  "scripts": {
+    "start": "cd demo && npm i && npm start",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/moothyknight/BreathCapture.js.git"
+  },
+  "keywords": [
+    "Breath Capture",
+    "Microphone",
+    "Web Audio Context"
+  ],
   "license": "AGPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/garrettmflynn/intensities/issues"
+  },
+  "homepage": "https://github.com/garrettmflynn/intensities",
   "private": false
 }
