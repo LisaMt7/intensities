@@ -1,3 +1,7 @@
 ## Dataset Details
-Lisa on left channel
-Maylane on right channel
+Maylane +  Lisa 8:17 mins
+stereo file
+
+Maylane RIGHT channel 
+Lisa LEFT channel
+

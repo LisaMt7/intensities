@@ -5,7 +5,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>Audio Visualization</title>
+  <title>Intensity | Audio Visualization</title>
   <!-- <script src="https://cdn.jsdelivr.net/npm/brainsatplay-components"></script> -->
 </head>
 
@@ -18,6 +18,35 @@
   html, body {
     margin: 0px;
     font-family: sans-serif;
+  }
+
+  #overlay {
+    opacity: 0;
+    width: 100vw;
+    height: 100vh;
+    transition: 0.5s;
+    position: fixed;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1;
+    font-size: 30px;
+    font-weight: bold;
+    /* background: black; */
+  }
+
+  #overlay.open {
+    opacity: 1;
+    pointer-events: all;
+    backdrop-filter: blur(5px);
+  }
+
+  .disabled {
+    pointer-events: none;
+    opacity: 0.5;
   }
 
   body {
@@ -34,6 +63,7 @@
   }
 
   nav, footer {
+    z-index: 2;
     padding: 20px;
     height: 75px;
     background: black;
@@ -90,12 +120,13 @@
 
 <body>
   <nav>Intensity</nav>
+  <div id="overlay">Loading file...</div>
 
   <!-- Interactive Sidebar -->
   <div id="sidebar">
     <h3>Controls</h3>
     <h4>Real-Time Data</h4>
-    <button id="start">Start</button>
+    <button id="start">Start Data Acquisition</button>
 
     <h5>Audio Input</h5>
     <select id="in"></select>
@@ -131,6 +162,7 @@
   const videoSelect = document.getElementById('video')
   var fileInput = document.getElementById('files');
   var main = document.getElementById('main');
+  var overlay = document.getElementById('overlay');
 
   navigator.mediaDevices.enumerateDevices()
     .then(gotDevices)
@@ -138,6 +170,7 @@
 
 
   const context = new AudioContext();
+  let self = false
 
   const sourceRegistry = {}
 
@@ -164,78 +197,130 @@
       }
     }
   }
-  const onFreqs = (frequencies, i) => {
-    sourceRegistry[i].spectrogram.data = Array.from(frequencies)
+
+  const createAnalyser = () => {
+    const analyser = context.createAnalyser();
+    analyser.smoothingTimeConstant = 0.2;
+    analyser.fftSize = 1024;
+    analyser.minDecibels = -127;
+    analyser.maxDecibels = 0;
+    return analyser
   }
 
-  const onAudio = (src) => {
-    reader1.readAsArrayBuffer(src);
-  }
 
-  const onStreamSource = (src, stream, i) => {
-      src.connect(filterNode);
-
-      stream.onended = () => {
-        src.disconnect();
-        gainNode.disconnect();
-        filterNode.disconnect()
-      }
-
-      // Show Audio Volume
+  const analyse = (o) => {
+      // Analyze the Data
       let volumeCallback = null;
       let volumeInterval = null;
-      const frequencies = new Uint8Array(analyser.frequencyBinCount);
+      const frequencies = new Uint8Array(o.analyser.frequencyBinCount);
       let raw = new Uint8Array(1) // Only get the latest
       const getData = () => {
-        analyser.getByteFrequencyData(frequencies);
-        analyser.getByteTimeDomainData(raw)
+        o.analyser.getByteFrequencyData(frequencies);
+        o.analyser.getByteTimeDomainData(raw)
+        console.log(frequencies)
         const arr = Array.from(raw)
-        sourceRegistry[i].timeseries.data = [arr]
-        onFreqs(frequencies, i)
+        o.timeseries.data = [arr]
+        o.spectrogram.data = Array.from(frequencies)
       };
 
       setInterval(getData, 100); // Get Data Every 100ms
   }
 
-  var reader1 = new FileReader();
+  const onStreamSource = (src, inputs={}) => {
 
-  const spawnStream = (count,stream) => {
-    const container = document.createElement('div')
-        const video = document.createElement('video')
-        video.controls = true
-        container.insertAdjacentElement('beforeend', video)
+      src.connect(filterNode); // Connect to top of Web Audio API Context
+
+      // TODO: Split tracks from video
+      const channels = src.numberOfChannels ?? src.buffer?.numberOfChannels
+      console.log('channels', src, channels, inputs.stream, inputs.video)
+      if (channels > 1) {
+        var splitter = context.createChannelSplitter(channels);
+        analyser.connect(splitter); // Connect end of main graph to the Splitter graph
+        var merger = context.createChannelMerger(channels);
+
+        for (let i = 0; i < channels; i++){
+          const o = spawnStreamDisplay(count, inputs) // Create Display
+          o.container.insertAdjacentHTML('afterbegin',`<h3>Channel ${i}`)
+          const gainNode = context.createGain();
+          gainNode.gain.setValueAtTime(1.0, context.currentTime);
+          o.analyser = createAnalyser()
+          splitter.connect(analyser, i) // Connect Analyser to Channel i
+          o.analyser.connect(gainNode);
+          gainNode.connect(merger, 0, i) // Merge split inputs
+          analyse(o) // Start analysis
+          count++
+        }
+        if (!self) merger.connect(context.destination); // Output to the speakers
+      } else {
+        const o = spawnStreamDisplay(count, inputs) // Create Display
+        o.analyser = analyser
+        if (!self) analyser.connect(context.destination)
+        analyse(o) // Start analysis
+      }
+
+      if (video){
+        video.onended = () => {
+          src.disconnect();
+          gainNode.disconnect();
+          filterNode.disconnect()
+        }
+      }
+
+      if (src.start instanceof Function) src.start()
+  }
+
+  const spawnStreamDisplay = (count, o = {}) => {
+        const container = document.createElement('div')
+        // if (!o.video) o.video = document.createElement('video')
         main.insertAdjacentElement('beforeend', container)
 
+        if (o.video){
+          container.insertAdjacentElement('beforeend', o.video)
+          // Real-Time Input
+          if (o.stream) {
+            o.video.srcObject = o.stream
+            o.video.controls = false
+          } 
+          else {
+            o.video.controls = true
+          }
+          o.video.autoplay = true
+
+        }
+
+        
         sourceRegistry[count] = {
-            video,
-            stream,
+            container,
+            video: o.video,
+            stream: o.stream,
             spectrogram: new components.streams.data.Spectrogram(),
             timeseries: new components.streams.data.TimeSeries(),
         }
 
         container.insertAdjacentElement('beforeend', sourceRegistry[count].spectrogram)
         container.insertAdjacentElement('beforeend', sourceRegistry[count].timeseries)
-  }
+        return sourceRegistry[count]
+    }
 
-  fileInput.onchange = (ev) => {
 
-    // TODO: Check if audio or video
-    // If video, then get the audio
-    let count = 0
+  let count = 0
+
+  fileInput.onchange = async (ev) => {
+    count = 0 // Reset count with new file...
     for (let file of fileInput.files) {
-      switch (file.type.split('/')[0]) {
-        case 'video':
-          spawnStream(count)
+      const type = file.type.split('/')[0]
+      let source, video;
+
+      if (type === 'video'){
+          video = document.createElement('video')
           video.src = URL.createObjectURL(file)
-          var source = context.createMediaElementSource(video);
-          // video.autoplay = true
-          onStreamSource(source, video, count)
-          break;
-        default:
-          onAudio(file);
-          break;
+          source = context.createMediaElementSource(video);
+      } else {
+        source = await onAudio(file);
       }
-      count++
+
+      onStreamSource(source, {video}) // Get Audio Features + Wire Audio Analysis + Create Display
+      // count added in here
     }
 
     main.style.gridTemplateColumns = `repeat(${count},1fr)`
@@ -243,62 +328,79 @@
 
   // Setup Analysis
   var analyser = context.createAnalyser();
-      analyser.smoothingTimeConstant = 0.2;
-      analyser.fftSize = 1024;
-      analyser.minDecibels = -127;
-      analyser.maxDecibels = 0;
+    analyser.smoothingTimeConstant = 0.2;
+    analyser.fftSize = 1024;
+    analyser.minDecibels = -127;
+    analyser.maxDecibels = 0;
 
-      var filterNode = context.createBiquadFilter();
-      filterNode.type = 'highpass';
-      filterNode.frequency.value = 7000;
+    var filterNode = context.createBiquadFilter();
+    filterNode.type = 'highpass';
+    filterNode.frequency.value = 7000;
 
-      var gainNode = context.createGain(); // Create a gain node to change audio volume.
-      gainNode.gain.value = 1.0;
+    var gainNode = context.createGain(); // Create a gain node to change audio volume.
+    gainNode.gain.value = 1.0;
 
       
   filterNode.connect(gainNode);
       // microphone.connect(gainNode);
       gainNode.connect(analyser);
-      analyser.connect(context.destination);
+      // analyser.connect(context.destination);
+
+      // var source = context.createBufferSource();
+      // source.buffer = data;
+
 
   start.onclick = () => {
 
+    self = true
     navigator.mediaDevices.getUserMedia({
       audio: {
         deviceId: { exact: audioInputSelect.value }
       }, 
       video: { exact: videoSelect.value }
     }).then((stream) => {
+      const video = document.createElement('video')
       const microphone = context.createMediaStreamSource(stream);
-      spawnStream(0, stream)
-      onStreamSource(microphone, stream, 0)
+      onStreamSource(microphone, {video, stream})
     })
   }
 
-  reader1.onload = (ev) => {
 
-    context.decodeAudioData(ev.target.result, (data) => {
+  // var reader1 = new FileReader();
 
-      var source = context.createBufferSource();
-      source.buffer = data;
-      var splitter = context.createChannelSplitter(2);
-      source.connect(splitter);
-      var merger = context.createChannelMerger(2);
+  const onAudio =(file) => {
+  return new Promise((resolve, reject) => {
+    let reader = new FileReader();
 
-      // Reduce the volume of the left channel only
-      var gainNode = context.createGain();
-      gainNode.gain.setValueAtTime(0.5, context.currentTime);
-      splitter.connect(gainNode, 0);
+    reader.onload = (ev) => {
 
-      // Connect the splitter back to the second input of the merger: we
-      // effectively swap the channels, here, reversing the stereo image.
-      gainNode.connect(merger, 0, 1);
-      splitter.connect(merger, 1, 0);
+      overlay.classList.add('open')
+      context.decodeAudioData(ev.target.result, (data) => {
+        overlay.classList.remove('open')
+        const source = context.createBufferSource();
+        source.buffer = data;
+        resolve(source);
+      })
+    };
 
-      // merger.connect(this.out)
-      merger.connect(context.destination);
-    })
-  }
+    function handleEvent(event) {
+    console.log(`${event.type}: ${event.loaded} bytes transferred\n`)
+
+    if (event.type === "load") {
+        // preview.src = reader.result;
+    }
+}
+
+    // reader.addEventListener('loadstart', handleEvent);
+    // reader.addEventListener('load', handleEvent);
+    // reader.addEventListener('loadend', handleEvent);
+    // reader.addEventListener('progress', handleEvent);
+    reader.addEventListener('error', handleEvent);
+    // reader.addEventListener('abort', handleEvent);
+
+    reader.readAsArrayBuffer(file);
+  })
+}
 
 </script>
 
