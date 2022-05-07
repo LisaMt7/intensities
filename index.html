@@ -10,25 +10,113 @@
 </head>
 
 <style>
+
+* {
+  box-sizing: border-box;
+}
+
+  html, body {
+    margin: 0px;
+    font-family: sans-serif;
+  }
+
+  body {
+    display: grid;
+    grid-template-columns: 1fr 300px;
+    grid-template-rows: 75px 1fr 75px;
+    grid-template-areas: 
+            "nav nav nav"
+            "main main side"
+            "foot foot side";
+
+    width: 100vw;
+    height: 100vh;
+  }
+
+  nav, footer {
+    padding: 20px;
+    height: 75px;
+    background: black;
+    color: white;
+    font-weight: bold;
+    display:flex;
+    align-items: center;
+    /* justify-content: center; */
+  }
+
+  nav {
+    grid-area: nav;
+  }
+
+  section {
+    padding: 25px;
+  }
+
   video {
-    width: 300px;
+    width: 100%;
+  }
+
+  footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    font-size: 70%;
+    font-weight: normal;
+    grid-area: footer;
+  }
+
+  #main {
+    grid-area: main;
+    display: flex;
+    flex-wrap: wrap;
+    display: grid;
+  }
+  
+  #main > div {
+    max-width: 400px;
+  }
+
+  #sidebar {
+    background: rgb(234, 234, 234);
+    padding: 10px;
+    grid-area: auto;
+    grid-area: side;
+    height: 100%;
+    width: 100%;
   }
 
 </style>
 
 <body>
-  <button id="start">Start</button>
-  <select id="in"></select>
-  <select id="out"></select>
-  <select id="video"></select>
+  <nav>Intensity</nav>
 
-  <h5>Upload Files (one audio or video)</h5>
-  <fieldset>
-    <input type="file" id="files" accept="audio/*, video/*" />
-    <!-- <button type="button" id="compress_btn" class="btn btn-outline-primary" style="margin-top: 20px;">Compress</button> -->
-  </fieldset>
+  <!-- Interactive Sidebar -->
+  <div id="sidebar">
+    <h3>Controls</h3>
+    <h4>Real-Time Data</h4>
+    <button id="start">Start</button>
 
-  <video></video>
+    <h5>Audio Input</h5>
+    <select id="in"></select>
+
+    <h5>Audio Output</h5>
+    <select id="out"></select>
+
+    <h5>Video Input</h5>
+    <select id="video"></select>
+
+    <h4>Upload Files</h4>
+    <fieldset>
+      <input type="file" id="files" accept="audio/*, video/*" />
+    </fieldset>
+  </div>
+
+  <!-- Main Visualization Area -->
+  <section id="main">
+  </section>
+
+  <footer>Garrett Flynn and Lisa Müller-Trede | 2022</footer>
 </body>
 
 <script type="module">
@@ -42,13 +130,7 @@
   const audioOutputSelect = document.getElementById('out')
   const videoSelect = document.getElementById('video')
   var fileInput = document.getElementById('files');
-
-  var video = document.querySelector('video');
-
-  const spectrogram = new components.streams.data.Spectrogram()
-  const timeseries = new components.streams.data.TimeSeries()
-  document.body.insertAdjacentElement('beforeend', spectrogram)
-  document.body.insertAdjacentElement('beforeend', timeseries)
+  var main = document.getElementById('main');
 
   navigator.mediaDevices.enumerateDevices()
     .then(gotDevices)
@@ -56,7 +138,10 @@
 
 
   const context = new AudioContext();
-  video.controls = true
+
+  const sourceRegistry = {}
+
+  // video.controls = true
 
   function gotDevices(deviceInfos) {
     console.log(deviceInfos)
@@ -79,15 +164,15 @@
       }
     }
   }
-  const onFreqs = (frequencies) => {
-    spectrogram.data = Array.from(frequencies)
+  const onFreqs = (frequencies, i) => {
+    sourceRegistry[i].spectrogram.data = Array.from(frequencies)
   }
 
   const onAudio = (src) => {
     reader1.readAsArrayBuffer(src);
   }
 
-  const onStreamSource = (src, stream) => {
+  const onStreamSource = (src, stream, i) => {
       src.connect(filterNode);
 
       stream.onended = () => {
@@ -105,8 +190,8 @@
         analyser.getByteFrequencyData(frequencies);
         analyser.getByteTimeDomainData(raw)
         const arr = Array.from(raw)
-        timeseries.data = [arr]
-        onFreqs(frequencies)
+        sourceRegistry[i].timeseries.data = [arr]
+        onFreqs(frequencies, i)
       };
 
       setInterval(getData, 100); // Get Data Every 100ms
@@ -114,23 +199,46 @@
 
   var reader1 = new FileReader();
 
+  const spawnStream = (count,stream) => {
+    const container = document.createElement('div')
+        const video = document.createElement('video')
+        video.controls = true
+        container.insertAdjacentElement('beforeend', video)
+        main.insertAdjacentElement('beforeend', container)
+
+        sourceRegistry[count] = {
+            video,
+            stream,
+            spectrogram: new components.streams.data.Spectrogram(),
+            timeseries: new components.streams.data.TimeSeries(),
+        }
+
+        container.insertAdjacentElement('beforeend', sourceRegistry[count].spectrogram)
+        container.insertAdjacentElement('beforeend', sourceRegistry[count].timeseries)
+  }
+
   fileInput.onchange = (ev) => {
 
     // TODO: Check if audio or video
     // If video, then get the audio
+    let count = 0
     for (let file of fileInput.files) {
       switch (file.type.split('/')[0]) {
         case 'video':
+          spawnStream(count)
           video.src = URL.createObjectURL(file)
           var source = context.createMediaElementSource(video);
           // video.autoplay = true
-          onStreamSource(source, video)
+          onStreamSource(source, video, count)
           break;
         default:
           onAudio(file);
           break;
       }
+      count++
     }
+
+    main.style.gridTemplateColumns = `repeat(${count},1fr)`
   }
 
   // Setup Analysis
@@ -155,15 +263,15 @@
 
   start.onclick = () => {
 
-    console.log('START')
-
     navigator.mediaDevices.getUserMedia({
       audio: {
         deviceId: { exact: audioInputSelect.value }
-      }
+      }, 
+      video: { exact: videoSelect.value }
     }).then((stream) => {
       const microphone = context.createMediaStreamSource(stream);
-      onStreamSource(microphone, stream)
+      spawnStream(0, stream)
+      onStreamSource(microphone, stream, 0)
     })
   }
 
