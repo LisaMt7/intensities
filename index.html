@@ -120,7 +120,7 @@
     grid-area: side;
     height: 100%;
     width: 100%;
-    z-index:1;
+    /* z-index:1; */
   }
 
 </style>
@@ -296,7 +296,6 @@
 
     // Then Integrations
     for (let k in integrations) {integrations[k].output =  integrations[k].function()}
-
   }
 
   const onStreamSource = (src, inputs={}) => {
@@ -323,7 +322,7 @@
           count++
         }
 
-        // Comparison (first two)
+        // Similarity (first two)
         const o = spawnStreamDisplay(count, inputs) // Create Display
         o.container.insertAdjacentHTML('afterbegin',`<h3>Similarity</h3>`)
 
@@ -383,6 +382,39 @@
         }) // Start integration
         count++
 
+        // Additive (first two)
+        const o2 = spawnStreamDisplay(count, inputs) // Create Display
+        o2.container.insertAdjacentHTML('afterbegin',`<h3>Additive</h3>`)
+        const add = (arr1, arr2) => {
+            return arr1.map((v, i) => {
+                return v + arr2[i]
+            })
+          }
+
+        integrate('additive', o2, [0, 1], (arr) => {
+          const o = {}
+          const addedFreqs = add(arr[0].frequencies, arr[1].frequencies)
+          o.frequencies = addedFreqs
+          return o
+        })
+        count++
+
+        // Remove common (first two)
+        const o3 = spawnStreamDisplay(count, inputs) // Create Display
+        o3.container.insertAdjacentHTML('afterbegin',`<h3>Remove Common Noise</h3>`)
+        const subCommon = (arr1, arr2) => {
+            return arr1.map((v, i) => {
+                return Math.abs(v - arr2[i])
+            })
+          }
+
+        integrate('common', o3, [0, 1], (arr) => {
+          const o = {}
+          const addedFreqs = subCommon(arr[0].frequencies, arr[1].frequencies)
+          o.frequencies = addedFreqs
+          return o
+        })
+        count++
 
 
         if (!self) merger.connect(context.destination); // Output to the speakers
