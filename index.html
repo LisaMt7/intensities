@@ -104,13 +104,31 @@
 
   #main {
     grid-area: main;
-    display: flex;
-    flex-wrap: wrap;
     overflow: scroll;
   }
   
-  #main > div {
+  #analyses > div {
     max-width: 400px;
+  }
+
+  #videos {
+    width: 100%;
+  }
+
+  #videos video {
+    max-width: 400px;
+  }
+  
+  #analyses {
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  .container {
+    background: rgb(237, 237, 237);
+    padding: 15px;
+    margin: 10px;
+    border-radius: 25px;
   }
 
   #sidebar {
@@ -152,6 +170,8 @@
 
   <!-- Main Visualization Area -->
   <section id="main">
+    <div id="videos"></div>
+    <div id="analyses"></div>
   </section>
 
   <footer>Garrett Flynn and Lisa Müller-Trede | 2022</footer>
@@ -169,6 +189,9 @@
   const videoSelect = document.getElementById('video')
   var fileInput = document.getElementById('files');
   var main = document.getElementById('main');
+  var videos = document.getElementById('videos');
+  var analysesDiv = document.getElementById('analyses');
+
   var overlay = document.getElementById('overlay');
 
   navigator.mediaDevices.enumerateDevices()
@@ -178,35 +201,45 @@
 
   let context = null; // Initialize on user action
   let analyser = null;
-  let filterNode = null;
+  let highPassNode = null;
+  let lowPassNode = null;
   let gainNode = null;
+  let outNode = null;
+  let frequencyBinCount = Math.pow(2,11);
+  let minFreq = 7000
+  let maxFreq = 0
+  const nodes = []
 
   const initializeContext = () => {
     if (!context) {
       setInterval(bigAnalysisLoop, 50); // Get Data Every 100ms
       context = new (window.AudioContext || window.webkitAudioContext)();
-    // Setup Analysis
-      analyser = context.createAnalyser();
-      analyser.smoothingTimeConstant = 0.2;
-      analyser.fftSize = 1024;
-      analyser.minDecibels = -127;
-      analyser.maxDecibels = 0;
+      // top of tree
+      if (minFreq) {
+        highPassNode = context.createBiquadFilter();
+        nodes.push(highPassNode)
+        highPassNode.type = 'highpass';
+        highPassNode.frequency.value = minFreq;
+      }
 
-      filterNode = context.createBiquadFilter();
-      filterNode.type = 'highpass';
-      filterNode.frequency.value = 7000;
+      // next node
+      if (maxFreq) {
+        lowPassNode = context.createBiquadFilter();
+        nodes.push(lowPassNode)
+        lowPassNode.type = 'lowpass';
+        if (maxFreq) highPassNode.frequency.value = maxFreq;
+        nodes[nodes.length - 1].connect(lowPassNode);
+      }
 
-      gainNode = context.createGain(); // Create a gain node to change audio volume.
-      gainNode.gain.value = 1.0;
-
-        
-      filterNode.connect(gainNode);
       // microphone.connect(gainNode);
-      gainNode.connect(analyser);
-      // analyser.connect(context.destination);
+      // next node
+      analyser = createAnalyser()
+      nodes[nodes.length - 1].connect(analyser);
 
-        // var source = context.createBufferSource();
-      // source.buffer = data;
+      // next node
+      outNode = context.createGain(); // Create a gain node to change audio volume.
+      outNode.gain.value = 1.0;
+      outNode.connect(context.destination);
     }
 
   }
@@ -245,7 +278,7 @@
   const createAnalyser = () => {
     const analyser = context.createAnalyser();
     analyser.smoothingTimeConstant = 0.2;
-    analyser.fftSize = 1024;
+    analyser.fftSize = frequencyBinCount
     analyser.minDecibels = -127;
     analyser.maxDecibels = 0;
     return analyser
@@ -256,12 +289,19 @@
       let volumeCallback = null;
       let volumeInterval = null;
       const frequencies = new Uint8Array(o.analyser.frequencyBinCount);
+
+      const upperBound = Math.min(context.sampleRate, minFreq)
+      const centerFreqs = Array.from({length: frequencies.length}, (e,i) => (i + 0.5)  * upperBound/(frequencies.length))
+      console.log(centerFreqs)
+
       // let raw = new Uint8Array(1) // Only get the latest
       const getData = () => {
         o.analyser.getByteFrequencyData(frequencies);
         // o.analyser.getByteTimeDomainData(raw)
         // const arr = Array.from(raw)
         const freqArr = Array.from(frequencies)
+
+
         // o.timeseries.data = [arr]
         o.spectrogram.data = freqArr
         return {
@@ -300,10 +340,12 @@
 
   const onStreamSource = (src, inputs={}) => {
 
-      src.connect(filterNode); // Connect to top of Web Audio API Context
+      if (inputs.video) videos.insertAdjacentElement('beforeend', inputs.video)
+
+      src.connect(nodes[0]); // Connect to top of Web Audio API Context
 
       // TODO: Split tracks from video
-      const channels = src.numberOfChannels ?? src.buffer?.numberOfChannels
+      const channels = src.channelCount ?? src.buffer?.numberOfChannels
       if (channels > 1) {
         var splitter = context.createChannelSplitter(channels);
         analyser.connect(splitter); // Connect end of main graph to the Splitter graph
@@ -311,7 +353,7 @@
 
         for (let i = 0; i < channels; i++){
           const o = spawnStreamDisplay(count, inputs) // Create Display
-          o.container.insertAdjacentHTML('afterbegin',`<h3>Channel ${i}</h3>`)
+          o.container.insertAdjacentHTML('afterbegin',`<h3>${i == 0 ? 'Left' : 'Right'} Channel </h3>`)
           const gainNode = context.createGain();
           gainNode.gain.setValueAtTime(1.0, context.currentTime);
           o.analyser = createAnalyser()
@@ -322,65 +364,12 @@
           count++
         }
 
-        // Similarity (first two)
-        const o = spawnStreamDisplay(count, inputs) // Create Display
-        o.container.insertAdjacentHTML('afterbegin',`<h3>Similarity</h3>`)
-
-        // const maxHist = 1000
-        // const averageDifference = {
-        //   // timeseries: [], 
-        //   frequencies: []
-        // }
-
-        const average = (arr) => arr.reduce((a,b) => a + b, 0) / arr.length
-        // let start = Date.now()
-        // let compareCount = 0
-        const similarityNorm = (arr, max, key) => {
-
-          // compareCount++
-
-          const res = arr.map(v => {
-            return Math.abs(1-v/max)
-            // const similarity = 1 - v/max
-            // averageDifference[key].push(similarity)
-            // if (averageDifference[key].length > maxHist) averageDifference[key].shift()
-            // return Math.abs(similarity - average(averageDifference[key]))
-          })
-
-          // if (compareCount >= maxHist) { 
-          //     compareCount = 0
-          //     const done = Date.now()
-          //     console.log(`${(done - start)/1000}s rolling average`)
-          //     start = done
-          //   }
-
-            return res
-        }
-
         const difference = (arr1, arr2, key) => {
             return arr1.map((v, i) => {
-                const diff = v - arr2[i]
-                // averageDifference[key].push(diff)
-                // if (averageDifference[key].length > maxHist) averageDifference[key].shift()
-                // return Math.abs(diff - average(averageDifference[key]))
+                const diff = Math.abs(v - arr2[i])
                 return diff
             })
           }
-
-        integrate('similarity', o, [0, 1], (arr) => {
-          const o = {}
-          // const differenceTime = difference(arr[0].timeseries, arr[1].timeseries, 'timeseries')
-          const differenceFreq = difference(arr[0].frequencies, arr[1].frequencies, 'frequencies')
-          const maxFreqDiff = Math.max(...differenceFreq)
-          // const maxTimeDiff = Math.max(...differenceTime)
-          // console.log(maxFreqDiff, maxTimeDiff)
-
-          // o.timeseries = differenceTime.map(v => 1 - v/maxTimeDiff) // Difference
-          const similarityFreq = similarityNorm(differenceFreq, maxFreqDiff, 'frequencies') // Similarity
-          o.frequencies = similarityFreq
-          return o
-        }) // Start integration
-        count++
 
         // Additive (first two)
         const o2 = spawnStreamDisplay(count, inputs) // Create Display
@@ -401,28 +390,33 @@
 
         // Remove common (first two)
         const o3 = spawnStreamDisplay(count, inputs) // Create Display
-        o3.container.insertAdjacentHTML('afterbegin',`<h3>Remove Common Noise</h3>`)
-        const subCommon = (arr1, arr2) => {
-            return arr1.map((v, i) => {
-                return Math.abs(v - arr2[i])
-            })
-          }
+        o3.container.insertAdjacentHTML('afterbegin',`<h3>Difference</h3>`)
 
         integrate('common', o3, [0, 1], (arr) => {
           const o = {}
-          const addedFreqs = subCommon(arr[0].frequencies, arr[1].frequencies)
+          const addedFreqs = difference(arr[0].frequencies, arr[1].frequencies)
           o.frequencies = addedFreqs
           return o
         })
         count++
 
+        const thisGain = context.createGain()
+        merger.connect(thisGain); 
+        thisGain.connect(outNode); // Output to the speakers
+        if (!self) thisGain.gain.value = 1
+        else thisGain.gain.value = 0 // Force Off Volume
 
-        if (!self) merger.connect(context.destination); // Output to the speakers
       } 
       else {
         const o = spawnStreamDisplay(count, inputs) // Create Display
         o.analyser = analyser
-        if (!self) analyser.connect(context.destination)
+
+        const thisGain = context.createGain()
+        analyser.connect(thisGain); 
+        thisGain.connect(outNode) // Output to the speakers
+        if (!self) thisGain.gain.value = 1
+        else thisGain.gain.value = 0 // Force Off Volume
+
         analyse(o, count) // Start analysis
       }
 
@@ -439,15 +433,16 @@
 
   const spawnStreamDisplay = (count, o = {}) => {
         const container = document.createElement('div')
+        container.classList.add('container')
         // if (!o.video) o.video = document.createElement('video')
-        main.insertAdjacentElement('beforeend', container)
+        analysesDiv.insertAdjacentElement('beforeend', container)
 
         if (o.video){
-          container.insertAdjacentElement('beforeend', o.video)
           // Real-Time Input
           if (o.stream) {
             o.video.srcObject = o.stream
-            o.video.controls = false
+            o.video.controls = true
+            o.video.muted = true // No volume on self
           } 
           else {
             o.video.controls = true
@@ -491,7 +486,7 @@
       // count added in here
     }
 
-    main.style.gridTemplateColumns = `repeat(${count},1fr)`
+    // main.style.gridTemplateColumns = `repeat(${count},1fr)`
   }
 
   start.onclick = () => {
