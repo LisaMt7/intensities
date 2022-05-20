@@ -5,3 +5,7 @@ demo/node_server/ssl/cert.pem
 node_modules
 **/*.lock
 **/*-lock.json
+
+/datasets/**/*.mov
+/datasets/**/*.wav
+
