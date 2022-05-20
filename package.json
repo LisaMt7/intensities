@@ -2,13 +2,15 @@
   "name": "intensities",
   "version": "0.0.0",
   "description": "Breathe together",
+  "type": "module",
   "main": "src/index.js",
   "author": "Garrett Flynn <garrettmflynn@gmail.com>",
   "contributors": [
     "Joshua Brewster <brewster.joshua1@gmail.com>"
   ],
   "scripts": {
-    "start": "cd demo && npm i && npm start",
+    "start": "tinybuild",
+    "start": "tinybuild bundle",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
