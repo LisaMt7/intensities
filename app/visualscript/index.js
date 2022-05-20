@@ -3704,7 +3704,7 @@ opacity: 0.5;
     
     .selectCustom-options {
       position: absolute;
-      top: calc(3.8rem + 0.8rem);
+      top: calc(2.8rem + 0.8rem);
       left: 0;
       width: 100%;
       border: 1px solid #6f6f6f;
@@ -3911,6 +3911,7 @@ opacity: 0.5;
       background-color: #1ea7fd;
       width: 100%;
       cursor: pointer;    
+      white-space: nowrap;
     }
 
     .hide {
@@ -6644,6 +6645,10 @@ opacity: 0.5;
         height: 100%;
     }
 
+    button > span {
+      font-size: 60%;
+    }
+
     button:hover {
         background: rgb(230,230,230);
       }
@@ -6683,21 +6688,16 @@ opacity: 0.5;
           return TabTogglePropsLit;
       }
       render() {
-          console.log('RENDERING', this.to, this.to.name);
           return $ `
       <button class="${(this.selected) ? 'selected' : ''}"  @click=${(ev) => {
             this.to.on(ev);
             // Show Correct Tab
             const tabs = this.to.dashboard.main.shadowRoot.querySelector('visualscript-tab-bar');
             if (tabs) {
-                console.log(this.to.toggle);
-                console.log('This Toggle', this.to.name, this.to.toggle);
                 this.to.toggle.shadowRoot.querySelector('button').classList.add('selected');
-                console.log(this.to.dashboard.main.tabs, tabs.querySelectorAll('visualscript-tab-toggle'));
                 if (this.to.style.display === 'none') {
                     this.to.dashboard.main.tabs.forEach(t => {
                         if (t != this.to) {
-                            console.log('Other Toggle', t.name, t.toggle);
                             t.toggle.shadowRoot.querySelector('button').classList.remove('selected');
                             t.style.display = 'none';
                             t.off(ev);
@@ -6721,7 +6721,7 @@ opacity: 0.5;
                     sidebar.insertAdjacentElement('beforeend', this.to.controlPanel);
                 }
             }
-        }}>${this.to.name ?? `Tab`}</button>
+        }}>${this.to.name ?? `Tab`} <span>${this.to.type}</span></button>
     `;
       }
   }
@@ -6751,6 +6751,7 @@ opacity: 0.5;
           this.controls = [];
           this.on = () => { };
           this.off = () => { };
+          this.type = 'tab';
           if (props.name)
               this.name = props.name;
           if (props.controls)
@@ -6766,7 +6767,6 @@ opacity: 0.5;
           this.dashboard.open = false;
           // Create a toggle
           this.toggle = new TabToggle(this);
-          console.log('NEw Tab', this, this.toggle);
           this.dashboard.addEventListener('close', (ev) => {
               this.off(ev);
           });
@@ -6825,7 +6825,6 @@ opacity: 0.5;
                       props.on(ev);
               },
               off: (ev) => {
-                  console.log('OFF APP!');
                   this.parent.appendChild(this); // Replace App element
                   if (props.off instanceof Function)
                       props.off(ev);
@@ -6834,6 +6833,7 @@ opacity: 0.5;
           tabProps.name = props.name;
           super(tabProps);
           this.name = props.name;
+          this.type = 'app';
           this.parent = this.parentNode; // Grab original parent
       }
       static get properties() {
@@ -6973,7 +6973,6 @@ opacity: 0.5;
                   t.style.display = 'none'; // Hide tabs other than the first
               return t.toggle;
           });
-          console.log(toggles, toggles.map(t => t.parentNode));
           return $ `
       <visualscript-tab-bar style="${toggles.length < 1 ? 'display: none;' : ''}">${toggles}</visualscript-tab-bar>
       <slot></slot>
