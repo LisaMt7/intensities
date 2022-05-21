@@ -3310,7 +3310,9 @@ Phasellus sodales eros at erat elementum, a semper ligula facilisis. Class apten
           this.disabled = props.disabled ?? false;
           this.label = props.label;
           this.persist = props.persist;
-          this.value = getPersistent(props);
+          const val = getPersistent(props);
+          if (val)
+              this.value = val;
       }
       // properties getter
       static get properties() {
@@ -3633,7 +3635,9 @@ opacity: 0.5;
               this.label = props.label;
           if (props.persist)
               this.persist = props.persist;
-          this.value = getPersistent(props);
+          const val = getPersistent(props);
+          if (val)
+              this.value = val;
       }
       static get styles() {
           return r$2 `
@@ -4021,7 +4025,9 @@ opacity: 0.5;
           if (props.persist)
               this.persist = props.persist;
           // Inside Control
-          this.value = getPersistent(props);
+          const val = getPersistent(props);
+          if (val)
+              this.value = val;
       }
       static get styles() {
           return r$2 `
@@ -4126,7 +4132,9 @@ opacity: 0.5;
               this.label = props.label;
           if (props.persist)
               this.persist = props.persist;
-          this.value = getPersistent(props);
+          const val = getPersistent(props);
+          if (val)
+              this.value = val;
       }
       static get styles() {
           return r$2 `

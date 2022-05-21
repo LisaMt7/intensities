@@ -172,11 +172,13 @@ start.onClick = () => {
   audioManager.initializeContext()
   audioManager.listen(false)
 
+  console.log(audioInputSelect.element.value, videoSelect.element.value, videoSelect.element)
 
-  navigator.mediaDevices.getUserMedia({
-    audio: { deviceId: { exact: audioInputSelect.element.value } }, 
-    video: { deviceId: { exact: videoSelect.element.value } }
-  }).then((stream) => {
+  const contraints = {audio: {}, video: {}}
+  if (videoSelect.element.value) contraints.video.deviceId = videoSelect.element.value 
+  if (audioInputSelect.element.value) contraints.audio.deviceId = audioInputSelect.element.value 
+
+  navigator.mediaDevices.getUserMedia(contraints).then((stream) => {
     const video = document.createElement('video')
     const microphone = audioManager.context.createMediaStreamSource(stream);
     videos.insertAdjacentElement('beforeend', video)
