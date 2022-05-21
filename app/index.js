@@ -12,6 +12,17 @@ var fileInput = document.getElementById('files');
 var main = document.getElementById('main');
 var videos = document.getElementById('videos');
 var analysesDiv = document.getElementById('analyses');
+const designTab = document.getElementById('design')
+
+
+// Set Controls Early
+designTab.controls = [
+  {
+    label: 'Color Scale', 
+    type: 'select', 
+    options: visualscript.streams.data.InteractiveSpectrogram.colorscales, 
+  }
+]
 
 var overlay = document.querySelector('visualscript-overlay')
 var overlayDiv = document.createElement('div')
@@ -58,15 +69,15 @@ function gotDevices(deviceInfos) {
     if (deviceInfo.kind === 'audioinput') {
       option.text = deviceInfo.label ||
         'Microphone ' + (audioInputSelect.length + 1);
-      audioInputSelect.add(option);
+      audioInputSelect.options = [...audioInputSelect.options, option]
     } else if (deviceInfo.kind === 'audiooutput') {
       option.text = deviceInfo.label || 'Speaker ' +
         (audioOutputSelect.length + 1);
-      audioOutputSelect.add(option);
+      audioOutputSelect.options = [...audioOutputSelect.options, option]
     } else if (deviceInfo.kind === 'videoinput') {
       option.text = deviceInfo.label || 'Camera ' +
         (videoSelect.length + 1);
-      videoSelect.add(option);
+      videoSelect.options = [...videoSelect.options, option]
     }
   }
 }
@@ -136,7 +147,7 @@ fileInput.onChange = async (ev) => {
   // main.style.gridTemplateColumns = `repeat(${count},1fr)`
 }
 
-start.onclick = () => {
+start.onClick = () => {
 
   audioManager.initializeContext()
   audioManager.listen(false)
@@ -178,31 +189,17 @@ return new Promise((resolve, reject) => {
               Plotly
             })
 
-            const tab = document.getElementById('design')
+            const thisControl = designTab.controls[0]
+            thisControl.value = interactive.colorscale
+            thisControl.onChange = (ev) => {
+              interactive.colorscale = ev.target.value
+            }
 
-
-            // const tab = new visualscript.Tab()
-            // tab.name = 'Interactive Spectrogram'
-            tab.controls = [
-              {
-                label: 'colorscale', 
-                type: 'select', 
-                value: interactive.colorscale,
-                options: interactive.colorscales, 
-                onChange: (ev) => {
-                  interactive.colorscale = ev.target.value
-              }
-            }, 
-              {
-                  label: 'Button Test', 
-                  type: 'button', 
-                  onClick: () => {
-                  console.log('CLICKED HERE!')
-                }
-              }
+            designTab.controls = [
+              thisControl,
             ]
-            
-            tab.insertAdjacentElement('beforeend', interactive)
+
+            designTab.insertAdjacentElement('beforeend', interactive)
           
             overlayDiv.innerHTML = 'Analysis complete!'
             overlay.open = false

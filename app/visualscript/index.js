@@ -2264,16 +2264,17 @@
   }
   customElements.define('visualscript-spectrogram', Spectrogram);
 
+  const colorscales = ['Hot', 'Cold', 'YlGnBu', 'YlOrRd', 'RdBu', 'Portland', 'Picnic', 'Jet', 'Greys', 'Greens', 'Electric', 'Earth', 'Bluered', 'Blackbody'];
   class InteractiveSpectrogram extends s {
       constructor(props = {}) {
           super();
-          this.colorscales = ['Hot', 'Cold', 'YlGnBu', 'YlOrRd', 'RdBu', 'Portland', 'Picnic', 'Jet', 'Greys', 'Greens', 'Electric', 'Earth', 'Bluered', 'Blackbody'];
           this.colorscale = 'Electric';
           this.div = document.createElement('div');
           this.data = [];
           this.plotData = [];
           this.windowSize = 300;
           this.binWidth = 256;
+          this.colorscales = colorscales;
           // this.div.style.width = '500px'
           // this.div.style.height = '300px'
           this.data = props.data ?? [[]];
@@ -2330,6 +2331,7 @@
       }
       willUpdate(changedProps) {
           if (changedProps.has('colorscale')) {
+              console.log('NewVAl', changedProps, this.colorscale, this.colorscales);
               if (!Array.isArray(this.colorscale) && !this.colorscales.includes(this.colorscale))
                   this.colorscale = 'Electric';
               this.Plotly.restyle(this.div, 'colorscale', this.colorscale);
@@ -2370,6 +2372,7 @@
           return this.div;
       }
   }
+  InteractiveSpectrogram.colorscales = colorscales;
   customElements.define('visualscript-spectrogram-interactive', InteractiveSpectrogram);
 
   var index$1 = /*#__PURE__*/Object.freeze({
@@ -3106,21 +3109,104 @@ Phasellus sodales eros at erat elementum, a semper ligula facilisis. Class apten
 
     
     :host {
+
+      --dark-color: rgb(25, 25, 25);
+      --light-color: rgb(240, 240, 240);
+
+      --blue-spiral: repeating-linear-gradient(
+        45deg,
+        rgb(30, 167, 253),
+        rgb(30, 167, 253) 10px,
+        rgb(118, 222, 255) 10px,
+        rgb(118, 222, 255) 20px
+      );
+
+      /* Light Hue: 118, 222, 255 */
+      /* Dark Hue: 0, 116, 196 */
+
+      --light-spiral: repeating-linear-gradient(
+        45deg,
+        rgb(190, 190, 190),
+        rgb(190, 190, 190) 10px,
+        rgb(240, 240, 240) 10px,
+        rgb(240, 240, 240) 20px
+      );
+
+      --dark-spiral: repeating-linear-gradient(
+        45deg,
+        rgb(25, 25, 25),
+        rgb(25, 25, 25) 10px,
+        rgb(75, 75, 75) 10px,
+        rgb(75, 75, 75) 20px
+      );
+
+      --final-toggle-width: 15px;
+
       color: black;
-      background: rgb(240, 240, 240);
       grid-area: side;
-      overflow-x: hidden; 
+      overflow-x: scroll; 
       overflow-y: scroll;
+      background: var(--light-color);
+      position: relative;
+      display: flex;
+      max-width: 100vw;
     }
 
-    select, input {
-      width: 200px;
+
+    :host > * {
+      box-sizing: border-box;
+    }
+
+    :host(.closed) > #main {
+        width: 0px;
+        overflow: hidden;
+    }
+
+    :host(.closed) > #toggle {
+      width: var(--final-toggle-width);
+    }
+
+    #toggle:hover { 
+      background: var(--blue-spiral)
+    }
+
+
+    #toggle {
+      height: 100%;
+      width: 10px;
+      display: block;
+      background: rgb(25, 25, 25);
+      cursor: pointer;
+      background: var(--light-spiral)
+    }
+
+
+    #header {
+      width: 100%;
+      padding: 10px 25px;
+      background: var(--dark-color);
+      color: white;
+      margin: 0px;
+      position: sticky;
+      left:0;
+      top: 0;
     }
 
     @media (prefers-color-scheme: dark) {
       :host {
         color: white;
-        background: rgb(25, 25, 25);
+        background: var(--dark-color);
+      }
+
+      #toggle {
+        background: var(--dark-spiral)
+      }
+
+      #header {
+        width: 100%;
+        padding: 5px 25px;
+        color: black;
+        background: var(--light-color);
       }
     }
 
@@ -3132,10 +3218,17 @@ Phasellus sodales eros at erat elementum, a semper ligula facilisis. Class apten
       constructor(props = {}) {
           super();
       }
+      // NOTE: this.children.length is not updating when children are added (e.g. when switching to the default Dashbaord Tab)
       render() {
           return $ `
-        <div style="${this.children?.length ? 'padding: 25px' : ''}">
-          <slot></slot>
+        ${this.children?.length ? $ `<div id=toggle @click=${() => {
+            this.classList.toggle('closed');
+        }}></div>` : ''}
+        <div id=main>
+        ${this.children?.length ? $ `<h4 id=header>Controls</h4>` : ''}
+          <div id=controls>
+            <slot></slot>
+          </div>
         </div>
       `;
       }
@@ -3538,7 +3631,7 @@ opacity: 0.5;
                   this.updateCustomSelectHovered(optionCheckedIndex);
               }
               // Add related event listeners
-              document.addEventListener("click", this.watchClickOutside);
+              // document.addEventListener("click", this.watchClickOutside);
               document.addEventListener("keydown", this.supportKeyboardNavigation);
           };
           this.closeSelectCustom = () => {
@@ -3546,7 +3639,7 @@ opacity: 0.5;
               this.elements.elSelectCustom.setAttribute("aria-hidden", 'true');
               this.updateCustomSelectHovered(-1);
               // Remove related event listeners
-              document.removeEventListener("click", this.watchClickOutside);
+              // document.removeEventListener("click", this.watchClickOutside);
               document.removeEventListener("keydown", this.supportKeyboardNavigation);
           };
           this.updateCustomSelectHovered = (newIndex) => {
@@ -3646,7 +3739,7 @@ opacity: 0.5;
     .selectNative:focus,
     .selectCustom.isActive .selectCustom-trigger {
       outline: none;
-      box-shadow: white 0 0 0 0.2rem, #6f6f6f 0 0 0 0.4rem;
+      box-shadow: white 0 0 0 0.0rem, #6f6f6f 0 0 0 0.2rem;
     }
     
 
@@ -3676,7 +3769,7 @@ opacity: 0.5;
     }
     
     .selectCustom-trigger  > div {
-      overflow: hidden;
+      overflow: scroll;
       white-space: nowrap;
     }
 
@@ -3749,6 +3842,9 @@ opacity: 0.5;
       left: 0.8rem;
     }
 
+
+    /* This makes the Custom Select work... 
+      Issues: Doesn't work inside of another component (e.g. Control), it clicks on that instead
     @media (hover: hover) {
       
       .selectCustom {
@@ -3759,6 +3855,7 @@ opacity: 0.5;
         display: none;
       }
     }
+    */
 
     @media (prefers-color-scheme: dark) {
       .selectCustom {
@@ -3794,8 +3891,6 @@ opacity: 0.5;
           }
       }
       updated(changedProperties) {
-          if (this.value)
-              this.updateCustomSelectChecked(this.value);
           const elSelectNative = this.shadowRoot.querySelectorAll(".js-selectNative")[0];
           const elSelectCustom = this.shadowRoot.querySelectorAll(".js-selectCustom")[0];
           const elSelectCustomOpts = elSelectCustom.children[1];
@@ -3807,6 +3902,8 @@ opacity: 0.5;
               elSelectCustomOpts,
               customOptsList,
           };
+          if (this.value)
+              this.updateCustomSelectChecked(this.value);
       }
       render() {
           return $ `
@@ -3912,6 +4009,7 @@ opacity: 0.5;
       width: 100%;
       cursor: pointer;    
       white-space: nowrap;
+      font-weight: bold;
     }
 
     .hide {
@@ -6454,9 +6552,9 @@ opacity: 0.5;
       constructor(props = {}) {
           super();
           this.apps = new Map();
-          this.toggle = () => this.open = !this.open;
           this.open = props.open ?? true;
           this.closeHandler = props.closeHandler ?? (() => { });
+          this.toggle = (typeof props.toggle === 'string') ? document.getElementById(props.toggle) : props.toggle;
       }
       static get styles() {
           return r$2 `
@@ -6492,7 +6590,7 @@ opacity: 0.5;
 
     slot {
       display: grid;
-      grid-template-columns: 1fr fit-content(300px);
+      grid-template-columns: 1fr fit-content(100%);
       grid-template-rows: fit-content(75px) 1fr fit-content(75px);
       grid-template-areas: 
               "nav nav"
@@ -6517,6 +6615,7 @@ opacity: 0.5;
     }
 
     #dashboard-toggle {
+      background: white;
       position: absolute; 
       top: 0px;
       right: 22px;
@@ -6548,6 +6647,7 @@ opacity: 0.5;
         border-top: none;
         color: white;
         box-shadow: 0 1px 5px 0 rgb(255 255 255 / 20%);
+        background: black;
       }
     }
     `;
@@ -6593,13 +6693,16 @@ opacity: 0.5;
           this.footer = this.querySelector('visualscript-footer');
           this.nav = this.querySelector('visualscript-nav');
           this.sidebar = this.querySelector('visualscript-sidebar');
+          const onclick = () => {
+              this.open = true;
+              const selectedApp = this.apps.values().next().value;
+              // Always open the app first!
+              selectedApp.toggle.shadowRoot.querySelector('button').click();
+          };
+          if (this.toggle)
+              this.toggle.onclick = onclick;
           return $ `
-      ${this.global ? $ `<div id="dashboard-toggle" @click=${() => {
-            this.open = true;
-            const selectedApp = this.apps.values().next().value;
-            // Always open the app first!
-            selectedApp.toggle.shadowRoot.querySelector('button').click();
-        }}>Edit</div>` : ''}
+      ${(this.global && !this.toggle) ? $ `<div id="dashboard-toggle" @click=${onclick}>Edit</div>` : ''}
       ${this.global ? $ `<visualscript-button id='close' secondary size="small" @click=${() => this.open = false}>Close</visualscript-button>` : ``}
       <slot>
       </slot>
@@ -6711,7 +6814,7 @@ opacity: 0.5;
             else
                 console.warn('No TabBar instance in the global Main');
             // Swap Sidebar Content
-            const dashboard = this.parentNode;
+            const dashboard = this.to.dashboard;
             if (dashboard) {
                 const sidebar = dashboard.querySelector('visualscript-sidebar');
                 if (sidebar) {
@@ -6719,6 +6822,7 @@ opacity: 0.5;
                         sidebar.removeChild(sidebar.children[i]);
                     }
                     sidebar.insertAdjacentElement('beforeend', this.to.controlPanel);
+                    sidebar.render(); // Force to recognize the new element
                 }
             }
         }}>${this.to.name ?? `Tab`} <span>${this.to.type}</span></button>
@@ -6726,6 +6830,140 @@ opacity: 0.5;
       }
   }
   customElements.define('visualscript-tab-toggle', TabToggle);
+
+  class Control extends s {
+      constructor(props = {}) {
+          super();
+          this.label = 'Control';
+          this.type = 'button';
+          // Select
+          this.options = [];
+          // File / Select
+          this.onChange = () => { };
+          if (props.label)
+              this.label = props.label;
+          if (props.type)
+              this.type = props.type;
+          // Select
+          if (props.options)
+              this.options = props.options;
+          // File / Select
+          if (props.onChange)
+              this.onChange = props.onChange;
+          if (props.accept)
+              this.accept = props.accept;
+          // Button
+          if (props.onClick)
+              this.onClick = props.onClick;
+          if (props.primary)
+              this.primary = props.primary;
+          if (props.backgroundColor)
+              this.backgroundColor = props.backgroundColor;
+          if (props.size)
+              this.size = props.size;
+      }
+      static get styles() {
+          return r$2 `
+
+    :host {
+      width: 100%;
+      height: 100%;
+    }
+
+    slot {
+      display: none;
+    }
+
+    div {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0px 15px;
+      margin: 10px;
+      border: 1px solid rgb(180,180,180);
+      white-space:nowrap;
+    }
+
+    h5 {
+      margin: 0;
+    }
+
+
+    div > * {
+      padding: 10px;
+    }
+
+    span { 
+      flex-grow: 1;
+    }
+
+    `;
+      }
+      static get properties() {
+          return {
+              label: {
+                  type: String,
+                  reflect: true
+              },
+              type: {
+                  type: String,
+                  reflect: true
+              },
+              // Select
+              options: {
+                  type: Object,
+                  reflect: true
+              },
+              // File / Select
+              onChange: {
+                  type: Object,
+                  reflect: true
+              },
+              accept: {
+                  type: String,
+                  reflect: true
+              },
+              // Button
+              primary: {
+                  type: Boolean,
+                  reflect: true
+              },
+              backgroundColor: {
+                  type: String,
+                  reflect: true
+              },
+              size: {
+                  type: String,
+                  reflect: true
+              },
+              onClick: {
+                  type: Object,
+                  reflect: true
+              }
+          };
+      }
+      // NOTE: Must do this so that custom Select trigger can be recognized as the target of a window.onclick event.
+      // createRenderRoot() {
+      //   return this;
+      // }
+      render() {
+          if (this.type === 'select')
+              this.element = new Select(this);
+          else if (this.type === 'file')
+              this.element = new File(this);
+          else
+              this.element = new Button(this);
+          return $ `<div><h5>${this.label}</h5>${this.element}</div><slot></slot>`;
+      }
+      updated(changedProperties) {
+          const slot = this.shadowRoot.querySelector("slot");
+          const nodes = slot.assignedNodes();
+          // Manually Place Slot Text in Button
+          if (this.type === 'button' && nodes.length)
+              nodes.forEach(el => this.element.appendChild(el));
+      }
+  }
+  customElements.define('visualscript-control', Control);
 
   const TabPropsLit = {
       name: {
@@ -6798,13 +7036,10 @@ opacity: 0.5;
       willUpdate(changedProps) {
           if (changedProps.has('controls')) {
               this.controlPanel = document.createElement('div');
+              console.log('panel', this.controlPanel);
               this.controls.forEach(o => {
-                  let element;
-                  if (o.type === 'select')
-                      element = new Select(o);
-                  if (o.type === 'button')
-                      element = new Button(o);
-                  this.controlPanel.insertAdjacentElement('beforeend', element);
+                  console.log('NEwconstrols', o);
+                  this.controlPanel.insertAdjacentElement('beforeend', new Control(o));
               });
           }
       }
