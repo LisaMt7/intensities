@@ -810,6 +810,10 @@
       static get styles() {
           return r$2 `
 
+      :host {
+        width: 100%;
+      }
+
       #wrapper{
         width: 100%;
       }
@@ -2331,7 +2335,6 @@
       }
       willUpdate(changedProps) {
           if (changedProps.has('colorscale')) {
-              console.log('NewVAl', changedProps, this.colorscale, this.colorscales);
               if (!Array.isArray(this.colorscale) && !this.colorscales.includes(this.colorscale))
                   this.colorscale = 'Electric';
               this.Plotly.restyle(this.div, 'colorscale', this.colorscale);
@@ -3268,27 +3271,64 @@ Phasellus sodales eros at erat elementum, a semper ligula facilisis. Class apten
 
   });
 
+  const PersistableProps = {
+      label: {
+          type: String,
+          reflect: true
+      },
+      persist: {
+          type: Boolean,
+          reflect: true
+      },
+      value: {
+          type: String,
+          reflect: true
+      },
+      onChange: {
+          type: Function,
+          reflect: true
+      }
+  };
+  const setPersistent = (o) => {
+      if (o.persist && o.label)
+          localStorage.setItem(o.label, String(o.value));
+  };
+  const getPersistent = (props) => {
+      if (props.value)
+          return props.value;
+      else if (props.persist && props.label) {
+          const val = localStorage.getItem(props.label);
+          return val;
+      }
+  };
+
   class Input extends s {
       constructor(props = {}) {
           super();
-          // initialize the properties
           this.value = props.value ?? "";
           this.outline = props.outline ?? false;
-          this.disabled = props.outline ?? false;
+          this.disabled = props.disabled ?? false;
+          this.label = props.label;
+          this.persist = props.persist;
+          this.value = getPersistent(props);
       }
       // properties getter
       static get properties() {
-          return {
-              type: { type: String },
-              label: { type: String },
-              value: { type: String },
-              disabled: { type: Boolean },
-              outline: { type: Boolean }
-          };
+          return Object.assign(PersistableProps, {
+              disabled: { type: Boolean, reflect: true },
+              outline: { type: Boolean, reflect: true }
+          });
       }
-      //
+      willUpdate(changedProps) {
+          if (changedProps.has('value'))
+              setPersistent(this);
+      }
       static get styles() {
           return r$2 `
+
+        :host {
+            width: 100%;
+        }
 *{
 box-sizing: border-box;
 }
@@ -3306,7 +3346,6 @@ font-size: 1rem;
 left: 0;
 top: 50%;
 transform: translateY(-50%);
-background-color:  #fff;
 color: gray;
 padding: 0 0.3rem;
 margin: 0 0.5rem;
@@ -3320,7 +3359,6 @@ outline: none;
 border: none;
 border-radius: 0px;
 padding: 1rem 0.6rem;
-color:  #333333;
 transition: 0.1s ease-out;
 border-bottom: 1px solid  #333333;
 background: transparent;
@@ -3328,6 +3366,9 @@ cursor: text;
 margin-left: auto;
 width: 95%;
 margin-right: auto;
+}
+input::placeholder {
+    color: transparent;
 }
 input:focus{
 border-color:  #b949d5;
@@ -3349,6 +3390,12 @@ padding-left: 0px;
 input:disabled,  input:disabled ~ .label {
 opacity: 0.5;
 }
+
+@media (prefers-color-scheme: dark) {
+    label {
+      color: rgb(120,120,120);
+    }
+  }
 `;
       }
       render() {
@@ -3359,9 +3406,13 @@ opacity: 0.5;
             outline: this.outline
         })}
                 type="${this.type}"
-                placeholder=" "
-                .value=${this.value}
+                placeholder="${this.label}"
+                .value=${(this.value != 'null' && this.value != 'undefined') ? this.value : ''}
                 ?disabled="${this.disabled}"
+
+                @change=${(ev) => {
+            this.value = ev.target.value;
+        }}
                 />
                 <label>${this.label}</label>
             </div>
@@ -3481,6 +3532,7 @@ opacity: 0.5;
   class Select extends s {
       constructor(props = {}) {
           super();
+          this.persist = false;
           this.optionChecked = "";
           this.optionHoveredIndex = -1;
           this.options = [];
@@ -3522,20 +3574,22 @@ opacity: 0.5;
               this.optionHoveredIndex = newIndex;
           };
           this.updateCustomSelectChecked = (value, text) => {
-              if (!text)
-                  text = this.elements.elSelectCustomOpts.querySelectorAll(`[data-value="${value}"]`)[0].textContent;
-              const prevValue = this.optionChecked;
-              const elPrevOption = this.elements.elSelectCustomOpts.querySelector(`[data-value="${prevValue}"`);
-              const elOption = this.elements.elSelectCustomOpts.querySelector(`[data-value="${value}"`);
-              if (elPrevOption) {
-                  elPrevOption.classList.remove("isActive");
+              if (this.elements) {
+                  if (!text)
+                      text = this.elements.elSelectCustomOpts.querySelectorAll(`[data-value="${value}"]`)[0]?.textContent;
+                  const prevValue = this.optionChecked;
+                  const elPrevOption = this.elements.elSelectCustomOpts.querySelector(`[data-value="${prevValue}"`);
+                  const elOption = this.elements.elSelectCustomOpts.querySelector(`[data-value="${value}"`);
+                  if (elPrevOption) {
+                      elPrevOption.classList.remove("isActive");
+                  }
+                  if (elOption) {
+                      elOption.classList.add("isActive");
+                  }
+                  const elSelectCustomBox = this.elements.elSelectCustom.children[0].children[0];
+                  elSelectCustomBox.textContent = text;
+                  this.optionChecked = value;
               }
-              if (elOption) {
-                  elOption.classList.add("isActive");
-              }
-              const elSelectCustomBox = this.elements.elSelectCustom.children[0].children[0];
-              elSelectCustomBox.textContent = text;
-              this.optionChecked = value;
           };
           this.watchClickOutside = (e) => {
               const didClickedOutside = !this.contains(e.target);
@@ -3573,9 +3627,13 @@ opacity: 0.5;
               }
           };
           this.options = props.options ?? [];
-          this.value = props.value;
           if (props.onChange)
               this.onChange = props.onChange;
+          if (props.label)
+              this.label = props.label;
+          if (props.persist)
+              this.persist = props.persist;
+          this.value = getPersistent(props);
       }
       static get styles() {
           return r$2 `
@@ -3607,7 +3665,7 @@ opacity: 0.5;
     .selectNative:focus,
     .selectCustom.isActive .selectCustom-trigger {
       outline: none;
-      box-shadow: white 0 0 0 0.0rem, #6f6f6f 0 0 0 0.2rem;
+      box-shadow: white 0 0 5px 2px;
     }
     
 
@@ -3737,22 +3795,16 @@ opacity: 0.5;
     `;
       }
       static get properties() {
-          return {
+          return Object.assign({
               options: {
                   type: Array,
                   reflect: true
-              },
-              value: {
-                  type: String,
-                  reflect: true
-              },
-              onChange: {
-                  type: Function,
-                  reflect: true
               }
-          };
+          }, PersistableProps);
       }
       willUpdate(changedProps) {
+          if (changedProps.has('value'))
+              setPersistent(this);
           if (changedProps.has('options')) {
               const firstOption = (this.options[0]?.value ?? this.options[0]);
               this.value = this.value ?? firstOption;
@@ -3776,7 +3828,7 @@ opacity: 0.5;
       render() {
           return $ `
       <div id=container>
-      <select class="selectNative js-selectNative" aria-labelledby="jobLabel" 
+      <select class="selectNative js-selectNative" aria-labelledby="${this.label}Label" 
       @change=${(e) => {
             // Update selectCustom value when selectNative is changed.
             const value = e.target.value;
@@ -3956,6 +4008,221 @@ opacity: 0.5;
       }
   }
   customElements.define('visualscript-file', File);
+
+  class Switch extends s {
+      constructor(props = {}) {
+          super();
+          this.persist = false;
+          this.onChange = () => { };
+          if (props.onChange)
+              this.onChange = props.onChange;
+          if (props.label)
+              this.label = props.label;
+          if (props.persist)
+              this.persist = props.persist;
+          // Inside Control
+          this.value = getPersistent(props);
+      }
+      static get styles() {
+          return r$2 `
+
+    :host * {
+      box-sizing: border-box;
+    }
+
+    [role="switch"] {  
+      position: relative;
+      border-radius: 0.5rem;
+      padding: 1em 2em;
+      cursor: pointer;
+      background-color: white;
+      border: none;
+      border-radius: 14px;
+      -webkit-transition: .4s;
+      transition: .4s;
+    }
+
+    [role="switch"] * {
+      pointer-events: none;
+    }
+
+
+    [role="switch"][aria-pressed="true"] {
+      background-color: #1ea7fd;
+    }
+
+    [role="switch"][aria-pressed="true"] > .slider{
+      -webkit-transform: translateY(-50%) translateX(100%);
+      -ms-transform: translateY(-50%) translateX(100%);
+      transform: translateY(-50%) translateX(100%);
+    }
+
+    /* Remove the default outline and 
+    add the outset shadow */  
+    [aria-pressed]:focus {
+      outline: none;
+      box-shadow: white 0 0 5px 2px;
+    }
+
+    /* The slider */
+    .slider {
+      padding: 3px;
+      position: absolute;
+      cursor: pointer;
+      top: 50%;
+      left: 0;
+      -webkit-transform: translateY(-50%);
+      -ms-transform: translateY(-50%);
+      transform: translateY(-50%);
+      -webkit-transition: .4s;
+      transition: .4s;
+      height: 100%;
+      aspect-ratio: 1/1;
+    }
+    .slider > * {
+      background-color: #ccc;
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Rounded sliders */
+    .slider.round > * {
+      border-radius: 34px;
+    }
+
+    `;
+      }
+      static get properties() {
+          return PersistableProps;
+      }
+      willUpdate(changedProps) {
+          if (changedProps.has('value'))
+              setPersistent(this);
+      }
+      render() {
+          return $ `
+      <button class="switch" role="switch" aria-pressed="${String(this.value)}" aria-labelledby=${this.label} @click=${(e) => {
+            let pressed = e.target.getAttribute('aria-pressed') === 'true';
+            this.value = !pressed;
+            e.target.setAttribute('aria-pressed', String(this.value));
+            this.onChange(e);
+        }}>
+        <div class="slider round"><div></div></div>
+    </button>
+    `;
+      }
+  }
+  customElements.define('visualscript-switch', Switch);
+
+  class Range extends s {
+      constructor(props = {}) {
+          super();
+          this.persist = false;
+          this.onChange = () => { };
+          this.onInput = () => { };
+          if (props.onChange)
+              this.onChange = props.onChange;
+          if (props.label)
+              this.label = props.label;
+          if (props.persist)
+              this.persist = props.persist;
+          this.value = getPersistent(props);
+      }
+      static get styles() {
+          return r$2 `
+
+    :host {
+      width: 100%;
+      height: 100%;
+    }
+
+    :host * {
+      box-sizing: border-box;
+    }
+
+    .wrapper {
+      position: relative;
+      width: 100%;
+      height: 100%;
+    }
+
+    input[type="range"] {
+      -webkit-appearance: none;
+      position: relative;
+      overflow: hidden;
+      height: 30%;
+      width: 100%;
+      cursor: pointer;
+      border: none;
+      margin: 0;
+  }
+  
+  output {
+      position: absolute; 
+      user-select: none; 
+      pointer-events: none; 
+      z-index: 1;
+      top: 50%;
+      left: 10px;
+      transform: translate(0%, calc(-50% - 0.12rem));
+      font-size: 80%;
+  }
+  
+  input[type="range"]::-webkit-slider-runnable-track {
+  }
+  
+  input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 0; /* 1 */
+      height: 20px;
+      box-shadow: -100vw 0 0 100vw #1ea7fd;
+      opacity: 0.9;
+      transition: opacity 0.5s;
+  }
+  
+  input[type="range"]:hover::-webkit-slider-thumb{
+      opacity: 1;
+  }
+  
+  input[type="range"]::-moz-range-track {
+
+  }
+  
+    .visually-hidden { 
+        position: absolute !important;
+        height: 1px; 
+        width: 1px;
+        overflow: hidden;
+        clip: rect(1px 1px 1px 1px); /* IE6, IE7 */
+        clip: rect(1px, 1px, 1px, 1px);
+        white-space: nowrap; /* added line */
+    }
+
+    `;
+      }
+      static get properties() {
+          return PersistableProps;
+      }
+      willUpdate(changedProps) {
+          if (changedProps.has('value'))
+              setPersistent(this);
+      }
+      render() {
+          return $ `
+      <div class="wrapper">
+        <input type="range" min="0" max="100" id="${this.label}" @change=${(ev) => {
+            this.value = ev.target.value;
+            this.onChange(ev);
+        }} @input=${(ev) => {
+            this.onInput(ev);
+        }}/>
+        <output for="${this.label}">${this.value}</output>
+        <label class="visually-hidden" for="${this.label}">${this.label}</label>
+      </div>
+    `;
+      }
+  }
+  customElements.define('visualscript-range', Range);
 
   class ObjectEditor extends s {
       constructor(props = { target: {}, header: 'Object' }) {
@@ -6704,17 +6971,29 @@ opacity: 0.5;
           super();
           this.label = 'Control';
           this.type = 'button';
-          // Select
+          this.persist = false;
           this.options = [];
           // File / Select
           this.onChange = () => { };
+          this.willUpdate = (changedProps) => {
+              changedProps.forEach((v, k) => {
+                  if (this.element)
+                      this.element[k] = this[k];
+              }); // TODO: Make sure this actually passes relevant changes
+          };
           if (props.label)
               this.label = props.label;
           if (props.type)
               this.type = props.type;
+          if (props.park)
+              this.park = props.park;
+          if (props.persist)
+              this.persist = props.persist;
           // Select
           if (props.options)
               this.options = props.options;
+          if (props.value)
+              this.value = props.value;
           // File / Select
           if (props.onChange)
               this.onChange = props.onChange;
@@ -6783,7 +7062,19 @@ opacity: 0.5;
                   type: String,
                   reflect: true
               },
+              persist: {
+                  type: Boolean,
+                  reflect: true
+              },
+              park: {
+                  type: Boolean,
+                  reflect: true
+              },
               // Select
+              value: {
+                  type: Object,
+                  reflect: true
+              },
               options: {
                   type: Object,
                   reflect: true
@@ -6813,7 +7104,7 @@ opacity: 0.5;
               onClick: {
                   type: Object,
                   reflect: true
-              }
+              },
           };
       }
       // NOTE: Must do this so that custom Select trigger can be recognized as the target of a window.onclick event.
@@ -6825,6 +7116,12 @@ opacity: 0.5;
               this.element = new Select(this);
           else if (this.type === 'file')
               this.element = new File(this);
+          else if (this.type === 'switch')
+              this.element = new Switch(this);
+          else if (this.type === 'range')
+              this.element = new Range(this);
+          else if (['input', 'text', 'number'].includes(this.type))
+              this.element = new Input(this);
           else
               this.element = new Button(this);
           return $ `<div><h5>${this.label}</h5>${this.element}</div><slot></slot>`;
@@ -6864,10 +7161,22 @@ opacity: 0.5;
           this.on = () => { };
           this.off = () => { };
           this.type = 'tab';
+          this.addControl = (instance) => {
+              this.controlPanel.appendChild(instance);
+          };
+          this.updated = () => {
+              const controls = this.querySelectorAll('visualscript-control');
+              controls.forEach((control) => {
+                  if (this.type === 'app')
+                      control.park = true; // Park all controls within an app
+                  else if (!control.park)
+                      this.addControl(control);
+              });
+          };
           if (props.name)
               this.name = props.name;
           if (props.controls)
-              this.controls = props.controls;
+              this.controls = props.controls; // Will also check for controls in the <slot> later
           if (props.on)
               this.on = props.on;
           if (props.off)
@@ -6910,10 +7219,8 @@ opacity: 0.5;
       willUpdate(changedProps) {
           if (changedProps.has('controls')) {
               this.controlPanel = document.createElement('div');
-              console.log('panel', this.controlPanel);
               this.controls.forEach(o => {
-                  console.log('NEwconstrols', o);
-                  this.controlPanel.insertAdjacentElement('beforeend', new Control(o));
+                  this.addControl(new Control(o));
               });
           }
       }
@@ -7183,14 +7490,19 @@ opacity: 0.5;
   }
   customElements.define('visualscript-gallery', Gallery);
 
+  const collapseThreshold = 600;
   class Sidebar extends s {
+      constructor(props = {}) {
+          super();
+          this.closed = props.closed;
+      }
       static get styles() {
           return r$2 `
 
     
     :host {
 
-      --collapse-width: 600px;
+      --collapse-width: ${collapseThreshold}px;
       --dark-color: rgb(25, 25, 25);
       --light-color: rgb(240, 240, 240);
 
@@ -7266,6 +7578,7 @@ opacity: 0.5;
     #controls {
       overflow-x: scroll; 
       overflow-y: scroll;
+      height: 100%;
     }
 
 
@@ -7281,7 +7594,7 @@ opacity: 0.5;
     }
 
     /* FLIP SIDEBAR SELECTED MEANING */
-    @media only screen and (max-width: 600px) {
+    @media only screen and (max-width: ${collapseThreshold}px) {
 
       :host > #main {
           width: 0px;
@@ -7326,13 +7639,19 @@ opacity: 0.5;
     `;
       }
       static get properties() {
-          return {};
-      }
-      constructor(props = {}) {
-          super();
+          return {
+              closed: {
+                  type: Boolean,
+                  reflect: true
+              }
+          };
       }
       // NOTE: this.children.length is not updating when children are added (e.g. when switching to the default Dashbaord Tab)
       render() {
+          if (this.closed) {
+              if (window.innerWidth > collapseThreshold)
+                  this.classList.add('selected');
+          }
           return $ `
         ${this.children?.length ? $ `<button id=toggle @click=${() => {
             this.classList.toggle('selected');
@@ -7358,16 +7677,19 @@ opacity: 0.5;
   exports.Footer = Footer;
   exports.Gallery = Gallery;
   exports.GraphEditor = GraphEditor;
+  exports.Input = Input;
   exports.Loader = Loader;
   exports.Main = Main;
   exports.Modal = Modal;
   exports.Nav = Nav;
   exports.ObjectEditor = ObjectEditor;
   exports.Overlay = Overlay;
+  exports.Range = Range;
   exports.Search = Search;
   exports.Select = Select;
   exports.SessionEditor = SessionEditor;
   exports.Sidebar = Sidebar;
+  exports.Switch = Switch;
   exports.Tab = Tab;
   exports.TabBar = TabBar;
   exports.TabBarPropsLit = TabBarPropsLit;

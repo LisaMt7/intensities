@@ -7,32 +7,27 @@
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
   <title>Intensities | Breathe Together</title>
   <link rel="stylesheet" href="./styles.css">
-  <script src="./app/visualscript/index.js" defer=true></script>
   <script src="https://cdn.plot.ly/plotly-2.12.1.min.js"></script>
 </head>
 
 <body>
   <visualscript-app id="app" name="Intensity">
     <visualscript-dashboard>
-    <visualscript-sidebar>
-
-        <h4 style="padding: 0px 15px">Real-Time Data</h4>
+    <visualscript-sidebar closed>
         <div>
-          <visualscript-control id="start" type="button" primary size="small" label="Audio + Video Data">Start Data Acquisition</visualscript-control>
-          <visualscript-control id="in" type="select" label="Audio Input"></visualscript-control>
-          <visualscript-control id="out" type="select" label="Audio Output"></visualscript-control>
-          <visualscript-control id="video" type="select" label="Video Input"></visualscript-control>
-        </div>
-        <h4 style="padding: 0px 15px">Recorded Data</h4>
-        <div>
-          <visualscript-control id="files" type="file"  accept="audio/*, video/*" label="Breath Data"></visualscript-control>
+          <visualscript-control id="in" type="select" label="Audio Input" persist></visualscript-control>
+          <visualscript-control id="out" type="select" label="Audio Output" persist></visualscript-control>
+          <visualscript-control id="video" type="select" label="Video Input" persist></visualscript-control>
         </div>
         <!-- <fieldset> -->
       <!-- </fieldset> -->
     </visualscript-sidebar>
   
     <visualscript-main style="display: flex; align-items: center; justify-content: center;">
-      This is placeholder for a really cool experience!
+      <div style="display: flex; flex-wrap: wrap; align-items: center; padding: 50px; justify-content: center; max-width: 80vw;">
+          <visualscript-button id="start" primary size="large">Start Data Acquisition</visualscript-button>
+          <visualscript-audio-volume id="volume" backgroundColor="#49fb35" style="padding: 25px;"></visualscript-audio-volume>
+      </div>
     </visualscript-main>
     </visualscript-dashboard>
   </visualscript-app>
@@ -43,25 +38,26 @@
     <visualscript-nav>Visualscript</visualscript-nav>
   <visualscript-sidebar></visualscript-sidebar>
   <visualscript-main id="main">
-    <visualscript-tab id="design" name="Model Design">
-      <br>
-      <strong>Note:</strong> .mp3 files only
-    </visualscript-tab>
-    <visualscript-tab id="realtime" name="Real-Time Analysis">
-      <br>
-      <strong>Note:</strong> Should have real-time data if you start it
+
+    <visualscript-tab id="realtime" name="Stream Analysis">
       <section id="data">
         <div id="videos"></div>
         <div id="analyses"></div>
       </section>
     </visualscript-tab>
-    <visualscript-tab id="test" name="Test" controls='[{"label":"colorscale","type":"select","options":["one","two","three"]},{"label":"Button Test","type":"button"},{"label":"File Test","type":"file"}]'>
-      <br>
-     <strong>Note:</strong> Just some buttons and stuff
+
+    <visualscript-tab id="design" name="Model Design">
+      <visualscript-control id="files" type="file"  accept="audio/*, video/*" label="Load a File" park></visualscript-control>
+      <visualscript-control type="switch" label="Combine" value=true persist></visualscript-control>
+      <visualscript-control type="range" label="Threshold" persist></visualscript-control>
+      <visualscript-control id="colorscale" type="select" label="Color Scale" persist></visualscript-control>
+      <visualscript-control type="input" label="Model File Name" persist></visualscript-control>
+      <visualscript-control type="button" label="Download Model" persist>Download</visualscript-control>
     </visualscript-tab>
+
   </visualscript-main>
   <visualscript-footer>Garrett Flynn and Lisa Müller-Trede | 2022</visualscript-footer>
   </visualscript-dashboard>
 </body>
-<script src="dist/index.js" defer=true></script>
+<script src="dist/index.js"></script>
 </html>
