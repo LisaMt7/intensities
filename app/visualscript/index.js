@@ -2276,6 +2276,7 @@
           this.div = document.createElement('div');
           this.data = [];
           this.plotData = [];
+          this.config = {};
           this.windowSize = 300;
           this.binWidth = 256;
           this.colorscales = colorscales;
@@ -2293,20 +2294,27 @@
                   type: 'heatmap'
               }
           ];
-          var config = {
-              responsive: true
+          this.config = {
+              responsive: true,
+              autosize: true
           };
           if (props.Plotly) {
               this.Plotly = props.Plotly;
-              this.Plotly.newPlot(this.div, this.plotData, config);
+              this.Plotly.newPlot(this.div, this.plotData, this.config);
           }
           else
               console.warn('<interactive-spectrogram>: Plotly instance not provided...');
+          window.addEventListener('resize', () => {
+              // this.Plotly.Plots.resize()
+          });
       }
       static get styles() {
           return r$2 `
 
       `;
+      }
+      createRenderRoot() {
+          return this;
       }
       static get properties() {
           return {
@@ -2338,6 +2346,10 @@
               if (!Array.isArray(this.colorscale) && !this.colorscales.includes(this.colorscale))
                   this.colorscale = 'Electric';
               this.Plotly.restyle(this.div, 'colorscale', this.colorscale);
+          }
+          if (changedProps.has('data')) {
+              this.plotData[0].z = this.transpose(this.data);
+              this.Plotly.newPlot(this.div, this.plotData, this.config);
           }
       }
       //   updateData = (newData) => {
@@ -3298,7 +3310,12 @@ Phasellus sodales eros at erat elementum, a semper ligula facilisis. Class apten
           return props.value;
       else if (props.persist && props.label) {
           const val = localStorage.getItem(props.label);
-          return val;
+          if (val === 'null')
+              return null;
+          else if (val === 'undefined')
+              return undefined;
+          else
+              return val;
       }
   };
 
@@ -3541,7 +3558,6 @@ opacity: 0.5;
           this.onChange = () => { };
           this.add = (option) => {
               this.options = [...this.options, option];
-              this.render();
           };
           this.openSelectCustom = () => {
               this.elements.elSelectCustom.classList.add("isActive");
@@ -4124,6 +4140,9 @@ opacity: 0.5;
       constructor(props = {}) {
           super();
           this.persist = false;
+          this.value = 0;
+          this.min = 0;
+          this.max = 100;
           this.onChange = () => { };
           this.onInput = () => { };
           if (props.onChange)
@@ -4132,6 +4151,10 @@ opacity: 0.5;
               this.label = props.label;
           if (props.persist)
               this.persist = props.persist;
+          if (props.min)
+              this.min = props.min;
+          if (props.max)
+              this.max = props.max;
           const val = getPersistent(props);
           if (val)
               this.value = val;
@@ -4209,7 +4232,16 @@ opacity: 0.5;
     `;
       }
       static get properties() {
-          return PersistableProps;
+          return Object.assign(PersistableProps, {
+              min: {
+                  type: Number,
+                  reflect: true
+              },
+              max: {
+                  type: Number,
+                  reflect: true
+              }
+          });
       }
       willUpdate(changedProps) {
           if (changedProps.has('value'))
@@ -4218,7 +4250,7 @@ opacity: 0.5;
       render() {
           return $ `
       <div class="wrapper">
-        <input type="range" min="0" max="100" id="${this.label}" @change=${(ev) => {
+        <input type="range" min="${this.min}" max="${this.max}" id="${this.label}" @change=${(ev) => {
             this.value = ev.target.value;
             this.onChange(ev);
         }} @input=${(ev) => {
@@ -6703,15 +6735,27 @@ opacity: 0.5;
           return r$2 `
     
     :host {
+      position: relative;
       width: 100%;
       height: 100%;
     }
 
+    
 
-    :host([global]) slot {
+    :host([global]) {
       position: absolute;
       top: 0;
-      left; 0;
+      left: 0;
+      z-index: 1000;
+      pointer-events: none;
+    }
+
+    :host([open]) {
+      pointer-events: all;
+    }
+
+
+    :host([global]) slot {
       opacity: 0;
       pointer-events: none;
     }
@@ -6726,7 +6770,7 @@ opacity: 0.5;
       
     }
 
-    :host, slot {
+    slot {
       background: white;
       color: black;
     }
@@ -6760,6 +6804,7 @@ opacity: 0.5;
     #dashboard-toggle {
       background: white;
       position: absolute; 
+      pointer-events: all;
       top: 0px;
       right: 22px;
       z-index: 1000;
@@ -6780,7 +6825,7 @@ opacity: 0.5;
     }
 
     @media (prefers-color-scheme: dark) {
-      :host, slot {
+      slot {
         color: white;
         background: black;
       }
@@ -6836,16 +6881,16 @@ opacity: 0.5;
           this.footer = this.querySelector('visualscript-footer');
           this.nav = this.querySelector('visualscript-nav');
           this.sidebar = this.querySelector('visualscript-sidebar');
-          const onclick = () => {
+          const onClick = () => {
               this.open = true;
               const selectedApp = this.apps.values().next().value;
               // Always open the app first!
               selectedApp.toggle.shadowRoot.querySelector('button').click();
           };
           if (this.toggle)
-              this.toggle.onclick = onclick;
+              this.toggle.onclick = onClick;
           return $ `
-      ${(this.global && !this.toggle) ? $ `<div id="dashboard-toggle" @click=${onclick}>Edit</div>` : ''}
+      ${(this.global && !this.toggle) ? $ `<div id="dashboard-toggle" @click=${onClick}>Edit</div>` : ''}
       ${this.global ? $ `<visualscript-button id='close' secondary size="small" @click=${() => this.open = false}>Close</visualscript-button>` : ``}
       <slot>
       </slot>
@@ -6864,7 +6909,6 @@ opacity: 0.5;
       constructor(tab) {
           super();
           this.to = tab;
-          this.render();
       }
       static get styles() {
           return r$2 `
@@ -6941,18 +6985,18 @@ opacity: 0.5;
             const tabs = this.to.dashboard.main.shadowRoot.querySelector('visualscript-tab-bar');
             if (tabs) {
                 this.to.toggle.shadowRoot.querySelector('button').classList.add('selected');
-                if (this.to.style.display === 'none') {
-                    this.to.dashboard.main.tabs.forEach(t => {
-                        if (t != this.to) {
-                            t.toggle.shadowRoot.querySelector('button').classList.remove('selected');
-                            t.style.display = 'none';
-                            t.off(ev);
-                        }
-                        else {
-                            t.style.display = '';
-                        } // hide other tabs
-                    });
-                }
+                // if (this.to.style.display === 'none') {
+                this.to.dashboard.main.tabs.forEach(t => {
+                    if (t != this.to) {
+                        t.toggle.shadowRoot.querySelector('button').classList.remove('selected');
+                        t.style.display = 'none';
+                        t.off(ev);
+                    }
+                    else {
+                        t.style.display = '';
+                    } // hide other tabs
+                });
+                // }
             }
             else
                 console.warn('No TabBar instance in the global Main');
@@ -6961,11 +7005,7 @@ opacity: 0.5;
             if (dashboard) {
                 const sidebar = dashboard.querySelector('visualscript-sidebar');
                 if (sidebar) {
-                    for (let i = 0; i < sidebar.children.length; i++) {
-                        sidebar.removeChild(sidebar.children[i]);
-                    }
-                    sidebar.insertAdjacentElement('beforeend', this.to.controlPanel);
-                    sidebar.render(); // Force to recognize the new element
+                    sidebar.content = (this.to.controlPanel.children.length) ? this.to.controlPanel : '';
                 }
             }
         }}>${this.to.name ?? `Tab`} <span>${this.to.type}</span></button>
@@ -7503,7 +7543,10 @@ opacity: 0.5;
   class Sidebar extends s {
       constructor(props = {}) {
           super();
+          this.content = '';
+          this.interacted = false;
           this.closed = props.closed;
+          this.classList.add('default');
       }
       static get styles() {
           return r$2 `
@@ -7556,12 +7599,12 @@ opacity: 0.5;
       box-sizing: border-box;
     }
 
-    :host(.selected) > #main {
+    :host(.closed) > #main {
         width: 0px;
         overflow: hidden;
     }
 
-    :host(.selected) > #toggle {
+    :host(.closed) > #toggle {
       width: var(--final-toggle-width);
     }
 
@@ -7569,11 +7612,13 @@ opacity: 0.5;
       background: var(--blue-spiral)
     }
 
+    .hidden {
+      display: none;
+    }
 
     #toggle {
       height: 100%;
       width: 10px;
-      display: block;
       background: rgb(25, 25, 25);
       cursor: pointer;
       background: var(--light-spiral);
@@ -7590,6 +7635,17 @@ opacity: 0.5;
       height: 100%;
     }
 
+    @media only screen and (max-width: ${collapseThreshold}px) {
+      :host(.default) > #main {
+          width: 0px;
+          overflow: hidden;
+      }
+
+      :host(.default) > #toggle {
+        width: var(--final-toggle-width);
+      }
+    }
+
 
     #header {
       width: 100%;
@@ -7600,31 +7656,6 @@ opacity: 0.5;
       position: sticky;
       left:0;
       top: 0;
-    }
-
-    /* FLIP SIDEBAR SELECTED MEANING */
-    @media only screen and (max-width: ${collapseThreshold}px) {
-
-      :host > #main {
-          width: 0px;
-          overflow: hidden;
-      }
-
-      :host(.selected) > #main {
-        width: auto;
-        overflow: auto;
-      }
-
-
-      :host(.selected) > #toggle {
-        width: 10px;
-      }
-      
-
-      :host > #toggle {
-        width: var(--final-toggle-width);
-      }
-
     }
 
     @media (prefers-color-scheme: dark) {
@@ -7652,23 +7683,27 @@ opacity: 0.5;
               closed: {
                   type: Boolean,
                   reflect: true
-              }
+              },
+              content: {
+                  type: Object,
+                  reflect: true
+              },
           };
       }
-      // NOTE: this.children.length is not updating when children are added (e.g. when switching to the default Dashbaord Tab)
       render() {
-          if (this.closed) {
-              if (window.innerWidth > collapseThreshold)
-                  this.classList.add('selected');
-          }
+          const renderToggle = this.content || this.children?.length; // Note: May also need to check the slot generally...
+          if (this.closed)
+              this.classList.add('closed');
           return $ `
-        ${this.children?.length ? $ `<button id=toggle @click=${() => {
-            this.classList.toggle('selected');
-        }}></button>` : ''}
+        <button id=toggle class="${!!renderToggle ? '' : 'hidden'}" @click=${() => {
+            this.classList.remove('default'); // Closed only added after user interaction
+            this.classList.toggle('closed'); // Closed only added after user interaction
+        }}></button>
         <div id=main>
-        ${this.children?.length ? $ `<h4 id=header>Controls</h4>` : ''}
+        ${!!renderToggle ? $ `<h4 id=header>Controls</h4>` : ''}
           <div id=controls>
-            <slot></slot>
+          ${this.content}
+          <slot></slot>
           </div>
         </div>
       `;
