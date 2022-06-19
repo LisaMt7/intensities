@@ -49,6 +49,8 @@ const info = {
     ]
 
     inputs.forEach(({el, variable}) => {
+
+        let immediate = true
         let input = el.shadowRoot.querySelector('visualscript-input')
         if (input) input = input.shadowRoot.querySelector('input')
         info.worker[variable] = parseInt(el.value ?? input?.value ?? 0) // Samples
@@ -58,7 +60,7 @@ const info = {
                 let input = el.shadowRoot.querySelector('visualscript-input')
                 if (input) input = input.shadowRoot.querySelector('input')
                 info.worker[variable] = parseInt(input?.value)
-                console.log('Variable', info.worker[variable], input)
+                immediate = false
             }, 100)
         }
 
@@ -66,7 +68,7 @@ const info = {
 
         el.onInput = (ev) => {
             const val = parseInt(ev.target.value)
-            if (val != undefined && !isNaN(val)) info.worker[variable] = val
+            if (!immediate || (val != undefined && !isNaN(val))) info.worker[variable] = val
             console.log('Variable', info.worker[variable])
         }
     })

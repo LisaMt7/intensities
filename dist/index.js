@@ -6690,6 +6690,7 @@ slot {
     { el: maximumFrequencyInput, variable: "maxFreq" }
   ];
   inputs.forEach(({ el, variable }) => {
+    let immediate = true;
     let input = el.shadowRoot.querySelector("visualscript-input");
     if (input)
       input = input.shadowRoot.querySelector("input");
@@ -6700,13 +6701,13 @@ slot {
         if (input2)
           input2 = input2.shadowRoot.querySelector("input");
         info.worker[variable] = parseInt(input2?.value);
-        console.log("Variable", info.worker[variable], input2);
+        immediate = false;
       }, 100);
     }
     console.log("Variable", info.worker[variable], input);
     el.onInput = (ev) => {
       const val = parseInt(ev.target.value);
-      if (val != void 0 && !isNaN(val))
+      if (!immediate || val != void 0 && !isNaN(val))
         info.worker[variable] = val;
       console.log("Variable", info.worker[variable]);
     };
