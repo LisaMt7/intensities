@@ -9,19 +9,19 @@
    * Copyright 2019 Google LLC
    * SPDX-License-Identifier: BSD-3-Clause
    */
-  const t$2 = window.ShadowRoot && (void 0 === window.ShadyCSS || window.ShadyCSS.nativeShadow) && "adoptedStyleSheets" in Document.prototype && "replace" in CSSStyleSheet.prototype,
-        e$3 = Symbol(),
-        n$4 = new Map();
+  const t$3 = window.ShadowRoot && (void 0 === window.ShadyCSS || window.ShadyCSS.nativeShadow) && "adoptedStyleSheets" in Document.prototype && "replace" in CSSStyleSheet.prototype,
+        e$4 = Symbol(),
+        n$6 = new Map();
 
-  class s$3 {
+  class s$4 {
     constructor(t, n) {
-      if (this._$cssResult$ = !0, n !== e$3) throw Error("CSSResult is not constructable. Use `unsafeCSS` or `css` instead.");
+      if (this._$cssResult$ = !0, n !== e$4) throw Error("CSSResult is not constructable. Use `unsafeCSS` or `css` instead.");
       this.cssText = t;
     }
 
     get styleSheet() {
-      let e = n$4.get(this.cssText);
-      return t$2 && void 0 === e && (n$4.set(this.cssText, e = new CSSStyleSheet()), e.replaceSync(this.cssText)), e;
+      let e = n$6.get(this.cssText);
+      return t$3 && void 0 === e && (n$6.set(this.cssText, e = new CSSStyleSheet()), e.replaceSync(this.cssText)), e;
     }
 
     toString() {
@@ -30,28 +30,28 @@
 
   }
 
-  const o$4 = t => new s$3("string" == typeof t ? t : t + "", e$3),
-        r$2 = (t, ...n) => {
+  const o$5 = t => new s$4("string" == typeof t ? t : t + "", e$4),
+        r$4 = (t, ...n) => {
     const o = 1 === t.length ? t[0] : n.reduce((e, n, s) => e + (t => {
       if (!0 === t._$cssResult$) return t.cssText;
       if ("number" == typeof t) return t;
       throw Error("Value passed to 'css' function must be a 'css' function result: " + t + ". Use 'unsafeCSS' to pass non-literal values, but take care to ensure page security.");
     })(n) + t[s + 1], t[0]);
-    return new s$3(o, e$3);
+    return new s$4(o, e$4);
   },
-        i$3 = (e, n) => {
-    t$2 ? e.adoptedStyleSheets = n.map(t => t instanceof CSSStyleSheet ? t : t.styleSheet) : n.forEach(t => {
+        i$4 = (e, n) => {
+    t$3 ? e.adoptedStyleSheets = n.map(t => t instanceof CSSStyleSheet ? t : t.styleSheet) : n.forEach(t => {
       const n = document.createElement("style"),
             s = window.litNonce;
       void 0 !== s && n.setAttribute("nonce", s), n.textContent = t.cssText, e.appendChild(n);
     });
   },
-        S$1 = t$2 ? t => t : t => t instanceof CSSStyleSheet ? (t => {
+        S$1 = t$3 ? t => t : t => t instanceof CSSStyleSheet ? (t => {
     let e = "";
 
     for (const n of t.cssRules) e += n.cssText;
 
-    return o$4(e);
+    return o$5(e);
   })(t) : t;
 
   /**
@@ -60,16 +60,16 @@
    * SPDX-License-Identifier: BSD-3-Clause
    */
 
-  var s$2;
+  var s$3;
 
-  const e$2 = window.trustedTypes,
-        r$1 = e$2 ? e$2.emptyScript : "",
-        h$1 = window.reactiveElementPolyfillSupport,
-        o$3 = {
+  const e$3 = window.trustedTypes,
+        r$3 = e$3 ? e$3.emptyScript : "",
+        h$3 = window.reactiveElementPolyfillSupport,
+        o$4 = {
     toAttribute(t, i) {
       switch (i) {
         case Boolean:
-          t = t ? r$1 : null;
+          t = t ? r$3 : null;
           break;
 
         case Object:
@@ -106,13 +106,13 @@
     }
 
   },
-        n$3 = (t, i) => i !== t && (i == i || t == t),
-        l$2 = {
+        n$5 = (t, i) => i !== t && (i == i || t == t),
+        l$3 = {
     attribute: !0,
     type: String,
-    converter: o$3,
+    converter: o$4,
     reflect: !1,
-    hasChanged: n$3
+    hasChanged: n$5
   };
 
   class a$1 extends HTMLElement {
@@ -135,7 +135,7 @@
       }), t;
     }
 
-    static createProperty(t, i = l$2) {
+    static createProperty(t, i = l$3) {
       if (i.state && (i.attribute = !1), this.finalize(), this.elementProperties.set(t, i), !i.noAccessor && !this.prototype.hasOwnProperty(t)) {
         const s = "symbol" == typeof t ? Symbol() : "__" + t,
               e = this.getPropertyDescriptor(t, s, i);
@@ -160,7 +160,7 @@
     }
 
     static getPropertyOptions(t) {
-      return this.elementProperties.get(t) || l$2;
+      return this.elementProperties.get(t) || l$3;
     }
 
     static finalize() {
@@ -219,7 +219,7 @@
     createRenderRoot() {
       var t;
       const s = null !== (t = this.shadowRoot) && void 0 !== t ? t : this.attachShadow(this.constructor.shadowRootOptions);
-      return i$3(s, this.constructor.elementStyles), s;
+      return i$4(s, this.constructor.elementStyles), s;
     }
 
     connectedCallback() {
@@ -244,13 +244,13 @@
       this._$AK(t, s);
     }
 
-    _$ES(t, i, s = l$2) {
+    _$ES(t, i, s = l$3) {
       var e, r;
 
       const h = this.constructor._$Eh(t, s);
 
       if (void 0 !== h && !0 === s.reflect) {
-        const n = (null !== (r = null === (e = s.converter) || void 0 === e ? void 0 : e.toAttribute) && void 0 !== r ? r : o$3.toAttribute)(i, s.type);
+        const n = (null !== (r = null === (e = s.converter) || void 0 === e ? void 0 : e.toAttribute) && void 0 !== r ? r : o$4.toAttribute)(i, s.type);
         this._$Ei = t, null == n ? this.removeAttribute(h) : this.setAttribute(h, n), this._$Ei = null;
       }
     }
@@ -264,14 +264,14 @@
       if (void 0 !== n && this._$Ei !== n) {
         const t = h.getPropertyOptions(n),
               l = t.converter,
-              a = null !== (r = null !== (e = null === (s = l) || void 0 === s ? void 0 : s.fromAttribute) && void 0 !== e ? e : "function" == typeof l ? l : null) && void 0 !== r ? r : o$3.fromAttribute;
+              a = null !== (r = null !== (e = null === (s = l) || void 0 === s ? void 0 : s.fromAttribute) && void 0 !== e ? e : "function" == typeof l ? l : null) && void 0 !== r ? r : o$4.fromAttribute;
         this._$Ei = n, this[n] = a(i, t.type), this._$Ei = null;
       }
     }
 
     requestUpdate(t, i, s) {
       let e = !0;
-      void 0 !== t && (((s = s || this.constructor.getPropertyOptions(t)).hasChanged || n$3)(this[t], i) ? (this._$AL.has(t) || this._$AL.set(t, i), !0 === s.reflect && this._$Ei !== t && (void 0 === this._$EC && (this._$EC = new Map()), this._$EC.set(t, s))) : e = !1), !this.isUpdatePending && e && (this._$Ep = this._$E_());
+      void 0 !== t && (((s = s || this.constructor.getPropertyOptions(t)).hasChanged || n$5)(this[t], i) ? (this._$AL.has(t) || this._$AL.set(t, i), !0 === s.reflect && this._$Ei !== t && (void 0 === this._$EC && (this._$EC = new Map()), this._$EC.set(t, s))) : e = !1), !this.isUpdatePending && e && (this._$Ep = this._$E_());
     }
 
     async _$E_() {
@@ -348,33 +348,33 @@
 
   a$1.finalized = !0, a$1.elementProperties = new Map(), a$1.elementStyles = [], a$1.shadowRootOptions = {
     mode: "open"
-  }, null == h$1 || h$1({
+  }, null == h$3 || h$3({
     ReactiveElement: a$1
-  }), (null !== (s$2 = globalThis.reactiveElementVersions) && void 0 !== s$2 ? s$2 : globalThis.reactiveElementVersions = []).push("1.3.1");
+  }), (null !== (s$3 = globalThis.reactiveElementVersions) && void 0 !== s$3 ? s$3 : globalThis.reactiveElementVersions = []).push("1.3.1");
 
   /**
    * @license
    * Copyright 2017 Google LLC
    * SPDX-License-Identifier: BSD-3-Clause
    */
-  var t$1;
+  var t$2;
 
-  const i$2 = globalThis.trustedTypes,
-        s$1 = i$2 ? i$2.createPolicy("lit-html", {
+  const i$3 = globalThis.trustedTypes,
+        s$2 = i$3 ? i$3.createPolicy("lit-html", {
     createHTML: t => t
   }) : void 0,
-        e$1 = `lit$${(Math.random() + "").slice(9)}$`,
-        o$2 = "?" + e$1,
-        n$2 = `<${o$2}>`,
-        l$1 = document,
-        h = (t = "") => l$1.createComment(t),
-        r = t => null === t || "object" != typeof t && "function" != typeof t,
-        d = Array.isArray,
+        e$2 = `lit$${(Math.random() + "").slice(9)}$`,
+        o$3 = "?" + e$2,
+        n$4 = `<${o$3}>`,
+        l$2 = document,
+        h$2 = (t = "") => l$2.createComment(t),
+        r$2 = t => null === t || "object" != typeof t && "function" != typeof t,
+        d$1 = Array.isArray,
         u = t => {
     var i;
-    return d(t) || "function" == typeof (null === (i = t) || void 0 === i ? void 0 : i[Symbol.iterator]);
+    return d$1(t) || "function" == typeof (null === (i = t) || void 0 === i ? void 0 : i[Symbol.iterator]);
   },
-        c = /<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g,
+        c$1 = /<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g,
         v = /-->/g,
         a = />/g,
         f = />|[ 	\n\r](?:([^\s"'>=/]+)([ 	\n\r]*=[ 	\n\r]*(?:[^ 	\n\r"'`<>=]|("|')|))|$)/g,
@@ -397,18 +397,18 @@
 
     if (void 0 === l) {
       const t = null !== (o = null == s ? void 0 : s.renderBefore) && void 0 !== o ? o : null;
-      n._$litPart$ = l = new N(i.insertBefore(h(), t), t, void 0, null != s ? s : {});
+      n._$litPart$ = l = new N(i.insertBefore(h$2(), t), t, void 0, null != s ? s : {});
     }
 
     return l._$AI(t), l;
   },
-        A = l$1.createTreeWalker(l$1, 129, null, !1),
+        A = l$2.createTreeWalker(l$2, 129, null, !1),
         C = (t, i) => {
     const o = t.length - 1,
           l = [];
     let h,
         r = 2 === i ? "<svg>" : "",
-        d = c;
+        d = c$1;
 
     for (let i = 0; i < o; i++) {
       const s = t[i];
@@ -417,15 +417,15 @@
           p = -1,
           $ = 0;
 
-      for (; $ < s.length && (d.lastIndex = $, u = d.exec(s), null !== u);) $ = d.lastIndex, d === c ? "!--" === u[1] ? d = v : void 0 !== u[1] ? d = a : void 0 !== u[2] ? (g.test(u[2]) && (h = RegExp("</" + u[2], "g")), d = f) : void 0 !== u[3] && (d = f) : d === f ? ">" === u[0] ? (d = null != h ? h : c, p = -1) : void 0 === u[1] ? p = -2 : (p = d.lastIndex - u[2].length, o = u[1], d = void 0 === u[3] ? f : '"' === u[3] ? m : _) : d === m || d === _ ? d = f : d === v || d === a ? d = c : (d = f, h = void 0);
+      for (; $ < s.length && (d.lastIndex = $, u = d.exec(s), null !== u);) $ = d.lastIndex, d === c$1 ? "!--" === u[1] ? d = v : void 0 !== u[1] ? d = a : void 0 !== u[2] ? (g.test(u[2]) && (h = RegExp("</" + u[2], "g")), d = f) : void 0 !== u[3] && (d = f) : d === f ? ">" === u[0] ? (d = null != h ? h : c$1, p = -1) : void 0 === u[1] ? p = -2 : (p = d.lastIndex - u[2].length, o = u[1], d = void 0 === u[3] ? f : '"' === u[3] ? m : _) : d === m || d === _ ? d = f : d === v || d === a ? d = c$1 : (d = f, h = void 0);
 
       const y = d === f && t[i + 1].startsWith("/>") ? " " : "";
-      r += d === c ? s + n$2 : p >= 0 ? (l.push(o), s.slice(0, p) + "$lit$" + s.slice(p) + e$1 + y) : s + e$1 + (-2 === p ? (l.push(void 0), i) : y);
+      r += d === c$1 ? s + n$4 : p >= 0 ? (l.push(o), s.slice(0, p) + "$lit$" + s.slice(p) + e$2 + y) : s + e$2 + (-2 === p ? (l.push(void 0), i) : y);
     }
 
     const u = r + (t[o] || "<?>") + (2 === i ? "</svg>" : "");
     if (!Array.isArray(t) || !t.hasOwnProperty("raw")) throw Error("invalid template strings array");
-    return [void 0 !== s$1 ? s$1.createHTML(u) : u, l];
+    return [void 0 !== s$2 ? s$2.createHTML(u) : u, l];
   };
 
   class E {
@@ -452,11 +452,11 @@
           if (l.hasAttributes()) {
             const t = [];
 
-            for (const i of l.getAttributeNames()) if (i.endsWith("$lit$") || i.startsWith(e$1)) {
+            for (const i of l.getAttributeNames()) if (i.endsWith("$lit$") || i.startsWith(e$2)) {
               const s = a[d++];
 
               if (t.push(i), void 0 !== s) {
-                const t = l.getAttribute(s.toLowerCase() + "$lit$").split(e$1),
+                const t = l.getAttribute(s.toLowerCase() + "$lit$").split(e$2),
                       i = /([.?@])?(.*)/.exec(s);
                 c.push({
                   type: 1,
@@ -475,30 +475,30 @@
           }
 
           if (g.test(l.tagName)) {
-            const t = l.textContent.split(e$1),
+            const t = l.textContent.split(e$2),
                   s = t.length - 1;
 
             if (s > 0) {
-              l.textContent = i$2 ? i$2.emptyScript : "";
+              l.textContent = i$3 ? i$3.emptyScript : "";
 
-              for (let i = 0; i < s; i++) l.append(t[i], h()), A.nextNode(), c.push({
+              for (let i = 0; i < s; i++) l.append(t[i], h$2()), A.nextNode(), c.push({
                 type: 2,
                 index: ++r
               });
 
-              l.append(t[s], h());
+              l.append(t[s], h$2());
             }
           }
-        } else if (8 === l.nodeType) if (l.data === o$2) c.push({
+        } else if (8 === l.nodeType) if (l.data === o$3) c.push({
           type: 2,
           index: r
         });else {
           let t = -1;
 
-          for (; -1 !== (t = l.data.indexOf(e$1, t + 1));) c.push({
+          for (; -1 !== (t = l.data.indexOf(e$2, t + 1));) c.push({
             type: 7,
             index: r
-          }), t += e$1.length - 1;
+          }), t += e$2.length - 1;
         }
 
         r++;
@@ -506,7 +506,7 @@
     }
 
     static createElement(t, i) {
-      const s = l$1.createElement("template");
+      const s = l$2.createElement("template");
       return s.innerHTML = t, s;
     }
 
@@ -516,7 +516,7 @@
     var o, n, l, h;
     if (i === b) return i;
     let d = void 0 !== e ? null === (o = s._$Cl) || void 0 === o ? void 0 : o[e] : s._$Cu;
-    const u = r(i) ? void 0 : i._$litDirective$;
+    const u = r$2(i) ? void 0 : i._$litDirective$;
     return (null == d ? void 0 : d.constructor) !== u && (null === (n = null == d ? void 0 : d._$AO) || void 0 === n || n.call(d, !1), void 0 === u ? d = void 0 : (d = new u(t), d._$AT(t, s, e)), void 0 !== e ? (null !== (l = (h = s)._$Cl) && void 0 !== l ? l : h._$Cl = [])[e] = d : s._$Cu = d), void 0 !== d && (i = P(t, d._$AS(t, i.values), d, e)), i;
   }
 
@@ -541,7 +541,7 @@
         },
         parts: e
       } = this._$AD,
-            o = (null !== (i = null == t ? void 0 : t.creationScope) && void 0 !== i ? i : l$1).importNode(s, !0);
+            o = (null !== (i = null == t ? void 0 : t.creationScope) && void 0 !== i ? i : l$2).importNode(s, !0);
       A.currentNode = o;
       let n = A.nextNode(),
           h = 0,
@@ -594,19 +594,19 @@
     }
 
     _$AI(t, i = this) {
-      t = P(this, t, i), r(t) ? t === w || null == t || "" === t ? (this._$AH !== w && this._$AR(), this._$AH = w) : t !== this._$AH && t !== b && this.$(t) : void 0 !== t._$litType$ ? this.T(t) : void 0 !== t.nodeType ? this.k(t) : u(t) ? this.S(t) : this.$(t);
+      t = P(this, t, i), r$2(t) ? t === w || null == t || "" === t ? (this._$AH !== w && this._$AR(), this._$AH = w) : t !== this._$AH && t !== b && this.$(t) : void 0 !== t._$litType$ ? this.T(t) : void 0 !== t.nodeType ? this.k(t) : u(t) ? this.S(t) : this.$(t);
     }
 
-    M(t, i = this._$AB) {
+    A(t, i = this._$AB) {
       return this._$AA.parentNode.insertBefore(t, i);
     }
 
     k(t) {
-      this._$AH !== t && (this._$AR(), this._$AH = this.M(t));
+      this._$AH !== t && (this._$AR(), this._$AH = this.A(t));
     }
 
     $(t) {
-      this._$AH !== w && r(this._$AH) ? this._$AA.nextSibling.data = t : this.k(l$1.createTextNode(t)), this._$AH = t;
+      this._$AH !== w && r$2(this._$AH) ? this._$AA.nextSibling.data = t : this.k(l$2.createTextNode(t)), this._$AH = t;
     }
 
     T(t) {
@@ -629,12 +629,12 @@
     }
 
     S(t) {
-      d(this._$AH) || (this._$AH = [], this._$AR());
+      d$1(this._$AH) || (this._$AH = [], this._$AR());
       const i = this._$AH;
       let s,
           e = 0;
 
-      for (const o of t) e === i.length ? i.push(s = new N(this.M(h()), this.M(h()), this, this.options)) : s = i[e], s._$AI(o), e++;
+      for (const o of t) e === i.length ? i.push(s = new N(this.A(h$2()), this.A(h$2()), this, this.options)) : s = i[e], s._$AI(o), e++;
 
       e < i.length && (this._$AR(s && s._$AB.nextSibling, e), i.length = e);
     }
@@ -671,11 +671,11 @@
     _$AI(t, i = this, s, e) {
       const o = this.strings;
       let n = !1;
-      if (void 0 === o) t = P(this, t, i, 0), n = !r(t) || t !== this._$AH && t !== b, n && (this._$AH = t);else {
+      if (void 0 === o) t = P(this, t, i, 0), n = !r$2(t) || t !== this._$AH && t !== b, n && (this._$AH = t);else {
         const e = t;
         let l, h;
 
-        for (t = o[0], l = 0; l < o.length - 1; l++) h = P(this, e[s + l], i, l), h === b && (h = this._$AH[l]), n || (n = !r(h) || h !== this._$AH[l]), h === w ? t = w : t !== w && (t += (null != h ? h : "") + o[l + 1]), this._$AH[l] = h;
+        for (t = o[0], l = 0; l < o.length - 1; l++) h = P(this, e[s + l], i, l), h === b && (h = this._$AH[l]), n || (n = !r$2(h) || h !== this._$AH[l]), h === w ? t = w : t !== w && (t += (null != h ? h : "") + o[l + 1]), this._$AH[l] = h;
       }
       n && !e && this.C(t);
     }
@@ -697,7 +697,7 @@
 
   }
 
-  const k = i$2 ? i$2.emptyScript : "";
+  const k = i$3 ? i$3.emptyScript : "";
 
   class H extends S {
     constructor() {
@@ -747,7 +747,7 @@
   }
 
   const z = window.litHtmlPolyfillSupport;
-  null == z || z(E, N), (null !== (t$1 = globalThis.litHtmlVersions) && void 0 !== t$1 ? t$1 : globalThis.litHtmlVersions = []).push("2.2.2");
+  null == z || z(E, N), (null !== (t$2 = globalThis.litHtmlVersions) && void 0 !== t$2 ? t$2 : globalThis.litHtmlVersions = []).push("2.2.1");
 
   /**
    * @license
@@ -755,9 +755,9 @@
    * SPDX-License-Identifier: BSD-3-Clause
    */
 
-  var l, o$1;
+  var l$1, o$2;
 
-  class s extends a$1 {
+  class s$1 extends a$1 {
     constructor() {
       super(...arguments), this.renderOptions = {
         host: this
@@ -791,16 +791,16 @@
 
   }
 
-  s.finalized = !0, s._$litElement$ = !0, null === (l = globalThis.litElementHydrateSupport) || void 0 === l || l.call(globalThis, {
-    LitElement: s
+  s$1.finalized = !0, s$1._$litElement$ = !0, null === (l$1 = globalThis.litElementHydrateSupport) || void 0 === l$1 || l$1.call(globalThis, {
+    LitElement: s$1
   });
-  const n$1 = globalThis.litElementPolyfillSupport;
-  null == n$1 || n$1({
-    LitElement: s
+  const n$3 = globalThis.litElementPolyfillSupport;
+  null == n$3 || n$3({
+    LitElement: s$1
   });
-  (null !== (o$1 = globalThis.litElementVersions) && void 0 !== o$1 ? o$1 : globalThis.litElementVersions = []).push("3.2.0");
+  (null !== (o$2 = globalThis.litElementVersions) && void 0 !== o$2 ? o$2 : globalThis.litElementVersions = []).push("3.2.0");
 
-  class Volume extends s {
+  class Volume extends s$1 {
       constructor(props = {}) {
           super();
           this.volume = props.volume ?? 0;
@@ -808,7 +808,7 @@
           this.count = props.count ?? 10;
       }
       static get styles() {
-          return r$2 `
+          return r$4 `
 
       :host {
         width: 100%;
@@ -870,12 +870,12 @@
   }
   customElements.define('visualscript-audio-volume', Volume);
 
-  var index$4 = /*#__PURE__*/Object.freeze({
+  var index$3 = /*#__PURE__*/Object.freeze({
     __proto__: null,
     Volume: Volume
   });
 
-  class Player extends s {
+  class Player extends s$1 {
       constructor(props = {}) {
           super();
           this.source = props.source;
@@ -883,7 +883,7 @@
           this.controls = props.controls;
       }
       static get styles() {
-          return r$2 `
+          return r$4 `
 
       video {
         width: 100%;
@@ -937,7 +937,7 @@
   }
   customElements.define('visualscript-video-player', Player);
 
-  var index$3 = /*#__PURE__*/Object.freeze({
+  var index$2 = /*#__PURE__*/Object.freeze({
     __proto__: null,
     Player: Player
   });
@@ -2022,7 +2022,7 @@
     return WebglLinePlotUtils;
   }();
 
-  class TimeSeries extends s {
+  class TimeSeries$1 extends s$1 {
       constructor(props = { seconds: 5, sps: 512 }) {
           super();
           this.data = [];
@@ -2076,10 +2076,12 @@
           requestAnimationFrame(newFrame);
       }
       static get styles() {
-          return r$2 `
+          return r$4 `
 
       canvas{
         background: black;
+        width: 100%;
+        height: 100%;
       }
 
       `;
@@ -2118,9 +2120,9 @@
           return this.canvas;
       }
   }
-  customElements.define('visualscript-timeseries', TimeSeries);
+  customElements.define('visualscript-timeseries-stream', TimeSeries$1);
 
-  class Spectrogram extends s {
+  class Spectrogram$1 extends s$1 {
       constructor(props = {}) {
           super();
           this.canvas = document.createElement('canvas');
@@ -2213,10 +2215,12 @@
           this.onresize();
       }
       static get styles() {
-          return r$2 `
+          return r$4 `
 
       canvas{
         background: black;
+        width: 100%;
+        height: 100%;
       }
 
       `;
@@ -2266,1269 +2270,44 @@
           return this.canvas;
       }
   }
-  customElements.define('visualscript-spectrogram', Spectrogram);
-
-  /**
-   * A collection of shims that provide minimal functionality of the ES6 collections.
-   *
-   * These implementations are not meant to be used outside of the ResizeObserver
-   * modules as they cover only a limited range of use cases.
-   */
-
-  /* eslint-disable require-jsdoc, valid-jsdoc */
-  var MapShim = function () {
-    if (typeof Map !== 'undefined') {
-      return Map;
-    }
-    /**
-     * Returns index in provided array that matches the specified key.
-     *
-     * @param {Array<Array>} arr
-     * @param {*} key
-     * @returns {number}
-     */
-
-
-    function getIndex(arr, key) {
-      var result = -1;
-      arr.some(function (entry, index) {
-        if (entry[0] === key) {
-          result = index;
-          return true;
-        }
-
-        return false;
-      });
-      return result;
-    }
-
-    return (
-      /** @class */
-      function () {
-        function class_1() {
-          this.__entries__ = [];
-        }
-
-        Object.defineProperty(class_1.prototype, "size", {
-          /**
-           * @returns {boolean}
-           */
-          get: function () {
-            return this.__entries__.length;
-          },
-          enumerable: true,
-          configurable: true
-        });
-        /**
-         * @param {*} key
-         * @returns {*}
-         */
-
-        class_1.prototype.get = function (key) {
-          var index = getIndex(this.__entries__, key);
-          var entry = this.__entries__[index];
-          return entry && entry[1];
-        };
-        /**
-         * @param {*} key
-         * @param {*} value
-         * @returns {void}
-         */
-
-
-        class_1.prototype.set = function (key, value) {
-          var index = getIndex(this.__entries__, key);
-
-          if (~index) {
-            this.__entries__[index][1] = value;
-          } else {
-            this.__entries__.push([key, value]);
-          }
-        };
-        /**
-         * @param {*} key
-         * @returns {void}
-         */
-
-
-        class_1.prototype.delete = function (key) {
-          var entries = this.__entries__;
-          var index = getIndex(entries, key);
-
-          if (~index) {
-            entries.splice(index, 1);
-          }
-        };
-        /**
-         * @param {*} key
-         * @returns {void}
-         */
-
-
-        class_1.prototype.has = function (key) {
-          return !!~getIndex(this.__entries__, key);
-        };
-        /**
-         * @returns {void}
-         */
-
-
-        class_1.prototype.clear = function () {
-          this.__entries__.splice(0);
-        };
-        /**
-         * @param {Function} callback
-         * @param {*} [ctx=null]
-         * @returns {void}
-         */
-
-
-        class_1.prototype.forEach = function (callback, ctx) {
-          if (ctx === void 0) {
-            ctx = null;
-          }
-
-          for (var _i = 0, _a = this.__entries__; _i < _a.length; _i++) {
-            var entry = _a[_i];
-            callback.call(ctx, entry[1], entry[0]);
-          }
-        };
-
-        return class_1;
-      }()
-    );
-  }();
-  /**
-   * Detects whether window and document objects are available in current environment.
-   */
-
-
-  var isBrowser = typeof window !== 'undefined' && typeof document !== 'undefined' && window.document === document; // Returns global object of a current environment.
-
-  var global$1 = function () {
-    if (typeof global !== 'undefined' && global.Math === Math) {
-      return global;
-    }
-
-    if (typeof self !== 'undefined' && self.Math === Math) {
-      return self;
-    }
-
-    if (typeof window !== 'undefined' && window.Math === Math) {
-      return window;
-    } // eslint-disable-next-line no-new-func
-
-
-    return Function('return this')();
-  }();
-  /**
-   * A shim for the requestAnimationFrame which falls back to the setTimeout if
-   * first one is not supported.
-   *
-   * @returns {number} Requests' identifier.
-   */
-
-
-  var requestAnimationFrame$1 = function () {
-    if (typeof requestAnimationFrame === 'function') {
-      // It's required to use a bounded function because IE sometimes throws
-      // an "Invalid calling object" error if rAF is invoked without the global
-      // object on the left hand side.
-      return requestAnimationFrame.bind(global$1);
-    }
-
-    return function (callback) {
-      return setTimeout(function () {
-        return callback(Date.now());
-      }, 1000 / 60);
-    };
-  }(); // Defines minimum timeout before adding a trailing call.
-
-
-  var trailingTimeout = 2;
-  /**
-   * Creates a wrapper function which ensures that provided callback will be
-   * invoked only once during the specified delay period.
-   *
-   * @param {Function} callback - Function to be invoked after the delay period.
-   * @param {number} delay - Delay after which to invoke callback.
-   * @returns {Function}
-   */
-
-  function throttle(callback, delay) {
-    var leadingCall = false,
-        trailingCall = false,
-        lastCallTime = 0;
-    /**
-     * Invokes the original callback function and schedules new invocation if
-     * the "proxy" was called during current request.
-     *
-     * @returns {void}
-     */
-
-    function resolvePending() {
-      if (leadingCall) {
-        leadingCall = false;
-        callback();
-      }
-
-      if (trailingCall) {
-        proxy();
-      }
-    }
-    /**
-     * Callback invoked after the specified delay. It will further postpone
-     * invocation of the original function delegating it to the
-     * requestAnimationFrame.
-     *
-     * @returns {void}
-     */
-
-
-    function timeoutCallback() {
-      requestAnimationFrame$1(resolvePending);
-    }
-    /**
-     * Schedules invocation of the original function.
-     *
-     * @returns {void}
-     */
-
-
-    function proxy() {
-      var timeStamp = Date.now();
-
-      if (leadingCall) {
-        // Reject immediately following calls.
-        if (timeStamp - lastCallTime < trailingTimeout) {
-          return;
-        } // Schedule new call to be in invoked when the pending one is resolved.
-        // This is important for "transitions" which never actually start
-        // immediately so there is a chance that we might miss one if change
-        // happens amids the pending invocation.
-
-
-        trailingCall = true;
-      } else {
-        leadingCall = true;
-        trailingCall = false;
-        setTimeout(timeoutCallback, delay);
-      }
-
-      lastCallTime = timeStamp;
-    }
-
-    return proxy;
-  } // Minimum delay before invoking the update of observers.
-
-
-  var REFRESH_DELAY = 20; // A list of substrings of CSS properties used to find transition events that
-  // might affect dimensions of observed elements.
-
-  var transitionKeys = ['top', 'right', 'bottom', 'left', 'width', 'height', 'size', 'weight']; // Check if MutationObserver is available.
-
-  var mutationObserverSupported = typeof MutationObserver !== 'undefined';
-  /**
-   * Singleton controller class which handles updates of ResizeObserver instances.
-   */
-
-  var ResizeObserverController =
-  /** @class */
-  function () {
-    /**
-     * Creates a new instance of ResizeObserverController.
-     *
-     * @private
-     */
-    function ResizeObserverController() {
-      /**
-       * Indicates whether DOM listeners have been added.
-       *
-       * @private {boolean}
-       */
-      this.connected_ = false;
-      /**
-       * Tells that controller has subscribed for Mutation Events.
-       *
-       * @private {boolean}
-       */
-
-      this.mutationEventsAdded_ = false;
-      /**
-       * Keeps reference to the instance of MutationObserver.
-       *
-       * @private {MutationObserver}
-       */
-
-      this.mutationsObserver_ = null;
-      /**
-       * A list of connected observers.
-       *
-       * @private {Array<ResizeObserverSPI>}
-       */
-
-      this.observers_ = [];
-      this.onTransitionEnd_ = this.onTransitionEnd_.bind(this);
-      this.refresh = throttle(this.refresh.bind(this), REFRESH_DELAY);
-    }
-    /**
-     * Adds observer to observers list.
-     *
-     * @param {ResizeObserverSPI} observer - Observer to be added.
-     * @returns {void}
-     */
-
-
-    ResizeObserverController.prototype.addObserver = function (observer) {
-      if (!~this.observers_.indexOf(observer)) {
-        this.observers_.push(observer);
-      } // Add listeners if they haven't been added yet.
-
-
-      if (!this.connected_) {
-        this.connect_();
-      }
-    };
-    /**
-     * Removes observer from observers list.
-     *
-     * @param {ResizeObserverSPI} observer - Observer to be removed.
-     * @returns {void}
-     */
-
-
-    ResizeObserverController.prototype.removeObserver = function (observer) {
-      var observers = this.observers_;
-      var index = observers.indexOf(observer); // Remove observer if it's present in registry.
-
-      if (~index) {
-        observers.splice(index, 1);
-      } // Remove listeners if controller has no connected observers.
-
-
-      if (!observers.length && this.connected_) {
-        this.disconnect_();
-      }
-    };
-    /**
-     * Invokes the update of observers. It will continue running updates insofar
-     * it detects changes.
-     *
-     * @returns {void}
-     */
-
-
-    ResizeObserverController.prototype.refresh = function () {
-      var changesDetected = this.updateObservers_(); // Continue running updates if changes have been detected as there might
-      // be future ones caused by CSS transitions.
-
-      if (changesDetected) {
-        this.refresh();
-      }
-    };
-    /**
-     * Updates every observer from observers list and notifies them of queued
-     * entries.
-     *
-     * @private
-     * @returns {boolean} Returns "true" if any observer has detected changes in
-     *      dimensions of it's elements.
-     */
-
-
-    ResizeObserverController.prototype.updateObservers_ = function () {
-      // Collect observers that have active observations.
-      var activeObservers = this.observers_.filter(function (observer) {
-        return observer.gatherActive(), observer.hasActive();
-      }); // Deliver notifications in a separate cycle in order to avoid any
-      // collisions between observers, e.g. when multiple instances of
-      // ResizeObserver are tracking the same element and the callback of one
-      // of them changes content dimensions of the observed target. Sometimes
-      // this may result in notifications being blocked for the rest of observers.
-
-      activeObservers.forEach(function (observer) {
-        return observer.broadcastActive();
-      });
-      return activeObservers.length > 0;
-    };
-    /**
-     * Initializes DOM listeners.
-     *
-     * @private
-     * @returns {void}
-     */
-
-
-    ResizeObserverController.prototype.connect_ = function () {
-      // Do nothing if running in a non-browser environment or if listeners
-      // have been already added.
-      if (!isBrowser || this.connected_) {
-        return;
-      } // Subscription to the "Transitionend" event is used as a workaround for
-      // delayed transitions. This way it's possible to capture at least the
-      // final state of an element.
-
-
-      document.addEventListener('transitionend', this.onTransitionEnd_);
-      window.addEventListener('resize', this.refresh);
-
-      if (mutationObserverSupported) {
-        this.mutationsObserver_ = new MutationObserver(this.refresh);
-        this.mutationsObserver_.observe(document, {
-          attributes: true,
-          childList: true,
-          characterData: true,
-          subtree: true
-        });
-      } else {
-        document.addEventListener('DOMSubtreeModified', this.refresh);
-        this.mutationEventsAdded_ = true;
-      }
-
-      this.connected_ = true;
-    };
-    /**
-     * Removes DOM listeners.
-     *
-     * @private
-     * @returns {void}
-     */
-
-
-    ResizeObserverController.prototype.disconnect_ = function () {
-      // Do nothing if running in a non-browser environment or if listeners
-      // have been already removed.
-      if (!isBrowser || !this.connected_) {
-        return;
-      }
-
-      document.removeEventListener('transitionend', this.onTransitionEnd_);
-      window.removeEventListener('resize', this.refresh);
-
-      if (this.mutationsObserver_) {
-        this.mutationsObserver_.disconnect();
-      }
-
-      if (this.mutationEventsAdded_) {
-        document.removeEventListener('DOMSubtreeModified', this.refresh);
-      }
-
-      this.mutationsObserver_ = null;
-      this.mutationEventsAdded_ = false;
-      this.connected_ = false;
-    };
-    /**
-     * "Transitionend" event handler.
-     *
-     * @private
-     * @param {TransitionEvent} event
-     * @returns {void}
-     */
-
-
-    ResizeObserverController.prototype.onTransitionEnd_ = function (_a) {
-      var _b = _a.propertyName,
-          propertyName = _b === void 0 ? '' : _b; // Detect whether transition may affect dimensions of an element.
-
-      var isReflowProperty = transitionKeys.some(function (key) {
-        return !!~propertyName.indexOf(key);
-      });
-
-      if (isReflowProperty) {
-        this.refresh();
-      }
-    };
-    /**
-     * Returns instance of the ResizeObserverController.
-     *
-     * @returns {ResizeObserverController}
-     */
-
-
-    ResizeObserverController.getInstance = function () {
-      if (!this.instance_) {
-        this.instance_ = new ResizeObserverController();
-      }
-
-      return this.instance_;
-    };
-    /**
-     * Holds reference to the controller's instance.
-     *
-     * @private {ResizeObserverController}
-     */
-
-
-    ResizeObserverController.instance_ = null;
-    return ResizeObserverController;
-  }();
-  /**
-   * Defines non-writable/enumerable properties of the provided target object.
-   *
-   * @param {Object} target - Object for which to define properties.
-   * @param {Object} props - Properties to be defined.
-   * @returns {Object} Target object.
-   */
-
-
-  var defineConfigurable = function (target, props) {
-    for (var _i = 0, _a = Object.keys(props); _i < _a.length; _i++) {
-      var key = _a[_i];
-      Object.defineProperty(target, key, {
-        value: props[key],
-        enumerable: false,
-        writable: false,
-        configurable: true
-      });
-    }
-
-    return target;
-  };
-  /**
-   * Returns the global object associated with provided element.
-   *
-   * @param {Object} target
-   * @returns {Object}
-   */
-
-
-  var getWindowOf = function (target) {
-    // Assume that the element is an instance of Node, which means that it
-    // has the "ownerDocument" property from which we can retrieve a
-    // corresponding global object.
-    var ownerGlobal = target && target.ownerDocument && target.ownerDocument.defaultView; // Return the local global object if it's not possible extract one from
-    // provided element.
-
-    return ownerGlobal || global$1;
-  }; // Placeholder of an empty content rectangle.
-
-
-  var emptyRect = createRectInit(0, 0, 0, 0);
-  /**
-   * Converts provided string to a number.
-   *
-   * @param {number|string} value
-   * @returns {number}
-   */
-
-  function toFloat(value) {
-    return parseFloat(value) || 0;
-  }
-  /**
-   * Extracts borders size from provided styles.
-   *
-   * @param {CSSStyleDeclaration} styles
-   * @param {...string} positions - Borders positions (top, right, ...)
-   * @returns {number}
-   */
-
-
-  function getBordersSize(styles) {
-    var positions = [];
-
-    for (var _i = 1; _i < arguments.length; _i++) {
-      positions[_i - 1] = arguments[_i];
-    }
-
-    return positions.reduce(function (size, position) {
-      var value = styles['border-' + position + '-width'];
-      return size + toFloat(value);
-    }, 0);
-  }
-  /**
-   * Extracts paddings sizes from provided styles.
-   *
-   * @param {CSSStyleDeclaration} styles
-   * @returns {Object} Paddings box.
-   */
-
-
-  function getPaddings(styles) {
-    var positions = ['top', 'right', 'bottom', 'left'];
-    var paddings = {};
-
-    for (var _i = 0, positions_1 = positions; _i < positions_1.length; _i++) {
-      var position = positions_1[_i];
-      var value = styles['padding-' + position];
-      paddings[position] = toFloat(value);
-    }
-
-    return paddings;
-  }
-  /**
-   * Calculates content rectangle of provided SVG element.
-   *
-   * @param {SVGGraphicsElement} target - Element content rectangle of which needs
-   *      to be calculated.
-   * @returns {DOMRectInit}
-   */
-
-
-  function getSVGContentRect(target) {
-    var bbox = target.getBBox();
-    return createRectInit(0, 0, bbox.width, bbox.height);
-  }
-  /**
-   * Calculates content rectangle of provided HTMLElement.
-   *
-   * @param {HTMLElement} target - Element for which to calculate the content rectangle.
-   * @returns {DOMRectInit}
-   */
-
-
-  function getHTMLElementContentRect(target) {
-    // Client width & height properties can't be
-    // used exclusively as they provide rounded values.
-    var clientWidth = target.clientWidth,
-        clientHeight = target.clientHeight; // By this condition we can catch all non-replaced inline, hidden and
-    // detached elements. Though elements with width & height properties less
-    // than 0.5 will be discarded as well.
-    //
-    // Without it we would need to implement separate methods for each of
-    // those cases and it's not possible to perform a precise and performance
-    // effective test for hidden elements. E.g. even jQuery's ':visible' filter
-    // gives wrong results for elements with width & height less than 0.5.
-
-    if (!clientWidth && !clientHeight) {
-      return emptyRect;
-    }
-
-    var styles = getWindowOf(target).getComputedStyle(target);
-    var paddings = getPaddings(styles);
-    var horizPad = paddings.left + paddings.right;
-    var vertPad = paddings.top + paddings.bottom; // Computed styles of width & height are being used because they are the
-    // only dimensions available to JS that contain non-rounded values. It could
-    // be possible to utilize the getBoundingClientRect if only it's data wasn't
-    // affected by CSS transformations let alone paddings, borders and scroll bars.
-
-    var width = toFloat(styles.width),
-        height = toFloat(styles.height); // Width & height include paddings and borders when the 'border-box' box
-    // model is applied (except for IE).
-
-    if (styles.boxSizing === 'border-box') {
-      // Following conditions are required to handle Internet Explorer which
-      // doesn't include paddings and borders to computed CSS dimensions.
-      //
-      // We can say that if CSS dimensions + paddings are equal to the "client"
-      // properties then it's either IE, and thus we don't need to subtract
-      // anything, or an element merely doesn't have paddings/borders styles.
-      if (Math.round(width + horizPad) !== clientWidth) {
-        width -= getBordersSize(styles, 'left', 'right') + horizPad;
-      }
-
-      if (Math.round(height + vertPad) !== clientHeight) {
-        height -= getBordersSize(styles, 'top', 'bottom') + vertPad;
-      }
-    } // Following steps can't be applied to the document's root element as its
-    // client[Width/Height] properties represent viewport area of the window.
-    // Besides, it's as well not necessary as the <html> itself neither has
-    // rendered scroll bars nor it can be clipped.
-
-
-    if (!isDocumentElement(target)) {
-      // In some browsers (only in Firefox, actually) CSS width & height
-      // include scroll bars size which can be removed at this step as scroll
-      // bars are the only difference between rounded dimensions + paddings
-      // and "client" properties, though that is not always true in Chrome.
-      var vertScrollbar = Math.round(width + horizPad) - clientWidth;
-      var horizScrollbar = Math.round(height + vertPad) - clientHeight; // Chrome has a rather weird rounding of "client" properties.
-      // E.g. for an element with content width of 314.2px it sometimes gives
-      // the client width of 315px and for the width of 314.7px it may give
-      // 314px. And it doesn't happen all the time. So just ignore this delta
-      // as a non-relevant.
-
-      if (Math.abs(vertScrollbar) !== 1) {
-        width -= vertScrollbar;
-      }
-
-      if (Math.abs(horizScrollbar) !== 1) {
-        height -= horizScrollbar;
-      }
-    }
-
-    return createRectInit(paddings.left, paddings.top, width, height);
-  }
-  /**
-   * Checks whether provided element is an instance of the SVGGraphicsElement.
-   *
-   * @param {Element} target - Element to be checked.
-   * @returns {boolean}
-   */
-
-
-  var isSVGGraphicsElement = function () {
-    // Some browsers, namely IE and Edge, don't have the SVGGraphicsElement
-    // interface.
-    if (typeof SVGGraphicsElement !== 'undefined') {
-      return function (target) {
-        return target instanceof getWindowOf(target).SVGGraphicsElement;
-      };
-    } // If it's so, then check that element is at least an instance of the
-    // SVGElement and that it has the "getBBox" method.
-    // eslint-disable-next-line no-extra-parens
-
-
-    return function (target) {
-      return target instanceof getWindowOf(target).SVGElement && typeof target.getBBox === 'function';
-    };
-  }();
-  /**
-   * Checks whether provided element is a document element (<html>).
-   *
-   * @param {Element} target - Element to be checked.
-   * @returns {boolean}
-   */
-
-
-  function isDocumentElement(target) {
-    return target === getWindowOf(target).document.documentElement;
-  }
-  /**
-   * Calculates an appropriate content rectangle for provided html or svg element.
-   *
-   * @param {Element} target - Element content rectangle of which needs to be calculated.
-   * @returns {DOMRectInit}
-   */
-
-
-  function getContentRect(target) {
-    if (!isBrowser) {
-      return emptyRect;
-    }
-
-    if (isSVGGraphicsElement(target)) {
-      return getSVGContentRect(target);
-    }
-
-    return getHTMLElementContentRect(target);
-  }
-  /**
-   * Creates rectangle with an interface of the DOMRectReadOnly.
-   * Spec: https://drafts.fxtf.org/geometry/#domrectreadonly
-   *
-   * @param {DOMRectInit} rectInit - Object with rectangle's x/y coordinates and dimensions.
-   * @returns {DOMRectReadOnly}
-   */
-
-
-  function createReadOnlyRect(_a) {
-    var x = _a.x,
-        y = _a.y,
-        width = _a.width,
-        height = _a.height; // If DOMRectReadOnly is available use it as a prototype for the rectangle.
-
-    var Constr = typeof DOMRectReadOnly !== 'undefined' ? DOMRectReadOnly : Object;
-    var rect = Object.create(Constr.prototype); // Rectangle's properties are not writable and non-enumerable.
-
-    defineConfigurable(rect, {
-      x: x,
-      y: y,
-      width: width,
-      height: height,
-      top: y,
-      right: x + width,
-      bottom: height + y,
-      left: x
-    });
-    return rect;
-  }
-  /**
-   * Creates DOMRectInit object based on the provided dimensions and the x/y coordinates.
-   * Spec: https://drafts.fxtf.org/geometry/#dictdef-domrectinit
-   *
-   * @param {number} x - X coordinate.
-   * @param {number} y - Y coordinate.
-   * @param {number} width - Rectangle's width.
-   * @param {number} height - Rectangle's height.
-   * @returns {DOMRectInit}
-   */
-
-
-  function createRectInit(x, y, width, height) {
-    return {
-      x: x,
-      y: y,
-      width: width,
-      height: height
-    };
-  }
-  /**
-   * Class that is responsible for computations of the content rectangle of
-   * provided DOM element and for keeping track of it's changes.
-   */
-
-
-  var ResizeObservation =
-  /** @class */
-  function () {
-    /**
-     * Creates an instance of ResizeObservation.
-     *
-     * @param {Element} target - Element to be observed.
-     */
-    function ResizeObservation(target) {
-      /**
-       * Broadcasted width of content rectangle.
-       *
-       * @type {number}
-       */
-      this.broadcastWidth = 0;
-      /**
-       * Broadcasted height of content rectangle.
-       *
-       * @type {number}
-       */
-
-      this.broadcastHeight = 0;
-      /**
-       * Reference to the last observed content rectangle.
-       *
-       * @private {DOMRectInit}
-       */
-
-      this.contentRect_ = createRectInit(0, 0, 0, 0);
-      this.target = target;
-    }
-    /**
-     * Updates content rectangle and tells whether it's width or height properties
-     * have changed since the last broadcast.
-     *
-     * @returns {boolean}
-     */
-
-
-    ResizeObservation.prototype.isActive = function () {
-      var rect = getContentRect(this.target);
-      this.contentRect_ = rect;
-      return rect.width !== this.broadcastWidth || rect.height !== this.broadcastHeight;
-    };
-    /**
-     * Updates 'broadcastWidth' and 'broadcastHeight' properties with a data
-     * from the corresponding properties of the last observed content rectangle.
-     *
-     * @returns {DOMRectInit} Last observed content rectangle.
-     */
-
-
-    ResizeObservation.prototype.broadcastRect = function () {
-      var rect = this.contentRect_;
-      this.broadcastWidth = rect.width;
-      this.broadcastHeight = rect.height;
-      return rect;
-    };
-
-    return ResizeObservation;
-  }();
-
-  var ResizeObserverEntry =
-  /** @class */
-  function () {
-    /**
-     * Creates an instance of ResizeObserverEntry.
-     *
-     * @param {Element} target - Element that is being observed.
-     * @param {DOMRectInit} rectInit - Data of the element's content rectangle.
-     */
-    function ResizeObserverEntry(target, rectInit) {
-      var contentRect = createReadOnlyRect(rectInit); // According to the specification following properties are not writable
-      // and are also not enumerable in the native implementation.
-      //
-      // Property accessors are not being used as they'd require to define a
-      // private WeakMap storage which may cause memory leaks in browsers that
-      // don't support this type of collections.
-
-      defineConfigurable(this, {
-        target: target,
-        contentRect: contentRect
-      });
-    }
-
-    return ResizeObserverEntry;
-  }();
-
-  var ResizeObserverSPI =
-  /** @class */
-  function () {
-    /**
-     * Creates a new instance of ResizeObserver.
-     *
-     * @param {ResizeObserverCallback} callback - Callback function that is invoked
-     *      when one of the observed elements changes it's content dimensions.
-     * @param {ResizeObserverController} controller - Controller instance which
-     *      is responsible for the updates of observer.
-     * @param {ResizeObserver} callbackCtx - Reference to the public
-     *      ResizeObserver instance which will be passed to callback function.
-     */
-    function ResizeObserverSPI(callback, controller, callbackCtx) {
-      /**
-       * Collection of resize observations that have detected changes in dimensions
-       * of elements.
-       *
-       * @private {Array<ResizeObservation>}
-       */
-      this.activeObservations_ = [];
-      /**
-       * Registry of the ResizeObservation instances.
-       *
-       * @private {Map<Element, ResizeObservation>}
-       */
-
-      this.observations_ = new MapShim();
-
-      if (typeof callback !== 'function') {
-        throw new TypeError('The callback provided as parameter 1 is not a function.');
-      }
-
-      this.callback_ = callback;
-      this.controller_ = controller;
-      this.callbackCtx_ = callbackCtx;
-    }
-    /**
-     * Starts observing provided element.
-     *
-     * @param {Element} target - Element to be observed.
-     * @returns {void}
-     */
-
-
-    ResizeObserverSPI.prototype.observe = function (target) {
-      if (!arguments.length) {
-        throw new TypeError('1 argument required, but only 0 present.');
-      } // Do nothing if current environment doesn't have the Element interface.
-
-
-      if (typeof Element === 'undefined' || !(Element instanceof Object)) {
-        return;
-      }
-
-      if (!(target instanceof getWindowOf(target).Element)) {
-        throw new TypeError('parameter 1 is not of type "Element".');
-      }
-
-      var observations = this.observations_; // Do nothing if element is already being observed.
-
-      if (observations.has(target)) {
-        return;
-      }
-
-      observations.set(target, new ResizeObservation(target));
-      this.controller_.addObserver(this); // Force the update of observations.
-
-      this.controller_.refresh();
-    };
-    /**
-     * Stops observing provided element.
-     *
-     * @param {Element} target - Element to stop observing.
-     * @returns {void}
-     */
-
-
-    ResizeObserverSPI.prototype.unobserve = function (target) {
-      if (!arguments.length) {
-        throw new TypeError('1 argument required, but only 0 present.');
-      } // Do nothing if current environment doesn't have the Element interface.
-
-
-      if (typeof Element === 'undefined' || !(Element instanceof Object)) {
-        return;
-      }
-
-      if (!(target instanceof getWindowOf(target).Element)) {
-        throw new TypeError('parameter 1 is not of type "Element".');
-      }
-
-      var observations = this.observations_; // Do nothing if element is not being observed.
-
-      if (!observations.has(target)) {
-        return;
-      }
-
-      observations.delete(target);
-
-      if (!observations.size) {
-        this.controller_.removeObserver(this);
-      }
-    };
-    /**
-     * Stops observing all elements.
-     *
-     * @returns {void}
-     */
-
-
-    ResizeObserverSPI.prototype.disconnect = function () {
-      this.clearActive();
-      this.observations_.clear();
-      this.controller_.removeObserver(this);
-    };
-    /**
-     * Collects observation instances the associated element of which has changed
-     * it's content rectangle.
-     *
-     * @returns {void}
-     */
-
-
-    ResizeObserverSPI.prototype.gatherActive = function () {
-      var _this = this;
-
-      this.clearActive();
-      this.observations_.forEach(function (observation) {
-        if (observation.isActive()) {
-          _this.activeObservations_.push(observation);
-        }
-      });
-    };
-    /**
-     * Invokes initial callback function with a list of ResizeObserverEntry
-     * instances collected from active resize observations.
-     *
-     * @returns {void}
-     */
-
-
-    ResizeObserverSPI.prototype.broadcastActive = function () {
-      // Do nothing if observer doesn't have active observations.
-      if (!this.hasActive()) {
-        return;
-      }
-
-      var ctx = this.callbackCtx_; // Create ResizeObserverEntry instance for every active observation.
-
-      var entries = this.activeObservations_.map(function (observation) {
-        return new ResizeObserverEntry(observation.target, observation.broadcastRect());
-      });
-      this.callback_.call(ctx, entries, ctx);
-      this.clearActive();
-    };
-    /**
-     * Clears the collection of active observations.
-     *
-     * @returns {void}
-     */
-
-
-    ResizeObserverSPI.prototype.clearActive = function () {
-      this.activeObservations_.splice(0);
-    };
-    /**
-     * Tells whether observer has active observations.
-     *
-     * @returns {boolean}
-     */
-
-
-    ResizeObserverSPI.prototype.hasActive = function () {
-      return this.activeObservations_.length > 0;
-    };
-
-    return ResizeObserverSPI;
-  }(); // Registry of internal observers. If WeakMap is not available use current shim
-  // for the Map collection as it has all required methods and because WeakMap
-  // can't be fully polyfilled anyway.
-
-
-  var observers = typeof WeakMap !== 'undefined' ? new WeakMap() : new MapShim();
-  /**
-   * ResizeObserver API. Encapsulates the ResizeObserver SPI implementation
-   * exposing only those methods and properties that are defined in the spec.
-   */
-
-  var ResizeObserver =
-  /** @class */
-  function () {
-    /**
-     * Creates a new instance of ResizeObserver.
-     *
-     * @param {ResizeObserverCallback} callback - Callback that is invoked when
-     *      dimensions of the observed elements change.
-     */
-    function ResizeObserver(callback) {
-      if (!(this instanceof ResizeObserver)) {
-        throw new TypeError('Cannot call a class as a function.');
-      }
-
-      if (!arguments.length) {
-        throw new TypeError('1 argument required, but only 0 present.');
-      }
-
-      var controller = ResizeObserverController.getInstance();
-      var observer = new ResizeObserverSPI(callback, controller, this);
-      observers.set(this, observer);
-    }
-
-    return ResizeObserver;
-  }(); // Expose public methods of ResizeObserver.
-
-
-  ['observe', 'unobserve', 'disconnect'].forEach(function (method) {
-    ResizeObserver.prototype[method] = function () {
-      var _a;
-
-      return (_a = observers.get(this))[method].apply(_a, arguments);
-    };
-  });
-
-  var index$2 = function () {
-    // Export existing implementation if available.
-    if (typeof global$1.ResizeObserver !== 'undefined') {
-      return global$1.ResizeObserver;
-    }
-
-    return ResizeObserver;
-  }();
-
-  const colorscales = ['Hot', 'Cold', 'YlGnBu', 'YlOrRd', 'RdBu', 'Portland', 'Picnic', 'Jet', 'Greys', 'Greens', 'Electric', 'Earth', 'Bluered', 'Blackbody'];
-  class InteractiveSpectrogram extends s {
-      constructor(props = {}) {
-          super();
-          this.colorscale = 'Electric';
-          this.div = document.createElement('div');
-          this.data = [];
-          this.plotData = [];
-          this.config = {};
-          this.windowSize = 300;
-          this.binWidth = 256;
-          this.colorscales = colorscales;
-          this.resize = () => {
-              this.Plotly.relayout(this.div, {
-                  'xaxis.autorange': true,
-                  'yaxis.autorange': true
-              });
-          };
-          this.data = props.data ?? [[]];
-          if (props.colorscale)
-              this.colorscale = props.colorscale;
-          this.plotData = [
-              {
-                  x: [1, 2],
-                  z: this.transpose(this.data),
-                  showscale: true,
-                  colorscale: this.colorscale,
-                  type: 'heatmap'
-              }
-          ];
-          this.config = {
-              responsive: true,
-              autosize: true // set autosize to rescale
-          };
-          if (props.Plotly) {
-              this.Plotly = props.Plotly;
-              this.Plotly.newPlot(this.div, this.plotData, this.config);
-          }
-          else
-              console.warn('<interactive-spectrogram>: Plotly instance not provided...');
-          // window.addEventListener('resize', this.resize)
-          let observer = new index$2(() => this.resize());
-          observer.observe(this.div);
-      }
-      static get styles() {
-          return r$2 `
-
-      `;
-      }
-      createRenderRoot() {
-          return this;
-      }
-      static get properties() {
-          return {
-              max: {
-                  type: Number,
-                  reflect: true
-              },
-              data: {
-                  type: Array,
-                  reflect: true
-              },
-              colorscale: {
-                  type: Object,
-                  reflect: true
-              },
-              backgroundColor: {
-                  type: String,
-                  reflect: true,
-              },
-          };
-      }
-      transpose(a) {
-          return Object.keys(a[0]).map(function (c) {
-              return a.map(function (r) { return r[c]; });
-          });
-      }
-      willUpdate(changedProps) {
-          if (changedProps.has('colorscale')) {
-              if (!Array.isArray(this.colorscale) && !this.colorscales.includes(this.colorscale))
-                  this.colorscale = 'Electric';
-              this.Plotly.restyle(this.div, 'colorscale', this.colorscale);
-          }
-          if (changedProps.has('data')) {
-              this.plotData[0].z = this.transpose(this.data);
-              this.Plotly.newPlot(this.div, this.plotData, this.config);
-          }
-      }
-      //   updateData = (newData) => {
-      //     // For a fixed window size,
-      //     // Push the latest data and remove the first element
-      //     if (!Array.isArray(newData[0])) newData = [newData]
-      //     newData.forEach(d => {
-      //       if(this.data.length > this.windowSize) {
-      //         this.data.push(d)
-      //         this.data.splice(0, 1)
-      //       } else {
-      //         this.data.push(d);
-      //       }
-      //     })
-      //   this.plotData[0].z[0] = transpose(this.data)
-      //     const ticRes = performance.now()
-      //     Plotly.restyle(this.div, 'z', this.plotData[0].z);
-      //     const tocRes = performance.now()
-      //     console.log('Restyle', tocRes - ticRes)
-      //     // const ticUp = performance.now()
-      //     // Plotly.update(this.div, this.plotData[0])
-      //     // const tocUp = performance.now()
-      //     // console.log('Update', tocUp - ticUp)
-      // //     const ticAn = performance.now()
-      // //     Plotly.animate(this.div, {
-      // //       data: [{z: this.plotData[0].z, type: 'heatmap'}],
-      // //   }, {
-      // //       transition: {duration: 0},
-      // //       frame: {duration: 0, redraw: true}
-      // //   });
-      // //   const tocAn = performance.now()
-      //   // console.log('Animate', tocAn - ticAn)
-      //   }
-      render() {
-          return this.div;
-      }
-  }
-  InteractiveSpectrogram.colorscales = colorscales;
-  customElements.define('visualscript-spectrogram-interactive', InteractiveSpectrogram);
+  customElements.define('visualscript-spectrogram-stream', Spectrogram$1);
 
   var index$1 = /*#__PURE__*/Object.freeze({
     __proto__: null,
-    TimeSeries: TimeSeries,
-    Spectrogram: Spectrogram,
-    InteractiveSpectrogram: InteractiveSpectrogram
+    TimeSeries: TimeSeries$1,
+    Spectrogram: Spectrogram$1
   });
 
   var index = /*#__PURE__*/Object.freeze({
     __proto__: null,
-    audio: index$4,
-    video: index$3,
+    audio: index$3,
+    video: index$2,
     data: index$1
   });
 
   // Note: Inspired by the Red Hat website https://www.redhat.com/en
-  class Nav extends s {
+  class Nav extends s$1 {
       constructor(props = { brand: {}, primary: { menu: [], options: [] }, secondary: [] }) {
           super();
+          this.stringToFunction = (value) => {
+              let regex = new RegExp('(|[a-zA-Z]\w*|\([a-zA-Z]\w*(,\s*[a-zA-Z]\w*)*\))\s*=>');
+              let func = (typeof value === 'string') ? value.substring(0, 8) == 'function' : false;
+              let arrow = (typeof value === 'string') ? regex.test(value) : false;
+              return (func || arrow) ? (0, eval)('(' + value + ')') : value;
+          };
           this.getElement = (o) => {
+              if (o.onClick)
+                  o.onClick = this.stringToFunction(o.onClick); // Convert to function
               switch (o.type) {
                   case 'button':
-                      return $ `<a href="${o.link}" target=${(o.external) ? "_blank" : "_self"}><button>${o.content}</button></a>`;
+                      const button = document.createElement('visualscript-button');
+                      button.id = o.id;
+                      button.size = 'small';
+                      button.onClick = o.onClick ?? (() => { });
+                      button.innerHTML = o.content;
+                      return button;
                   default:
-                      return $ `<a href="${o.link}" target=${(o.external) ? "_blank" : "_self"} class="decorate">${o.content}</a>`;
+                      return $ `<a href="${o.link}" id=${o.id}  target=${(o.external) ? "_blank" : "_self"} class="decorate">${o.content}</a>`;
               }
           };
           this.primary = props.primary ?? { menu: [], options: [] };
@@ -3537,7 +2316,7 @@
           this.brand = props.brand ?? { content: 'My Brand' };
       }
       static get styles() {
-          return r$2 `
+          return r$4 `
 
     
     :host {
@@ -3550,6 +2329,7 @@
       width: 100%;
       grid-area: nav;
       z-index: 100;
+      overflow: hidden;
     }
 
     header {
@@ -3566,7 +2346,7 @@
 
     nav {
       width: 100%;
-      padding:  0px 25px;
+      padding:  25px;
       display: flex;
       align-items: center;
     }
@@ -3575,15 +2355,18 @@
       position: sticky; 
       top: 0;
       left: 0;
-      height: 70px;
       max-height: 100px;
       justify-content: space-between;
       font-size: 80%;
     }
 
-    #primary > * {
+    #primary > * > * {
       flex-grow: 1;
       display: flex;
+    }
+
+    #primary > * {
+      height: 100%;
     }
 
     #primary > div:lastchild {
@@ -3598,7 +2381,7 @@
       height: 100%;
       display: flex;
       align-items: center;
-      justify-content: center;
+      justify-content: flex-end;
     }
 
     #secondary {
@@ -3614,7 +2397,10 @@
     }
 
     .brand {
+      height: 100%;
       padding-right: 15px;
+      display: flex;
+      align-items: center;
     }
 
     a:not(.brand) {
@@ -3636,23 +2422,9 @@
     #secondary .decorate:hover {
       box-shadow: 0 3px 0 #c4c4c4 inset;
     }
-
-    button {
-      border: 1px solid white;
-      border-radius: 3px;
-      background: transparent;
-      padding: 5px 10px;
-      margin-left: 10px;
-      font-size: 95%;
-    }
     
     nav button:last-child {
       margin-right: 0px;
-    }
-
-    button:hover {
-      outline: 1.1px solid white;
-      cursor: pointer;
     }
 
     @media only screen and (max-width: 800px) {
@@ -3694,13 +2466,8 @@
           };
       }
       willUpdate(changedProps) {
-          // console.log(changedProps)
-          if (changedProps.has('primary')) ;
       }
       render() {
-          // console.log('Primary', this.primary)
-          // console.log('secondary', this.secondary)
-          // console.log('brand', this.brand)
           return $ `
       <header>
       ${(this.secondary.length > 0) ? $ `<nav id="secondary">${this.secondary?.map(o => this.getElement(o))}</nav>` : ``}
@@ -3723,7 +2490,7 @@
   customElements.define('visualscript-nav', Nav);
 
   // Note: Inspired by the Red Hat website https://www.redhat.com/en
-  class Loader extends s {
+  class Loader extends s$1 {
       constructor(props = {}) {
           super();
           this.progress = props.progress;
@@ -3744,7 +2511,7 @@
           }
       }
       static get styles() {
-          return r$2 `
+          return r$4 `
     
     :host {
       
@@ -3915,7 +2682,7 @@
    * Copyright 2017 Google LLC
    * SPDX-License-Identifier: BSD-3-Clause
    */
-  const t = {
+  const t$1 = {
     ATTRIBUTE: 1,
     CHILD: 2,
     PROPERTY: 3,
@@ -3923,12 +2690,12 @@
     EVENT: 5,
     ELEMENT: 6
   },
-        e = t => (...e) => ({
+        e$1 = t => (...e) => ({
     _$litDirective$: t,
     values: e
   });
 
-  class i$1 {
+  class i$2 {
     constructor(t) {}
 
     get _$AU() {
@@ -3955,10 +2722,10 @@
    * SPDX-License-Identifier: BSD-3-Clause
    */
 
-  const i = e(class extends i$1 {
-    constructor(t$1) {
+  const i$1 = e$1(class extends i$2 {
+    constructor(t) {
       var e;
-      if (super(t$1), t$1.type !== t.ATTRIBUTE || "style" !== t$1.name || (null === (e = t$1.strings) || void 0 === e ? void 0 : e.length) > 2) throw Error("The `styleMap` directive must be used in the `style` attribute and must be the only part in the attribute.");
+      if (super(t), t.type !== t$1.ATTRIBUTE || "style" !== t.name || (null === (e = t.strings) || void 0 === e ? void 0 : e.length) > 2) throw Error("The `styleMap` directive must be used in the `style` attribute and must be the only part in the attribute.");
     }
 
     render(t) {
@@ -3995,7 +2762,7 @@
 
   });
 
-  class Button extends s {
+  class Button extends s$1 {
       constructor(props = {}) {
           super();
           this.primary = props.primary;
@@ -4004,17 +2771,18 @@
           this.onClick = props.onClick;
       }
       static get styles() {
-          return r$2 `
+          return r$4 `
 
     .storybook-button {
-      
       font-weight: 700;
       border: 0;
       border-radius: 1em;
       cursor: pointer;
       display: inline-block;
       line-height: 1;
+      overflow: hidden;
     }
+
     .storybook-button--primary {
       color: white;
       background-color: #1ea7fd;
@@ -4084,7 +2852,7 @@
       <button
            type="button"
             class=${['storybook-button', `storybook-button--${this.size || 'medium'}`, mode].join(' ')}
-            style=${i({ backgroundColor: this.backgroundColor })}
+            style=${i$1({ backgroundColor: this.backgroundColor })}
             @click=${this.onClick}
       >
         <slot>Button</slot>
@@ -4094,7 +2862,7 @@
   }
   customElements.define('visualscript-button', Button);
 
-  class Modal extends s {
+  class Modal extends s$1 {
       constructor(props = {}) {
           super();
           this.toggle = () => this.open = !this.open;
@@ -4103,7 +2871,7 @@
           this.footer = props.footer;
       }
       static get styles() {
-          return r$2 `
+          return r$4 `
 /* Modal Header */
 
   :host {
@@ -4233,9 +3001,9 @@ Phasellus sodales eros at erat elementum, a semper ligula facilisis. Class apten
   }
   customElements.define('visualscript-modal', Modal);
 
-  class Footer extends s {
+  class Footer extends s$1 {
       static get styles() {
-          return r$2 `
+          return r$4 `
 
     :host {
       padding: 25px;
@@ -4282,14 +3050,14 @@ Phasellus sodales eros at erat elementum, a semper ligula facilisis. Class apten
   }
   customElements.define('visualscript-footer', Footer);
 
-  class Overlay extends s {
+  class Overlay extends s$1 {
       constructor(props = {}) {
           super();
           this.open = false;
           this.open = props.open ?? false;
       }
       static get styles() {
-          return r$2 `
+          return r$4 `
 
     div {
       opacity: 0;
@@ -4345,8 +3113,8 @@ Phasellus sodales eros at erat elementum, a semper ligula facilisis. Class apten
    * SPDX-License-Identifier: BSD-3-Clause
    */
 
-  var n;
-  null != (null === (n = window.HTMLSlotElement) || void 0 === n ? void 0 : n.prototype.assignedElements) ? (o, n) => o.assignedElements(n) : (o, n) => o.assignedNodes(n).filter(o => o.nodeType === Node.ELEMENT_NODE);
+  var n$2;
+  null != (null === (n$2 = window.HTMLSlotElement) || void 0 === n$2 ? void 0 : n$2.prototype.assignedElements) ? (o, n) => o.assignedElements(n) : (o, n) => o.assignedNodes(n).filter(o => o.nodeType === Node.ELEMENT_NODE);
 
   /**
    * @license
@@ -4362,10 +3130,10 @@ Phasellus sodales eros at erat elementum, a semper ligula facilisis. Class apten
    * SPDX-License-Identifier: BSD-3-Clause
    */
 
-  const o = e(class extends i$1 {
-    constructor(t$1) {
+  const o$1 = e$1(class extends i$2 {
+    constructor(t) {
       var i;
-      if (super(t$1), t$1.type !== t.ATTRIBUTE || "class" !== t$1.name || (null === (i = t$1.strings) || void 0 === i ? void 0 : i.length) > 2) throw Error("`classMap()` can only be used in the `class` attribute and must be the only part in the attribute.");
+      if (super(t), t.type !== t$1.ATTRIBUTE || "class" !== t.name || (null === (i = t.strings) || void 0 === i ? void 0 : i.length) > 2) throw Error("`classMap()` can only be used in the `class` attribute and must be the only part in the attribute.");
     }
 
     render(t) {
@@ -4434,7 +3202,7 @@ Phasellus sodales eros at erat elementum, a semper ligula facilisis. Class apten
       }
   };
 
-  class Input extends s {
+  class Input extends s$1 {
       constructor(props = {}) {
           super();
           this.value = props.value ?? "";
@@ -4442,6 +3210,8 @@ Phasellus sodales eros at erat elementum, a semper ligula facilisis. Class apten
           this.disabled = props.disabled ?? false;
           this.label = props.label;
           this.persist = props.persist;
+          this.onChange = props.onChange;
+          this.onInput = props.onInput;
           const val = getPersistent(props);
           if (val)
               this.value = val;
@@ -4450,7 +3220,7 @@ Phasellus sodales eros at erat elementum, a semper ligula facilisis. Class apten
       static get properties() {
           return Object.assign(PersistableProps, {
               disabled: { type: Boolean, reflect: true },
-              outline: { type: Boolean, reflect: true }
+              outline: { type: Boolean, reflect: true },
           });
       }
       willUpdate(changedProps) {
@@ -4458,17 +3228,19 @@ Phasellus sodales eros at erat elementum, a semper ligula facilisis. Class apten
               setPersistent(this);
       }
       static get styles() {
-          return r$2 `
+          return r$4 `
 
         :host {
             width: 100%;
+            font-size: 15px;
+
         }
 *{
 box-sizing: border-box;
 }
 .form-group {
 position: relative;
-margin: 1rem 0;
+margin: 15px 0;
 }
 input.outline {
 border: 1px solid  #333333;
@@ -4476,7 +3248,6 @@ border-radius: 5px;
 }
 label {
 position: absolute;
-font-size: 1rem;
 left: 0;
 top: 50%;
 transform: translateY(-50%);
@@ -4488,11 +3259,10 @@ transform-origin: left top;
 pointer-events: none;
 }
 input {
-font-size: 1rem;
 outline: none;
 border: none;
 border-radius: 0px;
-padding: 1rem 0.6rem;
+padding: 15px 0.6rem 10px 0.6rem;
 transition: 0.1s ease-out;
 border-bottom: 1px solid  #333333;
 background: transparent;
@@ -4536,7 +3306,7 @@ opacity: 0.5;
           return $ `
             <div class="form-group">
                 <input
-                class=${o({
+                class=${o$1({
             outline: this.outline
         })}
                 type="${this.type}"
@@ -4546,6 +3316,13 @@ opacity: 0.5;
 
                 @change=${(ev) => {
             this.value = ev.target.value;
+            if (this.onChange instanceof Function)
+                this.onChange(ev);
+        }}
+
+                @input=${(ev) => {
+            if (this.onInput instanceof Function)
+                this.onInput(ev);
         }}
                 />
                 <label>${this.label}</label>
@@ -4555,7 +3332,7 @@ opacity: 0.5;
   }
   customElements.define("visualscript-input", Input);
 
-  class Search extends s {
+  class Search extends s$1 {
       constructor(props = {}) {
           super();
           this.getModal = () => {
@@ -4581,7 +3358,7 @@ opacity: 0.5;
           };
       }
       static get styles() {
-          return r$2 `
+          return r$4 `
 
     :host {
       display: flex;
@@ -4663,7 +3440,7 @@ opacity: 0.5;
   - Sync both selects values when selecting a option. (native or custom)
 
   */
-  class Select extends s {
+  class Select extends s$1 {
       constructor(props = {}) {
           super();
           this.persist = false;
@@ -4767,11 +3544,12 @@ opacity: 0.5;
           if (props.persist)
               this.persist = props.persist;
           const val = getPersistent(props);
-          if (val)
+          // Only Use Cached Value if Included In Options
+          if (val && this.options.includes(val))
               this.value = val;
       }
       static get styles() {
-          return r$2 `
+          return r$4 `
 
     #container { 
       position: relative;
@@ -4784,7 +3562,6 @@ opacity: 0.5;
     .selectNative, .selectCustom {
       position: relative;
       width: 100%;
-      height: 50px;
       font-size: 15px;
     }
 
@@ -4825,8 +3602,8 @@ opacity: 0.5;
       background-image: url("data:image/svg+xml;utf8,<svg fill='black' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/><path d='M0 0h24v24H0z' fill='none'/></svg>");
       background-repeat: no-repeat;
       background-position-x: 100%;
-      background-position-y: 0.8rem;
-      padding: 0rem 0.8rem;
+      background-position-y: 0.45rem;
+      padding: 10px 10px;
     }
     
     .selectCustom-trigger  > div {
@@ -4838,7 +3615,7 @@ opacity: 0.5;
       display: flex;
       align-items: center;
       position: relative;
-      padding: 0rem 0.8rem;
+      padding: 0px 10px;
       width: 100%;
       height: 100%;
       cursor: pointer;
@@ -4921,6 +3698,10 @@ opacity: 0.5;
     @media (prefers-color-scheme: dark) {
       .selectCustom {
         background: rgb(59, 59, 59);
+      }
+
+      .selectNative {
+        background-image: url("data:image/svg+xml;utf8,<svg fill='white' height='24' viewBox='0 0 24 24' width='24' xmlns='http://www.w3.org/2000/svg'><path d='M7 10l5 5 5-5z'/><path d='M0 0h24v24H0z' fill='none'/></svg>");
       }
 
       .selectCustom-options {
@@ -5027,7 +3808,7 @@ opacity: 0.5;
   }
   customElements.define('visualscript-select', Select);
 
-  class File extends s {
+  class File extends s$1 {
       constructor(props = {}) {
           super();
           this.onChange = () => { };
@@ -5035,14 +3816,20 @@ opacity: 0.5;
               this.accept = props.accept;
           if (props.onChange)
               this.onChange = props.onChange;
+          if (props.webkitdirectory)
+              this.webkitdirectory = props.webkitdirectory;
+          if (props.directory)
+              this.directory = props.directory;
+          if (props.multiple)
+              this.multiple = props.multiple;
       }
       static get styles() {
-          return r$2 `
+          return r$4 `
 
     :host {
-      width: 100%;
       display: flex;
       justify-content: center;
+      overflow: hidden;
     }
     
     input[type=file] {
@@ -5080,10 +3867,11 @@ opacity: 0.5;
 
     input[type=text] {
       flex-grow: 1;
-      padding: 8px 8px;
+      padding: 10px;
       border-top-right-radius: 5px;
       border-bottom-right-radius: 5px;
       border: none;
+      overflow: hidden;
     }
 
     input[type=text] {
@@ -5114,27 +3902,47 @@ opacity: 0.5;
               onChange: {
                   type: Function,
                   reflect: true
-              }
+              },
+              webkitdirectory: {
+                  type: Boolean,
+                  reflect: true
+              },
+              directory: {
+                  type: Boolean,
+                  reflect: true
+              },
+              multiple: {
+                  type: Boolean,
+                  reflect: true
+              },
           };
       }
       render() {
+          const input = document.createElement('input');
+          input.type = 'file';
+          input.id = 'fileupload';
+          input.accept = this.accept;
+          input.webkitdirectory = this.webkitdirectory;
+          input.directory = this.directory;
+          input.multiple = this.multiple;
+          input.onchange = (ev) => {
+              const lenFiles = ev.target.files.length;
+              const fileUploaded = ev.target.files[0];
+              const input = this.shadowRoot.querySelector('input[type=text]');
+              var filename = (lenFiles === 1) ? fileUploaded.name : `${lenFiles} files`;
+              input.value = filename;
+              input.placeholder = filename;
+              input.focus();
+              this.onChange(ev);
+          };
           return $ `
       <label for="fileupload" id="buttonlabel">
         <button aria-controls="filename" tabindex="0" @click=${() => {
-            const input = this.shadowRoot.querySelector('input[type=file]');
             if (input)
                 input.click();
         }}>Choose File</button>
       </label>
-      <input type="file" id="fileupload" accept="${this.accept ?? ''}" @change=${(ev) => {
-            const fileUploaded = ev.target.files[0];
-            const input = this.shadowRoot.querySelector('input[type=text]');
-            var filename = fileUploaded.name;
-            input.value = filename;
-            input.placeholder = filename;
-            input.focus();
-            this.onChange(ev);
-        }}>
+      ${input}
       <label for="filename" class="hide">
         uploaded file
       </label>
@@ -5144,7 +3952,7 @@ opacity: 0.5;
   }
   customElements.define('visualscript-file', File);
 
-  class Switch extends s {
+  class Switch extends s$1 {
       constructor(props = {}) {
           super();
           this.persist = false;
@@ -5161,7 +3969,7 @@ opacity: 0.5;
               this.value = val;
       }
       static get styles() {
-          return r$2 `
+          return r$4 `
 
     :host * {
       box-sizing: border-box;
@@ -5251,7 +4059,7 @@ opacity: 0.5;
   }
   customElements.define('visualscript-switch', Switch);
 
-  class Range extends s {
+  class Range extends s$1 {
       constructor(props = {}) {
           super();
           this.persist = false;
@@ -5275,7 +4083,7 @@ opacity: 0.5;
               this.value = val;
       }
       static get styles() {
-          return r$2 `
+          return r$4 `
 
     :host {
       width: 100%;
@@ -5379,19 +4187,525 @@ opacity: 0.5;
   }
   customElements.define('visualscript-range', Range);
 
-  class ObjectEditor extends s {
+  /**
+   * @license
+   * Copyright 2020 Google LLC
+   * SPDX-License-Identifier: BSD-3-Clause
+   */
+
+  const t = o => null === o || "object" != typeof o && "function" != typeof o,
+        r$1 = o => void 0 === o.strings;
+
+  /**
+   * @license
+   * Copyright 2017 Google LLC
+   * SPDX-License-Identifier: BSD-3-Clause
+   */
+
+  const e = (i, t) => {
+    var s, o;
+    const n = i._$AN;
+    if (void 0 === n) return !1;
+
+    for (const i of n) null === (o = (s = i)._$AO) || void 0 === o || o.call(s, t, !1), e(i, t);
+
+    return !0;
+  },
+        o = i => {
+    let t, s;
+
+    do {
+      if (void 0 === (t = i._$AM)) break;
+      s = t._$AN, s.delete(i), i = t;
+    } while (0 === (null == s ? void 0 : s.size));
+  },
+        n$1 = i => {
+    for (let t; t = i._$AM; i = t) {
+      let s = t._$AN;
+      if (void 0 === s) t._$AN = s = new Set();else if (s.has(i)) break;
+      s.add(i), l(t);
+    }
+  };
+
+  function r(i) {
+    void 0 !== this._$AN ? (o(this), this._$AM = i, n$1(this)) : this._$AM = i;
+  }
+
+  function h$1(i, t = !1, s = 0) {
+    const n = this._$AH,
+          r = this._$AN;
+    if (void 0 !== r && 0 !== r.size) if (t) {
+      if (Array.isArray(n)) for (let i = s; i < n.length; i++) e(n[i], !1), o(n[i]);else null != n && (e(n, !1), o(n));
+    } else e(this, i);
+  }
+
+  const l = i => {
+    var t, e, o, n;
+    i.type == t$1.CHILD && (null !== (t = (o = i)._$AP) && void 0 !== t || (o._$AP = h$1), null !== (e = (n = i)._$AQ) && void 0 !== e || (n._$AQ = r));
+  };
+
+  class d extends i$2 {
+    constructor() {
+      super(...arguments), this._$AN = void 0;
+    }
+
+    _$AT(i, t, s) {
+      super._$AT(i, t, s), n$1(this), this.isConnected = i._$AU;
+    }
+
+    _$AO(i, t = !0) {
+      var s, n;
+      i !== this.isConnected && (this.isConnected = i, i ? null === (s = this.reconnected) || void 0 === s || s.call(this) : null === (n = this.disconnected) || void 0 === n || n.call(this)), t && (e(this, i), o(this));
+    }
+
+    setValue(t) {
+      if (r$1(this._$Ct)) this._$Ct._$AI(t, this);else {
+        const i = [...this._$Ct._$AH];
+        i[this._$Ci] = t, this._$Ct._$AI(i, this, 0);
+      }
+    }
+
+    disconnected() {}
+
+    reconnected() {}
+
+  }
+
+  /**
+   * @license
+   * Copyright 2021 Google LLC
+   * SPDX-License-Identifier: BSD-3-Clause
+   */
+
+  class s {
+    constructor(t) {
+      this.U = t;
+    }
+
+    disconnect() {
+      this.U = void 0;
+    }
+
+    reconnect(t) {
+      this.U = t;
+    }
+
+    deref() {
+      return this.U;
+    }
+
+  }
+
+  class i {
+    constructor() {
+      this.Y = void 0, this.q = void 0;
+    }
+
+    get() {
+      return this.Y;
+    }
+
+    pause() {
+      var t;
+      null !== (t = this.Y) && void 0 !== t || (this.Y = new Promise(t => this.q = t));
+    }
+
+    resume() {
+      var t;
+      null === (t = this.q) || void 0 === t || t.call(this), this.Y = this.q = void 0;
+    }
+
+  }
+
+  /**
+   * @license
+   * Copyright 2017 Google LLC
+   * SPDX-License-Identifier: BSD-3-Clause
+   */
+
+  const n = t$1 => !t(t$1) && "function" == typeof t$1.then;
+
+  class h extends d {
+    constructor() {
+      super(...arguments), this._$Cwt = 1073741823, this._$Cyt = [], this._$CG = new s(this), this._$CK = new i();
+    }
+
+    render(...s) {
+      var i;
+      return null !== (i = s.find(t => !n(t))) && void 0 !== i ? i : b;
+    }
+
+    update(s, i) {
+      const r = this._$Cyt;
+      let e = r.length;
+      this._$Cyt = i;
+      const o = this._$CG,
+            h = this._$CK;
+      this.isConnected || this.disconnected();
+
+      for (let t = 0; t < i.length && !(t > this._$Cwt); t++) {
+        const s = i[t];
+        if (!n(s)) return this._$Cwt = t, s;
+        t < e && s === r[t] || (this._$Cwt = 1073741823, e = 0, Promise.resolve(s).then(async t => {
+          for (; h.get();) await h.get();
+
+          const i = o.deref();
+
+          if (void 0 !== i) {
+            const r = i._$Cyt.indexOf(s);
+
+            r > -1 && r < i._$Cwt && (i._$Cwt = r, i.setValue(t));
+          }
+        }));
+      }
+
+      return b;
+    }
+
+    disconnected() {
+      this._$CG.disconnect(), this._$CK.pause();
+    }
+
+    reconnected() {
+      this._$CG.reconnect(this), this._$CK.resume();
+    }
+
+  }
+
+  const c = e$1(h);
+
+  const colorscales$1 = ['Hot', 'Cold', 'YlGnBu', 'YlOrRd', 'RdBu', 'Portland', 'Picnic', 'Jet', 'Greys', 'Greens', 'Electric', 'Earth', 'Bluered', 'Blackbody'];
+  class TimeSeries extends s$1 {
+      constructor(props = {}) {
+          super();
+          this.colorscale = 'Electric';
+          this.div = document.createElement('div');
+          this.data = [];
+          this.plotData = [];
+          this.layout = {};
+          this.windowSize = 300;
+          this.binWidth = 256;
+          this.colorscales = colorscales$1;
+          this.config = {};
+          this.getTraces = () => {
+              return this.data.map(o => Object.assign({
+                  type: "scatter",
+                  mode: "lines",
+                  // line: {color: '#000000'}
+                  // name: 'Voltage',
+              }, o));
+          };
+          this.getConfig = () => {
+              return Object.assign({
+                  displaylogo: false,
+                  responsive: true
+              }, this.config);
+          };
+          this.getLayout = () => {
+              return Object.assign({
+              // title: 'Basic Time Series',
+              // responsive: true,
+              // autosize: true
+              }, this.layout);
+          };
+          this.data = props.data ?? [];
+          if (props.layout)
+              this.layout = props.layout;
+          if (window.Plotly)
+              props.Plotly = window.Plotly;
+          if (props.colorscale)
+              this.colorscale = props.colorscale;
+          if (props.onClick)
+              this.onClick = props.onClick;
+          if (props.onLegendClick)
+              this.onLegendClick = props.onLegendClick;
+          if (props.config)
+              this.config = props.config;
+          if (props.Plotly) {
+              this.Plotly = props.Plotly;
+              this.Plotly.newPlot(this.div, this.getTraces(), this.getLayout(), this.getConfig());
+          }
+          else
+              console.warn('<visualscript-timeseries->: Plotly instance not provided...');
+          // window.addEventListener('resize', this.resize)
+          // let observer = new ResizeObserver(() => this.resize());
+          // observer.observe(this.div);
+      }
+      static get styles() {
+          return r$4 `
+
+      :host {
+        overflow: hidden;
+      }
+      
+      `;
+      }
+      createRenderRoot() {
+          return this;
+      }
+      static get properties() {
+          return {
+              max: {
+                  type: Number,
+                  reflect: true
+              },
+              data: {
+                  type: Array,
+                  reflect: true
+              },
+              layout: {
+                  type: Object,
+                  reflect: true,
+              },
+              config: {
+                  type: Object,
+                  reflect: true,
+              },
+              colorscale: {
+                  type: Object,
+                  reflect: true
+              },
+              backgroundColor: {
+                  type: String,
+                  reflect: true,
+              },
+              onLegendClick: {
+                  type: Function,
+                  reflect: true,
+              },
+              onClick: {
+                  type: Function,
+                  reflect: true,
+              },
+          };
+      }
+      // resize = () => {
+      //   this.Plotly.relayout(this.div, {
+      //     'xaxis.autorange': true,
+      //     'yaxis.autorange': true
+      //   })
+      // }
+      transpose(a) {
+          return Object.keys(a[0]).map(function (c) {
+              return a.map(function (r) { return r[c]; });
+          });
+      }
+      willUpdate(changedProps) {
+          if (changedProps.has('data')) {
+              this.Plotly.newPlot(this.div, this.getTraces(), this.getLayout(), this.getConfig());
+          }
+          if (changedProps.has('onClick')) {
+              this.div.on('plotly_click', this.onClick);
+          }
+          if (changedProps.has('onLegendClick')) {
+              this.div.on('plotly_legendclick', this.onLegendClick);
+          }
+      }
+      //   updateData = (newData) => {
+      //     // For a fixed window size,
+      //     // Push the latest data and remove the first element
+      //     if (!Array.isArray(newData[0])) newData = [newData]
+      //     newData.forEach(d => {
+      //       if(this.data.length > this.windowSize) {
+      //         this.data.push(d)
+      //         this.data.splice(0, 1)
+      //       } else {
+      //         this.data.push(d);
+      //       }
+      //     })
+      //   this.plotData[0].z[0] = transpose(this.data)
+      //     const ticRes = performance.now()
+      //     Plotly.restyle(this.div, 'z', this.plotData[0].z);
+      //     const tocRes = performance.now()
+      //     console.log('Restyle', tocRes - ticRes)
+      //     // const ticUp = performance.now()
+      //     // Plotly.update(this.div, this.plotData[0])
+      //     // const tocUp = performance.now()
+      //     // console.log('Update', tocUp - ticUp)
+      // //     const ticAn = performance.now()
+      // //     Plotly.animate(this.div, {
+      // //       data: [{z: this.plotData[0].z, type: 'heatmap'}],
+      // //   }, {
+      // //       transition: {duration: 0},
+      // //       frame: {duration: 0, redraw: true}
+      // //   });
+      // //   const tocAn = performance.now()
+      //   // console.log('Animate', tocAn - ticAn)
+      //   }
+      render() {
+          return this.div;
+      }
+  }
+  TimeSeries.colorscales = colorscales$1;
+  customElements.define('visualscript-timeseries', TimeSeries);
+
+  const colorscales = ['Hot', 'Cold', 'YlGnBu', 'YlOrRd', 'RdBu', 'Portland', 'Picnic', 'Jet', 'Greys', 'Greens', 'Electric', 'Earth', 'Bluered', 'Blackbody'];
+  class Spectrogram extends s$1 {
+      constructor(props = {}) {
+          super();
+          this.colorscale = 'Electric';
+          this.div = document.createElement('div');
+          this.data = [];
+          this.plotData = [];
+          this.layout = {};
+          this.windowSize = 300;
+          this.binWidth = 256;
+          this.config = {};
+          this.colorscales = colorscales;
+          this.getConfig = () => {
+              return Object.assign({
+                  displaylogo: false,
+                  responsive: true
+              }, this.config);
+          };
+          this.data = props.data ?? [[]];
+          if (props.colorscale)
+              this.colorscale = props.colorscale;
+          if (props.config)
+              this.config = props.config;
+          if (window.Plotly)
+              props.Plotly = window.Plotly;
+          this.plotData = [
+              {
+                  x: [1, 2],
+                  z: this.transpose(this.data),
+                  showscale: true,
+                  colorscale: this.colorscale,
+                  type: 'heatmap'
+              }
+          ];
+          this.layout = {
+          // responsive: true,
+          // autosize: true // set autosize to rescale
+          };
+          if (props.Plotly) {
+              this.Plotly = props.Plotly;
+              this.Plotly.newPlot(this.div, this.plotData, this.layout, this.getConfig());
+          }
+          else
+              console.warn('<-spectrogram>: Plotly instance not provided...');
+          // window.addEventListener('resize', this.resize)
+          // let observer = new ResizeObserver(() => this.resize());
+          // observer.observe(this.div);
+      }
+      static get styles() {
+          return r$4 `
+
+      `;
+      }
+      createRenderRoot() {
+          return this;
+      }
+      static get properties() {
+          return {
+              max: {
+                  type: Number,
+                  reflect: true
+              },
+              data: {
+                  type: Array,
+                  reflect: true
+              },
+              config: {
+                  type: Object,
+                  reflect: true
+              },
+              colorscale: {
+                  type: Object,
+                  reflect: true
+              },
+              backgroundColor: {
+                  type: String,
+                  reflect: true,
+              },
+          };
+      }
+      // resize = () => {
+      //   this.Plotly.relayout(this.div, {
+      //     'xaxis.autorange': true,
+      //     'yaxis.autorange': true
+      //   })
+      // }
+      transpose(a) {
+          return Object.keys(a[0]).map(function (c) {
+              return a.map(function (r) { return r[c]; });
+          });
+      }
+      willUpdate(changedProps) {
+          if (changedProps.has('colorscale')) {
+              if (!Array.isArray(this.colorscale) && !this.colorscales.includes(this.colorscale))
+                  this.colorscale = 'Electric';
+              this.Plotly.restyle(this.div, 'colorscale', this.colorscale);
+          }
+          if (changedProps.has('data')) {
+              this.plotData[0].z = this.transpose(this.data);
+              this.Plotly.newPlot(this.div, this.plotData, this.layout, this.getConfig());
+          }
+      }
+      //   updateData = (newData) => {
+      //     // For a fixed window size,
+      //     // Push the latest data and remove the first element
+      //     if (!Array.isArray(newData[0])) newData = [newData]
+      //     newData.forEach(d => {
+      //       if(this.data.length > this.windowSize) {
+      //         this.data.push(d)
+      //         this.data.splice(0, 1)
+      //       } else {
+      //         this.data.push(d);
+      //       }
+      //     })
+      //   this.plotData[0].z[0] = transpose(this.data)
+      //     const ticRes = performance.now()
+      //     Plotly.restyle(this.div, 'z', this.plotData[0].z);
+      //     const tocRes = performance.now()
+      //     console.log('Restyle', tocRes - ticRes)
+      //     // const ticUp = performance.now()
+      //     // Plotly.update(this.div, this.plotData[0])
+      //     // const tocUp = performance.now()
+      //     // console.log('Update', tocUp - ticUp)
+      // //     const ticAn = performance.now()
+      // //     Plotly.animate(this.div, {
+      // //       data: [{z: this.plotData[0].z, type: 'heatmap'}],
+      // //   }, {
+      // //       transition: {duration: 0},
+      // //       frame: {duration: 0, redraw: true}
+      // //   });
+      // //   const tocAn = performance.now()
+      //   // console.log('Animate', tocAn - ticAn)
+      //   }
+      render() {
+          return this.div;
+      }
+  }
+  Spectrogram.colorscales = colorscales;
+  customElements.define('visualscript-spectrogram', Spectrogram);
+
+  class ObjectEditor extends s$1 {
       constructor(props = { target: {}, header: 'Object' }) {
           super();
           this.history = [];
-          this.getActions = (key, o) => {
+          this.getMode = (target, plot) => {
+              return (plot) ? 'plot' : 'view';
+          };
+          this.set = async (target = {}, plot = false) => {
+              if (this.preprocess instanceof Function)
+                  this.target = await this.preprocess(target);
+              else
+                  this.target = target;
+              this.keys = Object.keys(this.target);
+              this.mode = this.getMode(this.target, plot);
+          };
+          this.checkToPlot = (key, o) => this.plot.length !== 0 && this.plot.reduce((a, f) => a + f(key, o), 0) === this.plot.length;
+          this.getActions = async (key, o) => {
               let actions;
-              if (typeof o[key] === 'object') {
-                  actions = $ `<visualscript-button primary=true size="small" @click="${() => {
+              const val = await Promise.resolve(o[key]);
+              if (typeof val === 'object') {
+                  const mode = this.getMode(val, this.checkToPlot(key, o));
+                  actions = $ `<visualscript-button primary=true size="small" @click="${async () => {
                     this.history.push({ parent: o, key: this.header });
-                    this.target = o[key];
+                    await this.set(val, this.checkToPlot(key, o));
                     this.header = key;
-                    this.mode = (Array.isArray(o[key])) ? 'plot' : 'view';
-                }}">${Array.isArray(o[key]) ? $ `Plot` : $ `View`}</visualscript-button>`;
+                }}">${mode[0].toUpperCase() + mode.slice(1)}</visualscript-button>`;
               }
               return $ `
       <div class="actions">
@@ -5399,32 +4713,49 @@ opacity: 0.5;
       </div>
       `;
           };
-          this.getElement = (key, o) => {
+          this.getElement = async (key, o) => {
+              let display;
+              const val = await Promise.resolve(o[key]);
+              if (typeof val === 'string' && val.includes('data:image')) {
+                  display = document.createElement('img');
+                  display.src = val;
+                  display.style.height = '100%';
+              }
+              else {
+                  display = new Input();
+                  display.value = val;
+                  display.oninput = () => {
+                      o[key] = display.value; // Modify original data
+                  };
+              }
+              const isObject = typeof val === 'object';
               return $ `
         <div class="attribute separate">
-        <div>
+        <div class="info">
           <span class="name">${key}</span><br>
-          <span class="value">${(typeof o[key] === 'object'
-                ? (Object.keys(o[key]).length ? o[key].constructor.name : $ `Empty ${o[key].constructor.name}`)
-                : o[key])}</span>
+          <span class="value">${(isObject
+                ? (Object.keys(val).length ? val.constructor?.name : $ `Empty ${val.constructor?.name}`)
+                : '')}</span>
         </div>
-          ${this.getActions(key, o)}
+          ${isObject ? await this.getActions(key, o) : display}
         </div>`;
           };
-          this.target = props.target ?? {};
+          this.set(props.target);
           this.header = props.header ?? 'Object';
           this.mode = props.mode ?? 'view';
+          this.plot = props.plot ?? [];
+          this.onPlot = props.onPlot;
+          if (props.preprocess)
+              this.preprocess = props.preprocess;
+          this.timeseries = new TimeSeries({
+              data: []
+          });
       }
       static get styles() {
-          return r$2 `
+          return r$4 `
 
-    
-    :host {
-      
-    }
     :host * {
       box-sizing: border-box;
-      
     }
 
     :host > * {
@@ -5432,10 +4763,12 @@ opacity: 0.5;
       border-radius: 4px;
       overflow: hidden;
       box-shadow: 0 1px 5px 0 rgb(0 0 0 / 20%);
+      height: 100%;
+      width: 100%;
     }
 
-    .main {
-      
+    img {
+      max-height: 100px;
     }
 
     .header {
@@ -5452,13 +4785,13 @@ opacity: 0.5;
     }
 
     .container {
-      background: white;
       width: 100%;
       padding: 10px;
-      display: flex;
       align-items: center;
       justify-content: center;
-      flex-wrap: wrap;
+      position: relative;
+      overflow: scroll;
+      height: 100%;
     }
 
     .separate {
@@ -5475,6 +4808,11 @@ opacity: 0.5;
       flex-wrap: wrap;
     }
 
+    .info {
+      display: flex;
+      align-items: center;
+    }
+
     .name {
       font-weight: 800;
       padding-right: 10px;
@@ -5484,11 +4822,30 @@ opacity: 0.5;
       font-size: 80%;
     }
 
+    @media (prefers-color-scheme: dark) {
+      :host > * {
+        background-color: rgb(60, 60, 60);
+        box-shadow: 0 1px 5px 0 rgb(255 255 255 / 20%);
+      }
+
+      .header {
+        border-bottom: 1px solid gray;
+      }
+    }
+
     `;
       }
       static get properties() {
           return {
-              target: {
+              // target: {
+              //   type: Object,
+              //   reflect: false,
+              // },
+              keys: {
+                  type: Object,
+                  reflect: true,
+              },
+              plot: {
                   type: Object,
                   reflect: true,
               },
@@ -5500,31 +4857,44 @@ opacity: 0.5;
                   type: String,
                   reflect: true,
               },
+              onPlot: {
+                  type: Function,
+                  reflect: true,
+              },
+              preprocess: {
+                  type: Function,
+                  reflect: true,
+              },
           };
       }
-      willUpdate(changedProps) {
-          // console.log(changedProps)
-          if (changedProps.has('target')) ;
-      }
       render() {
-          return $ `
-      <div>
-        <div class="header separate">
-          <span>${this.header}</span>
-          ${(this.history.length > 0) ? $ `<visualscript-button size="extra-small" @click="${() => {
-            const historyItem = this.history.pop();
-            this.header = historyItem.key;
-            this.target = historyItem.parent;
-        }}">Go Back</visualscript-button>` : ``}
+          if (this.mode === 'plot') {
+              if (this.onPlot instanceof Function)
+                  this.onPlot(this);
+              this.insertAdjacentElement('afterend', this.timeseries);
+          }
+          else
+              this.timeseries.remove();
+          const content = (this.mode === 'view'
+              ? this.keys?.map(key => this.getElement(key, this.target))
+              : []);
+          return c(Promise.all(content).then((data) => {
+              return $ `
+        <div>
+          <div class="header separate">
+            <span>${this.header}</span>
+            ${(this.history.length > 0) ? $ `<visualscript-button size="extra-small" @click="${() => {
+                const historyItem = this.history.pop();
+                this.set(historyItem.parent);
+                this.header = historyItem.key;
+            }}">Go Back</visualscript-button>` : ``}
+          </div>
+          <div class="container">
+                ${data}
+          </div>
         </div>
-        <div class="container">
-              ${(this.mode === 'view'
-            ? Object.keys(this.target)?.map(key => this.getElement(key, this.target))
-            : Object.keys(this.target)?.map(key => this.getElement(key, this.target)) // TODO: Implement plot
-        )}
-        </div>
-      </div>
-    `;
+      `;
+          }), $ `<span>Loading...</span>`);
       }
   }
   customElements.define('visualscript-object-editor', ObjectEditor);
@@ -7148,15 +6518,8 @@ opacity: 0.5;
     Prism.languages.javascript['class-name'][0].pattern = /(\b(?:class|extends|implements|instanceof|interface|new)\s+)[\w.\\]+/;
     Prism.languages.insertBefore('javascript', 'keyword', {
       'regex': {
-        pattern: RegExp( // lookbehind
         // eslint-disable-next-line regexp/no-dupe-characters-character-class
-        /((?:^|[^$\w\xA0-\uFFFF."'\])\s]|\b(?:return|yield))\s*)/.source + // Regex pattern:
-        // There are 2 regex patterns here. The RegExp set notation proposal added support for nested character
-        // classes if the `v` flag is present. Unfortunately, nested CCs are both context-free and incompatible
-        // with the only syntax, so we have to define 2 different regex patterns.
-        /\//.source + '(?:' + /(?:\[(?:[^\]\\\r\n]|\\.)*\]|\\.|[^/\\\[\r\n])+\/[dgimyus]{0,7}/.source + '|' + // `v` flag syntax. This supports 3 levels of nested character classes.
-        /(?:\[(?:[^[\]\\\r\n]|\\.|\[(?:[^[\]\\\r\n]|\\.|\[(?:[^[\]\\\r\n]|\\.)*\])*\])*\]|\\.|[^/\\\[\r\n])+\/[dgimyus]{0,7}v[dgimyus]{0,7}/.source + ')' + // lookahead
-        /(?=(?:\s|\/\*(?:[^*]|\*(?!\/))*\*\/)*(?:$|[\r\n,.;:})\]]|\/\/))/.source),
+        pattern: /((?:^|[^$\w\xA0-\uFFFF."'\])\s]|\b(?:return|yield))\s*)\/(?:\[(?:[^\]\\\r\n]|\\.)*\]|\\.|[^/\\\[\r\n])+\/[dgimyus]{0,7}(?=(?:\s|\/\*(?:[^*]|\*(?!\/))*\*\/)*(?:$|[\r\n,.;:})\]]|\/\/))/,
         lookbehind: true,
         greedy: true,
         inside: {
@@ -7451,17 +6814,19 @@ opacity: 0.5;
 
   var Prism = prism.exports;
 
-  class CodeEditor extends s {
-      constructor(props = { instance: {}, header: 'Object' }) {
+  class CodeEditor extends s$1 {
+      constructor(props = {}) {
           super();
-          this.history = [];
+          this.textArea = document.createElement('textarea');
           this.getControls = () => {
-              let controls = ['Save', 'Reset', 'Close'];
+              let controls = ['Save']; //, 'Reset', 'Close']
               // let buttonType = ['primary', 'primary', 'primary']
               return $ `
       <div class="actions">
-            ${controls.map((name, i) => $ `<visualscript-button  size="small" @click="${() => {
-                console.log('Clicked', name, i);
+            ${controls.map((name, i) => $ `<visualscript-button primary size="small" @click="${() => {
+                const func = this[`on${name}`];
+                if (func)
+                    func();
             }}">${name}</visualscript-button>`)}
       </div>
       `;
@@ -7484,12 +6849,26 @@ opacity: 0.5;
                   highlight.scrollLeft = element.scrollLeft;
               }
           };
-          this.instance = props.instance ?? {};
-          this.header = props.header ?? 'Object';
-          this.mode = props.mode ?? 'view';
+          this.value = props.value ?? '';
+          if (props.onInput)
+              this.onInput = props.onInput;
+          if (props.onSave)
+              this.onSave = props.onSave;
+          if (props.onReset)
+              this.onReset = props.onReset;
+          if (props.onClose)
+              this.onClose = props.onClose;
+          this.textArea.id = 'editor';
+          this.textArea.spellcheck = false;
+          this.textArea.oninput = (ev) => {
+              this.text(this.textArea.value);
+              this.scroll(ev.target);
+              if (this.onInput instanceof Function)
+                  this.onInput(ev);
+          };
       }
       static get styles() {
-          return r$2 `
+          return r$4 `
 
     
     :host {
@@ -7579,45 +6958,26 @@ opacity: 0.5;
       }
       static get properties() {
           return {
-              instance: {
-                  type: Object,
-                  reflect: true,
-              },
-              header: {
-                  type: String,
-                  reflect: true,
-              },
-              mode: {
+              value: {
                   type: String,
                   reflect: true,
               },
           };
       }
       willUpdate(changedProps) {
-          // console.log(changedProps)
-          if (changedProps.has('instance')) ;
       }
       render() {
           const language = 'javascript';
+          this.textArea.placeholder = `Write your ${language} code...`;
+          this.textArea.value = this.value;
           return $ `
       <div id="controls">
         <h3>${language[0].toUpperCase() + language.slice(1)} Editor</h3>
         ${this.getControls()}
       </div>
       <div id='editorContainer' style="position: relative; width: 100%; height: 100%;">
-        <textarea 
-        id='editor' 
-        spellcheck="false" 
-        placeholder='Write your ${language} code...'
-        @input="${(ev) => {
-            console.error('input detected');
-            this.text(ev.target.value);
-            this.scroll(ev.target);
-            // this.oninput(ev.target.value)
-        }}"
-      
-      ></textarea>
-        <pre id="highlight" aria-hidden="true">
+        ${this.textArea}"
+          <pre id="highlight" aria-hidden="true">
             <code class="language-${language}"></code>
         </pre>
     </div>
@@ -7626,52 +6986,48 @@ opacity: 0.5;
   }
   customElements.define('visualscript-code-editor', CodeEditor);
 
-  class GraphEditor extends s {
-      constructor(props = { graph: {}, header: 'Object' }) {
+  class GraphEditor extends s$1 {
+      constructor(props = { tree: {} }) {
           super();
           this.history = [];
-          this.getActions = (key, o) => {
-              let actions;
-              if (typeof o[key] === 'object') {
-                  actions = $ `<visualscript-button primary=true size="small" @click="${() => {
-                    this.history.push({ parent: o, key: this.header });
-                    this.graph = o[key];
-                    this.header = key;
-                    this.mode = (Array.isArray(o[key])) ? 'plot' : 'view';
-                }}">${Array.isArray(o[key]) ? $ `Plot` : $ `View`}</visualscript-button>`;
-              }
-              return $ `
-      <div class="actions">
-            ${actions}
-      </div>
-      `;
+          this.set = async (tree = {}) => {
+              this.tree = tree;
+              this.keys = Object.keys(this.tree);
           };
-          this.getElement = (key, o) => {
+          this.getElement = async (key, o) => {
+              let display;
+              const val = await Promise.resolve(o[key]);
+              if (typeof val === 'string' && val.includes('data:image')) {
+                  display = document.createElement('img');
+                  display.src = val;
+                  display.style.height = '100%';
+              }
+              else {
+                  display = new Input();
+                  display.value = val;
+                  display.oninput = () => {
+                      o[key] = display.value; // Modify original data
+                  };
+              }
+              const isObject = typeof val === 'object';
               return $ `
         <div class="attribute separate">
-        <div>
+        <div class="info">
           <span class="name">${key}</span><br>
-          <span class="value">${(typeof o[key] === 'object'
-                ? (Object.keys(o[key]).length ? o[key].constructor.name : $ `Empty ${o[key].constructor.name}`)
-                : o[key])}</span>
+          <span class="value">${(isObject
+                ? (Object.keys(val).length ? val.constructor?.name : $ `Empty ${val.constructor?.name}`)
+                : '')}</span>
         </div>
-          ${this.getActions(key, o)}
+          ${key}${o}
         </div>`;
           };
-          this.graph = props.graph ?? {};
-          this.header = props.header ?? 'Object';
-          this.mode = props.mode ?? 'view';
+          this.set(props.tree);
       }
       static get styles() {
-          return r$2 `
+          return r$4 `
 
-    
-    :host {
-      
-    }
     :host * {
       box-sizing: border-box;
-      
     }
 
     :host > * {
@@ -7679,33 +7035,22 @@ opacity: 0.5;
       border-radius: 4px;
       overflow: hidden;
       box-shadow: 0 1px 5px 0 rgb(0 0 0 / 20%);
+      height: 100%;
+      width: 100%;
     }
 
-    .main {
-      
-    }
-
-    .header {
-      padding: 10px 20px;
-      border-top-left-radius: 3px;
-      border-top-right-radius: 3px;
-      font-size: 70%;
-      border-bottom: 1px solid #e3e3e3;
-    }
-
-    .header span {
-      font-weight: 800;
-      font-size: 120%;
+    img {
+      max-height: 100px;
     }
 
     .container {
-      background: white;
       width: 100%;
       padding: 10px;
-      display: flex;
       align-items: center;
       justify-content: center;
-      flex-wrap: wrap;
+      position: relative;
+      overflow: scroll;
+      height: 100%;
     }
 
     .separate {
@@ -7722,6 +7067,11 @@ opacity: 0.5;
       flex-wrap: wrap;
     }
 
+    .info {
+      display: flex;
+      align-items: center;
+    }
+
     .name {
       font-weight: 800;
       padding-right: 10px;
@@ -7731,54 +7081,43 @@ opacity: 0.5;
       font-size: 80%;
     }
 
+    @media (prefers-color-scheme: dark) {
+      :host > * {
+        background-color: rgb(60, 60, 60);
+        box-shadow: 0 1px 5px 0 rgb(255 255 255 / 20%);
+      }
+    }
+
     `;
       }
       static get properties() {
           return {
-              graph: {
+              // tree: {
+              //   type: Object,
+              //   reflect: false,
+              // },
+              keys: {
                   type: Object,
-                  reflect: true,
-              },
-              header: {
-                  type: String,
-                  reflect: true,
-              },
-              mode: {
-                  type: String,
                   reflect: true,
               },
           };
       }
-      willUpdate(changedProps) {
-          // console.log(changedProps)
-          if (changedProps.has('graph')) ;
-      }
       render() {
+          // const content = this.keys?.map(key => this.getElement(key, this.tree)) 
+          // return until(Promise.all(content).then((data) => {
           return $ `
-      <div>
-        <div class="header separate">
-          <span>${this.header}</span>
-          ${(this.history.length > 0) ? $ `<visualscript-button size="extra-small" @click="${() => {
-            const historyItem = this.history.pop();
-            this.header = historyItem.key;
-            this.graph = historyItem.parent;
-        }}">Go Back</visualscript-button>` : ``}
-        </div>
-        <div class="container">
-              ${(this.mode === 'view'
-            ? Object.keys(this.graph)?.map(key => this.getElement(key, this.graph))
-            : Object.keys(this.graph)?.map(key => this.getElement(key, this.graph)) // TODO: Implement plot
-        )}
-        </div>
-      </div>
-    `;
+          <div class="container">
+                ${this.tree}
+          </div>
+      `;
+          // }), html`<span>Loading...</span>`)
       }
   }
   customElements.define('visualscript-graph-editor', GraphEditor);
 
-  class DeviceEditor extends s {
+  class DeviceEditor extends s$1 {
       static get styles() {
-          return r$2 `
+          return r$4 `
     :host {
       width: 100%;
       height: 100%;
@@ -7807,9 +7146,9 @@ opacity: 0.5;
   }
   customElements.define('visualscript-device-editor', DeviceEditor);
 
-  class SessionEditor extends s {
+  class SessionEditor extends s$1 {
       static get styles() {
-          return r$2 `
+          return r$4 `
     :host {
       width: 100%;
       height: 100%;
@@ -7838,24 +7177,44 @@ opacity: 0.5;
   }
   customElements.define('visualscript-session-editor', SessionEditor);
 
-  class Dashboard extends s {
+  const slotGrid = r$4 `
+
+slot {
+  display: grid;
+  grid-template-columns: 1fr fit-content(100%);
+  grid-template-rows: fit-content(75px) 1fr fit-content(75px);
+  grid-template-areas: 
+          "nav nav"
+          "main side"
+          "foot foot";
+
+  width: 100%;
+  height: 100%;
+}
+
+`;
+  class Dashboard extends s$1 {
       constructor(props = {}) {
           super();
           this.apps = new Map();
           this.open = props.open ?? true;
           this.closeHandler = props.closeHandler ?? (() => { });
+          if (props.toggletext)
+              this.toggletext = props.toggletext;
           this.toggle = (typeof props.toggle === 'string') ? document.getElementById(props.toggle) : props.toggle;
       }
       static get styles() {
-          return r$2 `
+          return r$4 `
     
     :host {
+      color-scheme: light dark;
       position: relative;
       width: 100%;
       height: 100%;
+      box-sizing: border-box;
+      grid-area: main;
+      overflow: hidden;
     }
-
-    
 
     :host([global]) {
       position: absolute;
@@ -7880,9 +7239,7 @@ opacity: 0.5;
     }
 
     :host * {
-      
       box-sizing: border-box;
-      
     }
 
     slot {
@@ -7890,18 +7247,7 @@ opacity: 0.5;
       color: black;
     }
 
-    slot {
-      display: grid;
-      grid-template-columns: 1fr fit-content(100%);
-      grid-template-rows: fit-content(75px) 1fr fit-content(75px);
-      grid-template-areas: 
-              "nav nav"
-              "main side"
-              "foot foot";
-  
-      width: 100%;
-      height: 100%;
-    }
+    ${slotGrid}
 
     :host([open]) slot {
       opacity: 1;
@@ -7957,6 +7303,14 @@ opacity: 0.5;
       }
       static get properties() {
           return {
+              toggletext: {
+                  type: String,
+                  reflect: true
+              },
+              toggle: {
+                  type: Object,
+                  reflect: true
+              },
               open: {
                   type: Boolean,
                   reflect: true,
@@ -8005,7 +7359,7 @@ opacity: 0.5;
           if (this.toggle)
               this.toggle.onclick = onClick;
           return $ `
-      ${(this.global && !this.toggle) ? $ `<div id="dashboard-toggle" @click=${onClick}>Edit</div>` : ''}
+      ${(this.global && !this.toggle) ? $ `<div id="dashboard-toggle" @click=${onClick}>${this.toggletext ?? 'Edit'}</div>` : ''}
       ${this.global ? $ `<visualscript-button id='close' secondary size="small" @click=${() => this.open = false}>Close</visualscript-button>` : ``}
       <slot>
       </slot>
@@ -8019,18 +7373,55 @@ opacity: 0.5;
           type: String,
           reflect: true
       },
+      selected: {
+          type: Boolean,
+          reflect: true
+      }
   };
-  class TabToggle extends s {
+  class TabToggle extends s$1 {
       constructor(tab) {
           super();
+          this.select = (toggles) => {
+              this.to.on(this);
+              // Show Correct Tab
+              if (!toggles) {
+                  const parent = this.parentNode; // ASSUMPTION: Always within a tabBar
+                  const tabContainer = parent.getRootNode().host; // ASSUMPTION: Always within a tabBar
+                  toggles = Array.from(tabContainer.tabs.values()).map(tab => tab.toggle);
+              }
+              if (toggles) {
+                  this.selected = true;
+                  // if (this.to.style.display === 'none') {
+                  toggles.forEach(t => {
+                      if (t != this) {
+                          t.selected = false;
+                          t.to.style.display = 'none';
+                          t.to.off(this);
+                      }
+                      else {
+                          t.to.style.display = '';
+                      } // hide other tabs
+                  });
+                  // }
+              }
+              else
+                  console.warn('No TabBar instance in the global Main');
+              // Swap Sidebar Content
+              const dashboard = this.to.dashboard;
+              if (dashboard) {
+                  const sidebar = dashboard.querySelector('visualscript-sidebar');
+                  if (sidebar) {
+                      sidebar.content = (this.to.controlPanel.children.length) ? this.to.controlPanel : '';
+                  }
+              }
+          };
           this.to = tab;
       }
       static get styles() {
-          return r$2 `
+          return r$4 `
 
     :host {
       flex-grow: 1;
-      min-width: 100px;
     }
 
     :host * {
@@ -8094,42 +7485,13 @@ opacity: 0.5;
       }
       render() {
           return $ `
-      <button class="${(this.selected) ? 'selected' : ''}"  @click=${(ev) => {
-            this.to.on(ev);
-            // Show Correct Tab
-            const tabs = this.to.dashboard.main.shadowRoot.querySelector('visualscript-tab-bar');
-            if (tabs) {
-                this.to.toggle.shadowRoot.querySelector('button').classList.add('selected');
-                // if (this.to.style.display === 'none') {
-                this.to.dashboard.main.tabs.forEach(t => {
-                    if (t != this.to) {
-                        t.toggle.shadowRoot.querySelector('button').classList.remove('selected');
-                        t.style.display = 'none';
-                        t.off(ev);
-                    }
-                    else {
-                        t.style.display = '';
-                    } // hide other tabs
-                });
-                // }
-            }
-            else
-                console.warn('No TabBar instance in the global Main');
-            // Swap Sidebar Content
-            const dashboard = this.to.dashboard;
-            if (dashboard) {
-                const sidebar = dashboard.querySelector('visualscript-sidebar');
-                if (sidebar) {
-                    sidebar.content = (this.to.controlPanel.children.length) ? this.to.controlPanel : '';
-                }
-            }
-        }}>${this.to.name ?? `Tab`} <span>${this.to.type}</span></button>
+      <button class="${(this.selected) ? 'selected' : ''}"  @click=${() => this.select()}>${this.to.name ?? `Tab`}</button>
     `;
       }
   }
   customElements.define('visualscript-tab-toggle', TabToggle);
 
-  class Control extends s {
+  class Control extends s$1 {
       constructor(props = {}) {
           super();
           this.label = 'Control';
@@ -8138,6 +7500,24 @@ opacity: 0.5;
           this.options = [];
           // File / Select
           this.onChange = () => { };
+          // NOTE: Must do this so that custom Select trigger can be recognized as the target of a window.onclick event.
+          // createRenderRoot() {
+          //   return this;
+          // }
+          this.getElement = () => {
+              if (this.type === 'select')
+                  this.element = new Select(this);
+              else if (this.type === 'file')
+                  this.element = new File(this);
+              else if (this.type === 'switch')
+                  this.element = new Switch(this);
+              else if (this.type === 'range')
+                  this.element = new Range(this);
+              else if (['input', 'text', 'number'].includes(this.type))
+                  this.element = new Input(this);
+              else
+                  this.element = new Button(this);
+          };
           this.willUpdate = (changedProps) => {
               changedProps.forEach((v, k) => {
                   if (this.element)
@@ -8162,6 +7542,12 @@ opacity: 0.5;
               this.onChange = props.onChange;
           if (props.accept)
               this.accept = props.accept;
+          if (props.webkitdirectory)
+              this.webkitdirectory = props.webkitdirectory;
+          if (props.directory)
+              this.directory = props.directory;
+          if (props.multiple)
+              this.multiple = props.multiple;
           // Button
           if (props.onClick)
               this.onClick = props.onClick;
@@ -8171,9 +7557,10 @@ opacity: 0.5;
               this.backgroundColor = props.backgroundColor;
           if (props.size)
               this.size = props.size;
+          // this.getElement()
       }
       static get styles() {
-          return r$2 `
+          return r$4 `
 
     :host {
       width: 100%;
@@ -8188,7 +7575,7 @@ opacity: 0.5;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0px 15px;
+      padding: 0px 5px;
       margin: 10px;
       border: 1px solid rgb(180,180,180);
       /* white-space: nowrap; */
@@ -8251,6 +7638,18 @@ opacity: 0.5;
                   type: String,
                   reflect: true
               },
+              webkitdirectory: {
+                  type: Boolean,
+                  reflect: true
+              },
+              directory: {
+                  type: Boolean,
+                  reflect: true
+              },
+              multiple: {
+                  type: Boolean,
+                  reflect: true
+              },
               // Button
               primary: {
                   type: Boolean,
@@ -8270,23 +7669,8 @@ opacity: 0.5;
               },
           };
       }
-      // NOTE: Must do this so that custom Select trigger can be recognized as the target of a window.onclick event.
-      // createRenderRoot() {
-      //   return this;
-      // }
       render() {
-          if (this.type === 'select')
-              this.element = new Select(this);
-          else if (this.type === 'file')
-              this.element = new File(this);
-          else if (this.type === 'switch')
-              this.element = new Switch(this);
-          else if (this.type === 'range')
-              this.element = new Range(this);
-          else if (['input', 'text', 'number'].includes(this.type))
-              this.element = new Input(this);
-          else
-              this.element = new Button(this);
+          this.getElement();
           return $ `<div><h5>${this.label}</h5>${this.element}</div><slot></slot>`;
       }
       updated(changedProperties) {
@@ -8294,11 +7678,31 @@ opacity: 0.5;
           const nodes = slot.assignedNodes();
           // Manually Place Slot Text in Button
           if (this.type === 'button' && nodes.length)
-              nodes.forEach(el => this.element.appendChild(el));
+              nodes.forEach(el => this.element.appendChild(el.cloneNode()));
       }
   }
   customElements.define('visualscript-control', Control);
 
+  const tabStyle = r$4 `
+
+:host {
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+  background: inherit;
+  display: block;
+}
+
+slot {
+  overflow: scroll;
+}
+
+:host * {
+  
+  box-sizing: border-box;
+  
+}
+`;
   const TabPropsLit = {
       name: {
           type: String,
@@ -8317,7 +7721,7 @@ opacity: 0.5;
           reflect: true
       }
   };
-  class Tab extends s {
+  class Tab extends s$1 {
       constructor(props = {}) {
           super();
           this.controls = [];
@@ -8352,29 +7756,11 @@ opacity: 0.5;
           // Create a toggle
           this.toggle = new TabToggle(this);
           this.dashboard.addEventListener('close', (ev) => {
-              this.off(ev);
+              this.off(this.toggle);
           });
       }
       static get styles() {
-          return r$2 `
-
-    :host {
-      width: 100%;
-      height: 100%;
-      box-sizing: border-box;
-      background: inherit;
-    }
-
-    slot {
-      overflow: scroll;
-    }
-
-    :host * {
-      
-      box-sizing: border-box;
-      
-    }
-    `;
+          return tabStyle;
       }
       static get properties() {
           return TabPropsLit;
@@ -8398,16 +7784,16 @@ opacity: 0.5;
   class App extends Tab {
       constructor(props = {}) {
           const tabProps = Object.assign({
-              on: (ev) => {
+              on: (target) => {
                   this.dashboard.main.appendChild(this);
                   if (props.on instanceof Function)
-                      props.on(ev);
+                      props.on(target);
               },
-              off: (ev) => {
+              off: (target) => {
                   this.style.display = '';
                   this.parent.appendChild(this); // Replace App element
                   if (props.off instanceof Function)
-                      props.off(ev);
+                      props.off(target);
               }
           }, props);
           tabProps.name = props.name;
@@ -8415,6 +7801,23 @@ opacity: 0.5;
           this.name = props.name;
           this.type = 'app';
           this.parent = this.parentNode; // Grab original parent
+      }
+      static get styles() {
+          return r$4 `
+    :host {
+      color-scheme: light dark;
+      max-width: 100vw;
+      max-height: 100vh;
+    }
+
+
+    slot {
+      overflow: hidden !important;
+    }
+
+    ${tabStyle}
+    ${slotGrid}
+    `;
       }
       static get properties() {
           return Object.assign({}, TabPropsLit);
@@ -8430,10 +7833,10 @@ opacity: 0.5;
   customElements.define('visualscript-app', App);
 
   const TabBarPropsLit = {};
-  class TabBar extends s {
+  class TabBar extends s$1 {
       // tabs: TabBarProps['tabs']
       static get styles() {
-          return r$2 `
+          return r$4 `
 
     :host {
       background: whitesmoke;
@@ -8444,7 +7847,7 @@ opacity: 0.5;
       width: 100%;
       top: 0;
       left: 0;
-      z-index: 10;
+      z-index: 1000;
     }
 
     /* Tab Scrollbar */
@@ -8496,7 +7899,7 @@ opacity: 0.5;
   }
   customElements.define('visualscript-tab-bar', TabBar);
 
-  class Main extends s {
+  class Main extends s$1 {
       constructor(props = { target: {}, header: 'Object' }) {
           super();
           this.tabs = new Map();
@@ -8521,24 +7924,21 @@ opacity: 0.5;
           };
       }
       static get styles() {
-          return r$2 `
+          return r$4 `
 
     :host {
       width: 100%;
       height: 100%;
       box-sizing: border-box;
       grid-area: main;
-      overflow-x: hidden;
-      overflow-y: scroll;
+      overflow: hidden;
       background: inherit;
       color: inherit;
       position: relative;
     }
 
     :host * {
-      
       box-sizing: border-box;
-      
     }
     `;
       }
@@ -8565,7 +7965,7 @@ opacity: 0.5;
   }
   customElements.define('visualscript-main', Main);
 
-  class Gallery extends s {
+  class Gallery extends s$1 {
       constructor(props = {}) {
           super();
           this.things = [];
@@ -8599,7 +7999,7 @@ opacity: 0.5;
               this.search = props.search;
       }
       static get styles() {
-          return r$2 `
+          return r$4 `
 
     :host {
       width: 100%;
@@ -8655,8 +8055,95 @@ opacity: 0.5;
   }
   customElements.define('visualscript-gallery', Gallery);
 
+  class TabContainer extends s$1 {
+      constructor(props = {}) {
+          super();
+          this.tabs = new Map();
+          this.tabLabels = [];
+          this.addTab = (tab) => {
+              this.insertAdjacentElement('beforeend', tab);
+              this.tabs.set(tab.name, tab);
+              this.updateTabs();
+          };
+          this.removeTab = (tab) => {
+              if (tab instanceof Tab)
+                  tab = tab.name;
+              const tabObj = this.tabs.get(tab);
+              tabObj.remove();
+              this.updateTabs();
+              this.tabs.delete(tab);
+          };
+          this.updateTabs = () => {
+              this.tabLabels = Array.from(this.tabs.values()).map(t => t.name);
+          };
+          this.getTabs = () => {
+              this.tabs = new Map();
+              // Tabs
+              for (var i = 0; i < this.children.length; i++) {
+                  const child = this.children[i];
+                  if (child instanceof Tab)
+                      this.tabs.set(child.name, child);
+              }
+              this.updateTabs();
+              return Array.from(this.tabs.values());
+          };
+      }
+      static get styles() {
+          return r$4 `
+
+    :host {
+      box-sizing: border-box;
+      grid-area: main;
+      overflow: hidden;
+      background: inherit;
+      color: inherit;
+      position: relative;
+      width: 100%;
+      height: 100%;
+      display: grid;
+      grid-template-areas:
+          "tabs"
+          "content";
+      grid-template-rows: min-content 1fr;
+    }
+
+    :host * {
+      box-sizing: border-box;
+    }
+    `;
+      }
+      static get properties() {
+          return {
+              tabLabels: {
+                  type: Object,
+                  reflect: true
+              },
+              tabs: {
+                  type: Object,
+                  // reflect: true
+              }
+          };
+      }
+      render() {
+          const tabs = this.getTabs();
+          const toggles = tabs.map((t, i) => {
+              if (i !== 0)
+                  t.style.display = 'none'; // Hide tabs other than the first
+              return t.toggle;
+          });
+          const firstToggle = toggles[0];
+          if (firstToggle)
+              firstToggle.select(toggles);
+          return $ `
+      <visualscript-tab-bar style="${toggles.length < 1 ? 'display: none;' : ''}">${toggles}</visualscript-tab-bar>
+      <slot></slot>
+    `;
+      }
+  }
+  customElements.define('visualscript-tab-container', TabContainer);
+
   const collapseThreshold = 600;
-  class Sidebar extends s {
+  class Sidebar extends s$1 {
       constructor(props = {}) {
           super();
           this.content = '';
@@ -8665,7 +8152,7 @@ opacity: 0.5;
           this.classList.add('default');
       }
       static get styles() {
-          return r$2 `
+          return r$4 `
 
     
     :host {
@@ -8708,6 +8195,8 @@ opacity: 0.5;
       background: var(--light-color);
       position: relative;
       display: flex;
+      overflow: hidden;
+      max-width: 50vw;
     }
 
 
@@ -8722,6 +8211,10 @@ opacity: 0.5;
 
     :host([closed]) > #toggle {
       width: var(--final-toggle-width);
+    }
+
+    #main {
+      overflow: hidden;
     }
 
     #toggle:hover { 
@@ -8746,12 +8239,16 @@ opacity: 0.5;
     }
 
     #controls {
-      overflow-x: scroll; 
+      overflow-x: hidden;
       overflow-y: scroll;
       height: 100%;
     }
 
     @media only screen and (max-width: ${collapseThreshold}px) {
+      :host {
+        max-width: 100%;
+      }
+
       :host(.default) > #main {
           width: 0px;
           overflow: hidden;
@@ -8763,12 +8260,7 @@ opacity: 0.5;
     }
 
 
-    #header {
-      width: 100%;
-      padding: 10px 25px;
-      background: var(--dark-color);
-      color: white;
-      margin: 0px;
+    #toggle {
       position: sticky;
       left:0;
       top: 0;
@@ -8782,13 +8274,6 @@ opacity: 0.5;
 
       #toggle {
         background: var(--dark-spiral)
-      }
-
-      #header {
-        width: 100%;
-        padding: 5px 25px;
-        color: black;
-        background: var(--light-color);
       }
     }
 
@@ -8820,7 +8305,6 @@ opacity: 0.5;
                 this.closed = !this.closed; // Closed only added after user interaction
         }}></button>
         <div id=main>
-        ${!!renderToggle ? $ `<h4 id=header>Controls</h4>` : ''}
           <div id=controls>
           ${this.content}
           <slot></slot>
@@ -8830,6 +8314,44 @@ opacity: 0.5;
       }
   }
   customElements.define('visualscript-sidebar', Sidebar);
+
+  class SidebarHeader extends s$1 {
+      static get styles() {
+          return r$4 `
+
+    :host {
+      width: 100%;
+    }
+
+    h4 {
+      background: rgb(25, 25, 25);
+      color: white;
+      margin: 0px;
+      padding: 10px 25px;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      h4 {
+        color: black;
+        background: rgb(60, 60, 60);
+      }
+    }
+
+    `;
+      }
+      static get properties() {
+          return {};
+      }
+      constructor(props = {}) {
+          super();
+      }
+      render() {
+          return $ `
+          <h4><slot></slot></h4>
+      `;
+      }
+  }
+  customElements.define('visualscript-sidebar-header', SidebarHeader);
 
   exports.App = App;
   exports.Button = Button;
@@ -8853,14 +8375,20 @@ opacity: 0.5;
   exports.Select = Select;
   exports.SessionEditor = SessionEditor;
   exports.Sidebar = Sidebar;
+  exports.SidebarHeader = SidebarHeader;
+  exports.Spectrogram = Spectrogram;
   exports.Switch = Switch;
   exports.Tab = Tab;
   exports.TabBar = TabBar;
   exports.TabBarPropsLit = TabBarPropsLit;
+  exports.TabContainer = TabContainer;
   exports.TabPropsLit = TabPropsLit;
   exports.TabToggle = TabToggle;
   exports.TabTogglePropsLit = TabTogglePropsLit;
+  exports.TimeSeries = TimeSeries;
+  exports.slotGrid = slotGrid;
   exports.streams = index;
+  exports.tabStyle = tabStyle;
 
   Object.defineProperty(exports, '__esModule', { value: true });
 

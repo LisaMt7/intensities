@@ -10,7 +10,6 @@
   ],
   "scripts": {
     "start": "tinybuild",
-    "start": "tinybuild bundle",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {

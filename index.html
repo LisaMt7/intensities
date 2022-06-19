@@ -15,6 +15,14 @@
     <visualscript-dashboard>
     <visualscript-sidebar>
         <div>
+          <visualscript-control id="runAnalysis" type="button" label="Run Analysis">Start</visualscript-control>
+          <visualscript-control id="files" type="file"  accept="audio/*, video/*" label="Load a File"></visualscript-control>
+          <visualscript-control id=freqWindow type="input"  label="Frequency Window (bins)" value=10 persist></visualscript-control>
+          <visualscript-control id=duration type="input"  label="Duration (ffts)" value=100 persist></visualscript-control>
+          <visualscript-control id=ffts  type="input"  label="FFTs from File" value=1000 persist></visualscript-control>
+          <visualscript-control id=distance  type="input"  label="Maximum Euclidean Distance" value=50 persist></visualscript-control>
+          <visualscript-control id=maxFreq  type="input"  label="Maximum Frequency" persist></visualscript-control>
+
           <visualscript-control id="in" type="select" label="Audio Input" persist></visualscript-control>
           <visualscript-control id="out" type="select" label="Audio Output" persist></visualscript-control>
           <visualscript-control id="video" type="select" label="Video Input" persist></visualscript-control>
@@ -22,24 +30,33 @@
     </visualscript-sidebar>
   
     <visualscript-main style="display: flex; align-items: center; justify-content: center;">
-      <div id=circles>
+      <visualscript-overlay></visualscript-overlay>
+      <section>
+
+        <div id="popout">
+          <div id="videos"></div>
+          <div id="analyses"></div>
+        </div>
+        <div id="alphabet">
+        </div>
+      <!-- <div id=circles>
         <div><div></div></div>
         <div><div></div></div>
-      </div>
-      <div style="display: flex; flex-wrap: wrap; align-items: center; padding: 50px; justify-content: center; max-width: 80vw;">
+      </div> -->
+      <!-- <div style="display: flex; flex-wrap: wrap; align-items: center; padding: 50px; justify-content: center; max-width: 80vw;">
           <visualscript-button id="start" primary size="large">Start Data Acquisition</visualscript-button>
-          <!-- <visualscript-audio-volume id="volume" backgroundColor="#49fb35" style="padding: 25px;"></visualscript-audio-volume> -->
-      </div>
+      </div> -->
+    </section>
+
     </visualscript-main>
     </visualscript-dashboard>
   </visualscript-app>
 
-
+<!-- 
   <visualscript-dashboard>
     <visualscript-nav>Visualscript</visualscript-nav>
   <visualscript-sidebar></visualscript-sidebar>
   <visualscript-main id="main">
-    <visualscript-overlay></visualscript-overlay>
 
     <visualscript-tab id="realtime" name="Stream Analysis">
       <section id="data">
@@ -60,7 +77,7 @@
 
   </visualscript-main>
   <visualscript-footer>Garrett Flynn and Lisa Müller-Trede | 2022</visualscript-footer>
-  </visualscript-dashboard>
+  </visualscript-dashboard> -->
 </body>
 <script src="dist/index.js" defer=true></script>
 </html>

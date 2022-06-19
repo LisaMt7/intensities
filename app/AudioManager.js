@@ -1,4 +1,5 @@
 import transformations from "./transformations"
+import * as alphabetize from "./alphabetize"
 
 
 export default class AudioManager {
@@ -188,17 +189,25 @@ export default class AudioManager {
 
           this.analyser.connect(splitInfo.input); // Connect end of main graph to the Splitter graph
   
-          // Additive (first two)
-          const o2 = addDisplay() // Create Display
-          o2.container.insertAdjacentHTML('afterbegin',`<h3>Additive</h3>`)
+          // // Additive (first two)
+          // const o2 = addDisplay() // Create Display
+          // o2.container.insertAdjacentHTML('afterbegin',`<h3>Additive</h3>`)
   
-          this.integrate('additive', [0, 1], (arr) => transformations.add(arr[0].frequencies, arr[1].frequencies), o2.spectrogram, 'data')
+          // this.integrate('additive', [0, 1], (arr) => transformations.add(arr[0].frequencies, arr[1].frequencies), (res) => {
+          //   o2.spectrogram.data = res
+          // })
   
-          // Remove common (first two)
-          const o3 = addDisplay() // Create Display
-          o3.container.insertAdjacentHTML('afterbegin',`<h3>Difference</h3>`)
+          // // Remove common (first two)
+          // const o3 = addDisplay() // Create Display
+          // o3.container.insertAdjacentHTML('afterbegin',`<h3>Difference</h3>`)
   
-          this.integrate('difference', [0, 1], (arr) => transformations.difference(arr[0].frequencies, arr[1].frequencies), o3.spectrogram, 'data')
+          // this.integrate('difference', [0, 1], (arr) => transformations.difference(arr[0].frequencies, arr[1].frequencies), (res) => {
+          //   o3.spectrogram.data = res
+          // })
+
+          // ------------- Alphabet Generation -------------
+          const o4 = alphabetize.init(10)
+          this.integrate('alphabet', [0, 1], async (arr) => await alphabetize.process(arr, o4), alphabetize.visualize)
   
           const thisGain = this.context.createGain()
           splitInfo.output.connect(thisGain); 
@@ -228,7 +237,7 @@ export default class AudioManager {
         if (src.start instanceof Function) src.start()
     }
 
-    addAnalysis = (analyser, type, outputObj, ondata=()=>{}) => {
+    addAnalysis = (analyser, type, outputObj, ondata) => {
 
         const analysisIndex = Object.keys(this.analyses).length
         // Analyze the Data
@@ -246,10 +255,10 @@ export default class AudioManager {
                     analyser.getByteFrequencyData(frequencies);
                     const freqArr = Array.from(frequencies)
 
-                    outputObj.updateData(freqArr)
+                    if (outputObj) outputObj.updateData(freqArr)
                     // outputObj.data = freqArr
                     const data = {frequencies: freqArr}
-                    ondata(data, analysisIndex)
+                    if (ondata instanceof Function) ondata(data, analysisIndex)
 
                     return data
                   };
@@ -275,12 +284,12 @@ export default class AudioManager {
         }
     }
 
-    integrate = (key, iArr, integrator = (arr) => {}, outputObj, outKey) => {
+    integrate = (key, iArr, integrator = (arr) => {}, after= () => {}) => {
 
         this.integrations[key] = {
-          function: () => {
-            const o2 = integrator(iArr.map(i => this.analyses[i].output))
-            outputObj[outKey] = o2
+          function: async () => {
+            const o2 = await integrator(iArr.map(i => this.analyses[i].output))
+            after(o2)
           },
           output: null
         }

@@ -11,7 +11,8 @@ const config = {
         bundleESM: false, //.esm format
         bundleTypes: false, //entry point should be a ts or jsx (or other typescript) file
         bundleNode: false, // bundle a package with platform:node and separate externals
-        bundleHTML: false //can wrap the built outfile (or first file in outdir) automatically and serve it or click and run the file without hosting.
+        bundleHTML: false, //can wrap the built outfile (or first file in outdir) automatically and serve it or click and run the file without hosting.
+        minify: false
     },
     server: { //defaultServer
         debug:false, //print debog messages?

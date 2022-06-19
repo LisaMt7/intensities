@@ -8,4 +8,6 @@ node_modules
 
 /datasets/**/*.mov
 /datasets/**/*.wav
+/datasets/**/*.mp4
+
 

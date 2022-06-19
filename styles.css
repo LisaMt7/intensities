@@ -10,9 +10,29 @@ html, body {
         color-scheme: light dark;
         font-family: sans-serif;
     }
+
+    * {
+        box-sizing: border-box;
+    }
+
+    visualscript-overlay > div {
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items:center;
+        justify-content: center;
+    }
+
+    visualscript-overlay h3 {
+        margin: 0;
+        width: auto;
+    }
       
     section {
-    padding: 25px;
+        display: flex;
+        padding: 25px;
+        height: 100%;
+        overflow: scroll;
     }
     
     
@@ -43,7 +63,7 @@ html, body {
     #circles > div > div {
         box-sizing: border-box;
         width: 100%;
-        border: 2px solid white;
+        border: 2px solid cadetblue;
         border-radius: 100%;
         transition: 0.5s;
         aspect-ratio: 1/1;
@@ -60,17 +80,54 @@ html, body {
     #videos video {
     max-width: clamp(0px, 400px, 100%);
     }
-    
-    #analyses {
-    display: flex;
-    flex-wrap: wrap;
+
+    #popout, #alphabet {
+        display: flex;
+        flex-wrap: wrap;
+        position: relative;
+        /* height: 100%; */
+        align-items: center; 
+        flex-grow: 1;
+    }
+
+    .letter h3 , .container h3{
+        position: absolute;
+        top: 0;
+        left: 0;
+        color: white;
+        margin: 0;
+        padding: 10px;
+        font-size: 80%;
+    }
+
+    .letter, .container {
+        flex-grow: 1;
+        align-items: center; 
+        justify-content: center;
+        position: relative;
+        margin-bottom: 10px;
+    }
+
+    .letter {
+        width: 100%;
+    }
+
+    .letter canvas {
+        /* width: 200px;
+        height: 200px; */
+        background: black;
     }
     
-    .container {
+    #analyses {
+        display: flex;
+        flex-wrap: nowrap;
+    }
+    
+    /* .container {
     background: rgb(237, 237, 237);
     padding: 15px;
     margin: 10px;
     border-radius: 25px;
     color: black;
-    }
+    } */
     

@@ -5,16 +5,6 @@ import transformations from "./transformations"
 export const overlay = document.querySelector('visualscript-overlay')
 export const overlayDiv = document.createElement('div')
 overlay.insertAdjacentElement('beforeend', overlayDiv)
-overlayDiv.style =  `
-width: 100%;
-height: 100%;
-display: flex;
-align-items:center;
-justify-content: center;
-font-size:170%;
-font-weight: bold;
-font-family: sans-serif;
-`
 
 let features = []
 
@@ -38,81 +28,95 @@ export const transformFFTData = (o, transformation) => {
 
 
 // ---------------------- Transformation ----------------------
+if (transformation){
   transformation.options = Object.keys(transformations)
   transformation.onChange = (ev) => {
     plotData(undefined, undefined, ev.target.value)
   }
+}
 
 
     // ---------------------- Threshold ----------------------
+    if (threshold){
 
   threshold.onChange = (ev) => {
     plotData(undefined, undefined, undefined,ev.target.value)
   }
 
+}
+
 
 // ---------------------- Data ----------------------
-dataSelect.options = ['Right Channel', 'Left Channel', 'Combined']
 
 export const plotData = (data=audio.fftData, which=dataSelect.element.value, how=transformation.element.value, thresh=threshold.element.value) => {
 
-    return new Promise(resolve => {
-    if (audio.fftData[0]){
+  return new Promise(resolve => {
+  if (audio.fftData[0]){
 
-        overlayDiv.innerHTML = `Plotting ${data[0].length} FFT windows...`
-        overlay.open = true
-        setTimeout(() => {
-            let plottedData;
-            switch(which){
-                case 'Right Channel':
-                    transformation.style.display = 'none'
-                    plottedData = data[0]
-                break;
+      overlayDiv.innerHTML = `Plotting ${data[0].length} FFT windows...`
+      overlay.open = true
+      setTimeout(() => {
+          let plottedData;
+          switch(which){
+              case 'Right Channel':
+                  transformation.style.display = 'none'
+                  plottedData = data[0]
+              break;
 
-                case 'Left Channel':
-                    transformation.style.display = 'none'
-                    plottedData = data[1]
-                break;
+              case 'Left Channel':
+                  transformation.style.display = 'none'
+                  plottedData = data[1]
+              break;
 
-                case 'Combined':
-                    transformation.style.display = ''
-                    plottedData = transformFFTData(data, transformations[how])
-            }
+              case 'Combined':
+                  transformation.style.display = ''
+                  plottedData = transformFFTData(data, transformations[how])
+          }
 
-            if (plottedData) {
-                const min = Math.min(...plottedData.map(arr => Math.min(...arr)))
-                const max = Math.max(...plottedData.map(arr => Math.max(...arr)))
-                threshold.element.min = min
-                threshold.element.max = max
-                features = plottedData.map(arr => arr.map(v => (v < thresh) ? 0 : v))
-                spectrogram.data = features
-            } else console.warn('Plot not updated because there was no data')
-            overlay.open = false
-            resolve(features)
-        }, 500)
-    }
+          if (plottedData) {
+              const min = Math.min(...plottedData.map(arr => Math.min(...arr)))
+              const max = Math.max(...plottedData.map(arr => Math.max(...arr)))
+              threshold.element.min = min
+              threshold.element.max = max
+              features = plottedData.map(arr => arr.map(v => (v < thresh) ? 0 : v))
+              spectrogram.data = features
+          } else console.warn('Plot not updated because there was no data')
+          overlay.open = false
+          resolve(features)
+      }, 500)
+  }
 })
 }
+
+if (dataSelect){
+
+dataSelect.options = ['Right Channel', 'Left Channel', 'Combined']
 
 dataSelect.onChange = (ev) => {
     plotData(undefined, ev.target.value)
   }
 
+}
+
   // ---------------------- Colorscale ----------------------
-  colorscale.options = visualscript.streams.data.InteractiveSpectrogram.colorscales
-  export const spectrogram = new visualscript.streams.data.InteractiveSpectrogram({
+  export const spectrogram = new visualscript.Spectrogram({
     Plotly
   })
-  designTab.insertAdjacentElement('beforeend', spectrogram)
-  colorscale.value = spectrogram.colorscale
-  colorscale.onChange = (ev) => {
-    spectrogram.colorscale = ev.target.value
+  
+  if (colorscale){
+
+    colorscale.options = visualscript.Spectrogram.colorscales
+    designTab.insertAdjacentElement('beforeend', spectrogram)
+    colorscale.value = spectrogram.colorscale
+    colorscale.onChange = (ev) => {
+      spectrogram.colorscale = ev.target.value
+    }
   }
 
 
   // ---------------------- Audio ----------------------
-  const circles = document.getElementById('circles').children
-  const circleMultiplier = 5
+  // const circles = document.getElementById('circles').children
+  // const circleMultiplier = 5
 
   const volume = document.getElementById('volume')
 
@@ -137,7 +141,7 @@ dataSelect.onChange = (ev) => {
         const volumeVal = (averageVolume / (audio.info.maxDecibels - audio.info.minDecibels))
 
         if (volume) volume.volume = volumeVal
-        circles[i].children[0].style.width = `${circleMultiplier*100*volumeVal}%`
+        // circles[i].children[0].style.width = `${circleMultiplier*100*volumeVal}%`
     }
   }
 

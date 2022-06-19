@@ -2,9 +2,13 @@
 import  "./visualscript/index.js"
 import './controls'
 import * as controls from './controls'
+import ripThroughFile from './ripThroughFile'
+
+const showRealtime = false
 
   // Bypass the usual requirement for user action
   const start = document.getElementById('start')
+  const runAnalysis = document.getElementById('runAnalysis')
   const audioInputSelect = document.getElementById('in')
   const audioOutputSelect = document.getElementById('out')
   const videoSelect = document.getElementById('video')
@@ -12,6 +16,8 @@ import * as controls from './controls'
   var videos = document.getElementById('videos');
   var analysesDiv = document.getElementById('analyses');
 
+
+  if (showRealtime){
 
 
   navigator.mediaDevices.enumerateDevices()
@@ -42,6 +48,24 @@ import * as controls from './controls'
       }
     }
   }
+} else {
+  audioInputSelect.style.display = 'none'
+  audioOutputSelect.style.display = 'none'
+  videoSelect.style.display = 'none'
+}
+
+  const addDisplay = (input, type='stream') => {
+
+    let o;
+
+    if (type === 'stream'){
+      o = spawnStreamDisplay(count, input)
+      count++
+    }
+
+    return o
+
+  }
 
 
   const spawnStreamDisplay = (count, o = {}) => {
@@ -67,25 +91,22 @@ import * as controls from './controls'
             container,
             video: o.video,
             stream: o.stream,
-            // spectrogram: new visualscript.streams.data.InteractiveSpectrogram(),
             spectrogram: new visualscript.streams.data.Spectrogram(),
-            // timeseries: new visualscript.streams.data.TimeSeries(),
         }
 
         container.insertAdjacentElement('beforeend', sourceRegistry[count].spectrogram)
-        // container.insertAdjacentElement('beforeend', sourceRegistry[count].timeseries)
         return sourceRegistry[count]
     }
 
 
   let count = 0
+  let files = []
 
-  fileInput.onChange = async (ev) => {
-
+  runAnalysis.onclick = async (ev) => {
     controls.audio.initializeContext()
     count = 0 // Reset count with new file...
 
-    for (let file of ev.target.files) {
+    for (let file of files) {
       const type = file.type.split('/')[0]
       let source, video;
 
@@ -93,32 +114,28 @@ import * as controls from './controls'
           video = document.createElement('video')
           video.src = URL.createObjectURL(file)
           source = controls.audio.context.createMediaElementSource(video);
-          onAudio(file).then(res => {
-            console.log('Audio done')
-          })
+          ripThroughFile(file)
       } else {
-        source = await onAudio(file);
+        source = await ripThroughFile(file);
       }
 
-      if (video) videos.insertAdjacentElement('beforeend', video)
-      controls.audio.addSource(source, () => {
-        const o = spawnStreamDisplay(count, {video})
-        count++
-        return o
-      })// Get Audio Features + Wire Audio Analysis + Create Display
-      // count added in here
+  
+      if (showRealtime){
+        if (video) videos.insertAdjacentElement('beforeend', video)
+        controls.audio.addSource(source, (type) => addDisplay({video}, type))// Get Audio Features + Wire Audio Analysis + Create Display
+      }
     }
 
-    // main.style.gridTemplateColumns = `repeat(${count},1fr)`
   }
 
-  start.onClick = () => {
+  fileInput.onChange = async (ev) => files = ev.target.files
 
-    start.style.display = 'none'
+  if (start) start.onClick = () => {
+
+    start.parentNode.style.display = 'none'
 
     controls.audio.initializeContext()
     controls.audio.listen(false)
-
 
     navigator.mediaDevices.getUserMedia({
       audio: { deviceId: { exact: audioInputSelect.element.value } }, 
@@ -127,59 +144,7 @@ import * as controls from './controls'
       const video = document.createElement('video')
       const microphone = controls.audio.context.createMediaStreamSource(stream);
       videos.insertAdjacentElement('beforeend', video)
-      controls.audio.addSource(microphone, () => {
-        const o = spawnStreamDisplay(count, {video, stream})
-        count++
-        return o
-      })
+      controls.audio.addSource(microphone, (type) => addDisplay({video, stream}, type))
     })
   }
 
-  const onAudio =(file) => {
-
-    const type = file.type.split('/')[0]
-  return new Promise((resolve, reject) => {
-    let reader = new FileReader();
-
-    reader.onload = (ev) => {
-
-
-      controls.overlayDiv.innerHTML = `Decoding audio data from ${type} file...`
-      controls.overlay.open = true
-      controls.audio.context.decodeAudioData(ev.target.result, (data) => {
-
-        controls.overlayDiv.innerHTML = 'Audio decoded! Analysing audio data...'
-          // Preanalyze Audio
-          controls.audio.fft(data, null, async (o) => {
-            
-              await controls.plotData(o)
-            
-              controls.overlay.open = false
-              
-              // if (type === 'audio'){
-                const source = controls.audio.context.createBufferSource(); // Get audio to play in the AudioContext
-                source.buffer = data;
-                resolve(source);
-              // } else resolve()
-          })
-      })
-    };
-
-    function handleEvent(event) {
-    console.log(`${event.type}: ${event.loaded} bytes transferred\n`)
-
-    if (event.type === "load") {
-        // preview.src = reader.result;
-    }
-}
-
-    // reader.addEventListener('loadstart', handleEvent);
-    // reader.addEventListener('load', handleEvent);
-    // reader.addEventListener('loadend', handleEvent);
-    // reader.addEventListener('progress', handleEvent);
-    reader.addEventListener('error', handleEvent);
-    // reader.addEventListener('abort', handleEvent);
-
-    reader.readAsArrayBuffer(file);
-  })
-}
