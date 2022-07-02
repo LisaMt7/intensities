@@ -1,5 +1,6 @@
 import * as distance from './distance'
 import * as matrix from './matrix'
+import shuffle from './shuffle'
 
 onmessage = async function (e) {
     const [msg, ...args] = e.data
@@ -30,7 +31,7 @@ async function process(arr, info) {
     info.frequencies = firstPersonFreqs[0].length // Add frequency length
 
     // Organize history slices
-    const historySlices = []
+    let historySlices = []
     firstPersonFreqs.forEach((_, i) => {
         if (info.history[0].length === info.duration) {
             historySlices.push(Object.assign({}, info.history))
@@ -44,8 +45,10 @@ async function process(arr, info) {
         })
     })
 
-    // Asynchronously Derive Patterns
 
+    if (info.shuffle) historySlices = shuffle(historySlices)
+
+    // Derive Patterns
     const promises = historySlices.forEach(async (historySlice, i) => {
 
             const tic = performance.now()

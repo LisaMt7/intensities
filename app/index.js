@@ -1,5 +1,5 @@
 
-import  "./visualscript/index.js"
+import * as visualscript from "./visualscript/index.esm.js"
 import './controls'
 import * as controls from './controls'
 import ripThroughFile from './ripThroughFile'

@@ -1,9 +1,17 @@
 var alphabetDiv = document.getElementById('alphabet');
 
 const info = {
+    secondsPerBin: undefined, // set with fft
     worker: {
 
     },
+
+    updateLabels: () => {
+      inputs.forEach(({el, variable, label}) => {
+        if (label) el.innerHTML = label(info.worker[variable])
+      })
+    },
+
     createContainer: (key) => {
       
       const container = document.createElement('div')
@@ -39,37 +47,53 @@ const info = {
     const fftRange = document.getElementById('ffts')
     const euclideanDistanceInput = document.getElementById('distance')
     const maximumFrequencyInput = document.getElementById('maxFreq')
+    const minFrequencyInput = document.getElementById('minFreq')
+    const shuffleSwitch = document.getElementById('shuffle')
 
     const inputs = [
-        {el: durationRange, variable: 'duration'},
+        {el: durationRange, variable: 'duration', label: (val) => {
+          if (info.secondsPerBin) {
+            return `<span>${(info.secondsPerBin * val).toFixed(3)}s</span>`
+          } else return '<span>In Bins</span>'
+        }},
         {el: freqWindowRange, variable: 'freqWindow'},
-        {el: fftRange, variable: 'maximumFFTs'},
+        {el: fftRange, variable: 'maximumFFTs', allowUndefined: true},
         {el: euclideanDistanceInput, variable: 'distanceMax'},
-        {el: maximumFrequencyInput, variable: 'maxFreq'}
+        {el: maximumFrequencyInput, variable: 'maxFreq', allowUndefined: true},
+        {el: minFrequencyInput, variable: 'minFreq', allowUndefined: true},
+        {el: shuffleSwitch, variable: 'shuffle'}
+
     ]
 
-    inputs.forEach(({el, variable}) => {
+    inputs.forEach(({el, variable, allowUndefined, label}) => {
 
         let immediate = true
         let input = el.shadowRoot.querySelector('visualscript-input')
         if (input) input = input.shadowRoot.querySelector('input')
-        info.worker[variable] = parseInt(el.value ?? input?.value ?? 0) // Samples
+        let val = parseInt(el.value ?? input?.value) 
+        if (isNaN(val)) val = undefined
+        info.worker[variable] = val
+        if (label) el.innerHTML = label(val)
 
         if (!info.worker[variable]) {
             setTimeout(() => {
                 let input = el.shadowRoot.querySelector('visualscript-input')
                 if (input) input = input.shadowRoot.querySelector('input')
-                info.worker[variable] = parseInt(input?.value)
+                let val = parseInt(input?.value)
+                if (isNaN(val)) val = undefined
+                info.worker[variable] = val
+                if (label) el.innerHTML = label(val)
                 immediate = false
             }, 100)
         }
 
-        console.log('Variable', info.worker[variable], input)
-
         el.onInput = (ev) => {
-            const val = parseInt(ev.target.value)
-            if (!immediate || (val != undefined && !isNaN(val))) info.worker[variable] = val
-            console.log('Variable', info.worker[variable])
+            let val = parseInt(ev.target.value)
+            if (isNaN(val)) val = undefined
+            if (!immediate || (allowUndefined || val != undefined)) info.worker[variable] = val
+
+
+            if (label) el.innerHTML = label(val)
         }
     })
 

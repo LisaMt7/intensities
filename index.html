@@ -17,11 +17,13 @@
         <div>
           <visualscript-control id="runAnalysis" type="button" label="Run Analysis">Start</visualscript-control>
           <visualscript-control id="files" type="file"  accept="audio/*, video/*" label="Load a File"></visualscript-control>
-          <visualscript-control id=freqWindow type="input"  label="Frequency Window (bins)" value=10 persist></visualscript-control>
-          <visualscript-control id=duration type="input"  label="Duration (ffts)" value=100 persist></visualscript-control>
-          <visualscript-control id=ffts  type="input"  label="FFTs from File" value=1000 persist></visualscript-control>
-          <visualscript-control id=distance  type="input"  label="Maximum Euclidean Distance" value=50 persist></visualscript-control>
-          <visualscript-control id=maxFreq  type="input"  label="Maximum Frequency" persist></visualscript-control>
+          <visualscript-control id=freqWindow type="input"  label="Frequency Window" value=2 persist>In Bins</visualscript-control>
+          <visualscript-control id=duration type="input"  label="Duration" value=30 persist></visualscript-control>
+          <visualscript-control id=ffts  type="input"  label="FFTs from File" persist></visualscript-control>
+          <visualscript-control id=distance  type="input"  label="Maximum Euclidean Distance" value=100 persist></visualscript-control>
+          <visualscript-control id=maxFreq  type="input"  label="Maximum Frequency" value=1000 persist></visualscript-control>
+          <visualscript-control id=minFreq  type="input"  label="Minimum Frequency" value=100 persist></visualscript-control>
+          <visualscript-control id=shuffle  type="switch"  label="Shuffle Bins" value=true persist></visualscript-control>
 
           <visualscript-control id="in" type="select" label="Audio Input" persist></visualscript-control>
           <visualscript-control id="out" type="select" label="Audio Output" persist></visualscript-control>

@@ -1,4 +1,4 @@
-import  "./visualscript/index.js"
+import * as visualscript from "./visualscript/index.esm.js"
 import AudioManager from './AudioManager'
 import transformations from "./transformations"
 

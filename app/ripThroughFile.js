@@ -4,8 +4,8 @@ import * as alphabetize from "./alphabetize"
 
 const fileFFTs = {}
 
-var binToFreq = (bin, hzPerBin) => (bin * hzPerBin) - hzPerBin / 2
-var freqToBin = (freq, hzPerBin) => Math.ceil((freq + hzPerBin / 2) / hzPerBin)
+var binToFreq = (bin, hzPerBin) => ((bin) * hzPerBin) // Lower frequency of bin
+var freqToBin = (freq, hzPerBin) => Math.ceil((freq) / hzPerBin) // TODO: Check
 
 
 const getFileFFT = (file) => {
@@ -71,27 +71,32 @@ const ripThroughFile = async (file) => {
             let info = alphabetize.init()
             const hzPerBin = (controls.audio.context.sampleRate) / (2 * controls.audio.analyser.frequencyBinCount);
             const fftWindowWidth = controls.audio.analyser.fftSize
-
+            info.secondsPerBin = (fftWindowWidth)/fftInfo.data.sampleRate 
+            info.updateLabels() // displaying seconds on duration control
 
             const maxFreqBin = freqToBin(info.worker.maxFreq, hzPerBin)
+            const minFreqBin = freqToBin(info.worker.minFreq, hzPerBin)
 
-            console.log('maxFreqBin', maxFreqBin, info.worker, info.worker.maxFreq)
+            // console.log('maxFreqBin', maxFreqBin, info.worker, info.worker.maxFreq)
+
+            const ffts = Object.assign({}, fftInfo.ffts)
+            const len = (ffts[0].length - 1)
 
             let filePct = 0
             let fileLength = 0
+            let maxFFTs = info.worker.maximumFFTs ?? len // Set as length when undefined
 
-            const ffts = Object.assign({}, fftInfo.ffts)
-            
+
             for (let key in ffts) {
                 
                 // Get Data Slice Info
-                const len = (ffts[key].length - 1)
-                filePct = info.worker.maximumFFTs / len
+                filePct = maxFFTs / len
                 fileLength = (len * fftWindowWidth)/fftInfo.data.sampleRate
 
                 // Slice the Data
-                ffts[key] = ffts[key].slice(0, info.worker.maximumFFTs)
-                if (maxFreqBin && !isNaN(maxFreqBin)) ffts[key] = ffts[key].map(arr => arr.slice(0, maxFreqBin))
+                ffts[key] = ffts[key].slice(0, maxFFTs) // length
+                if (maxFreqBin) ffts[key] = ffts[key].map(arr => arr.slice(0, maxFreqBin)) // max freq
+                if (minFreqBin) ffts[key] = ffts[key].map(arr => arr.slice(minFreqBin)) // min freq
             }
 
 
@@ -106,7 +111,7 @@ const ripThroughFile = async (file) => {
                 controls.overlayDiv.innerHTML = `
                     <div>
                         <h3>Deriving an alphabet <small>${(100*ratio).toFixed(2)}%</small></h3>
-                        <small>${info.worker.maximumFFTs} FFTs | First ${(fileLength*filePct).toFixed(1)}s of the file</small>
+                        <small>${maxFFTs} FFTs | ${(fileLength*filePct).toFixed(1)}s of the file</small>
                         <p><b>Unique Patterns Found:</b> ${patterns}</p>
                         <p><b>Comparison Time per Duration:</b> ${performanceAverage.toFixed(0)}ms</p>
                     </div>
@@ -134,16 +139,22 @@ const ripThroughFile = async (file) => {
 
             // ------------------- Map Values to Meaningful File Info -------------------
 
+            console.log('info.worker.alphabetData', info.worker.alphabetData)
+
             info.worker.alphabetData.forEach(o => {
 
                 // Map to video time
                 o.times = o.times.map(obj => {
-                    obj.t = (obj.i * fftWindowWidth)/fftInfo.data.sampleRate 
+                    obj.t = obj.i * info.secondsPerBin * info.worker.duration
                     return obj
                 })
 
                 // Map Bin to Frequency
-                o.frequencies = [binToFreq(o.bin, hzPerBin), binToFreq(o.bin + info.worker.freqWindow, hzPerBin)]
+                const firstFreq = binToFreq(o.bin, hzPerBin)
+                o.frequencies = [firstFreq, binToFreq(
+                    o.bin + info.worker.freqWindow + 1, // Add one to get the top frequency
+                    hzPerBin
+                    )]
             })
 
             alphabetize.visualize(info, (ratio) => {
