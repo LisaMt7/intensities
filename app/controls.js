@@ -10,7 +10,7 @@ let features = []
 
 
 // Model Design Tab Initialization
-export const designTab = document.getElementById('design')
+export const designTab = document.getElementById('design') ?? document.getElementById('graph')
 export const colorscale = document.getElementById('colorscale')
 export const transformation = document.getElementById('transformation')
 export const threshold = document.getElementById('threshold')
@@ -51,9 +51,9 @@ if (transformation){
 export const plotData = (data=audio.fftData, which=dataSelect.element.value, how=transformation.element.value, thresh=threshold.element.value) => {
 
   return new Promise(resolve => {
-  if (audio.fftData[0]){
+  if (data[0]){
 
-      overlayDiv.innerHTML = `Plotting ${data[0].length} FFT windows...`
+      overlayDiv.innerHTML = `<h3>Plotting ${data[0].length} FFT windows...</h3>`
       overlay.open = true
       setTimeout(() => {
           let plottedData;

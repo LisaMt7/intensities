@@ -17,6 +17,8 @@
         <div>
           <visualscript-control id="runAnalysis" type="button" label="Run Analysis">Start</visualscript-control>
           <visualscript-control id="files" type="file"  accept="audio/*, video/*" label="Load a File"></visualscript-control>
+          
+          <visualscript-sidebar-header>Alphabet</visualscript-sidebar-header>
           <visualscript-control id=freqWindow type="input"  label="Frequency Window" value=2 persist>In Bins</visualscript-control>
           <visualscript-control id=duration type="input"  label="Duration" value=30 persist></visualscript-control>
           <visualscript-control id=ffts  type="input"  label="FFTs from File" persist></visualscript-control>
@@ -25,6 +27,15 @@
           <visualscript-control id=minFreq  type="input"  label="Minimum Frequency" value=100 persist></visualscript-control>
           <visualscript-control id=shuffle  type="switch"  label="Shuffle Bins" value=true persist></visualscript-control>
 
+          <visualscript-sidebar-header>Plot Parameters</visualscript-sidebar-header>
+          <visualscript-control id="dataSelect" type="select" label="Data" persist></visualscript-control>
+          <visualscript-control id=threshold type="range" label="Threshold" persist></visualscript-control>
+          <visualscript-control id="transformation" type="select" label="Transformation" persist></visualscript-control>
+          <visualscript-control id="colorscale" type="select" label="Color Scale" persist></visualscript-control>
+          <!-- <visualscript-control type="input" label="Model File Name" persist></visualscript-control>
+          <visualscript-control type="button" label="Download Model" persist>Download</visualscript-control> -->
+
+          <!-- Hidden Programmatically -->
           <visualscript-control id="in" type="select" label="Audio Input" persist></visualscript-control>
           <visualscript-control id="out" type="select" label="Audio Output" persist></visualscript-control>
           <visualscript-control id="video" type="select" label="Video Input" persist></visualscript-control>
@@ -35,11 +46,14 @@
       <visualscript-overlay></visualscript-overlay>
       <section>
 
+        <div id="graph">
+          <visualscript-sidebar-header>Graph</visualscript-sidebar-header>
+        </div>
         <div id="popout">
+          <visualscript-sidebar-header>Alphabet</visualscript-sidebar-header>
           <div id="videos"></div>
           <div id="analyses"></div>
-        </div>
-        <div id="alphabet">
+          <div id="alphabet"></div>
         </div>
       <!-- <div id=circles>
         <div><div></div></div>
@@ -54,8 +68,7 @@
     </visualscript-dashboard>
   </visualscript-app>
 
-<!-- 
-  <visualscript-dashboard>
+  <!-- <visualscript-dashboard>
     <visualscript-nav>Visualscript</visualscript-nav>
   <visualscript-sidebar></visualscript-sidebar>
   <visualscript-main id="main">

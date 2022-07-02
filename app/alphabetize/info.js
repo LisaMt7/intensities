@@ -19,7 +19,7 @@ const info = {
       canvas.width = 200
       canvas.height = 200
       const readout = document.createElement('div')
-      const count = document.createElement('h3')
+      const count = document.createElement('span')
       // container.classList.add('container')
       container.classList.add('letter')
   

@@ -64,6 +64,7 @@ const ripThroughFile = async (file) => {
     const type = file.type.split('/')[0]
 
 
+    const alreadyPlotted = !!fileFFTs[file.name]
     const fftInfo = await getFileFFT(file)
     controls.overlay.open = true
 
@@ -86,11 +87,14 @@ const ripThroughFile = async (file) => {
             let fileLength = 0
             let maxFFTs = info.worker.maximumFFTs ?? len // Set as length when undefined
 
+            console.log('info.worker.maximumFFTs', maxFFTs, len)
 
             for (let key in ffts) {
                 
                 // Get Data Slice Info
                 filePct = maxFFTs / len
+                console.log('filePct', filePct)
+
                 fileLength = (len * fftWindowWidth)/fftInfo.data.sampleRate
 
                 // Slice the Data
@@ -139,8 +143,6 @@ const ripThroughFile = async (file) => {
 
             // ------------------- Map Values to Meaningful File Info -------------------
 
-            console.log('info.worker.alphabetData', info.worker.alphabetData)
-
             info.worker.alphabetData.forEach(o => {
 
                 // Map to video time
@@ -150,9 +152,9 @@ const ripThroughFile = async (file) => {
                 })
 
                 // Map Bin to Frequency
-                const firstFreq = binToFreq(o.bin, hzPerBin)
+                const firstFreq = binToFreq(minFreqBin + o.bin, hzPerBin)
                 o.frequencies = [firstFreq, binToFreq(
-                    o.bin + info.worker.freqWindow + 1, // Add one to get the top frequency
+                    minFreqBin + o.bin + info.worker.freqWindow, // Add one to get the top frequency
                     hzPerBin
                     )]
             })
@@ -161,7 +163,8 @@ const ripThroughFile = async (file) => {
                 controls.overlayDiv.innerHTML = `<h3>Visualizing the alphabet</h3> - ${(100*ratio).toFixed(2)}%`
             })
             
-            //   await controls.plotData(o)
+            console.log('FFTs', ffts)
+             if (!alreadyPlotted) await controls.plotData(ffts)
             
               controls.overlay.open = false
               
