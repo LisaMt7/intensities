@@ -19,7 +19,7 @@
           <visualscript-control id="files" type="file"  accept="audio/*, video/*" label="Load a File"></visualscript-control>
           
           <visualscript-sidebar-header>Alphabet</visualscript-sidebar-header>
-          <visualscript-control id=freqWindow type="input"  label="Frequency Window" value=2 persist>In Bins</visualscript-control>
+          <visualscript-control id=freqWindow type="input"  label="Frequency Window" persist>In Bins</visualscript-control>
           <visualscript-control id=duration type="input"  label="Duration" value=30 persist></visualscript-control>
           <visualscript-control id=ffts  type="input"  label="FFTs from File" persist></visualscript-control>
           <visualscript-control id=distance  type="input"  label="Maximum Euclidean Distance" value=100 persist></visualscript-control>
@@ -27,7 +27,7 @@
           <visualscript-control id=minFreq  type="input"  label="Minimum Frequency" value=100 persist></visualscript-control>
           <visualscript-control id=shuffle  type="switch"  label="Shuffle Bins" value=true persist></visualscript-control>
 
-          <visualscript-sidebar-header>Plot Parameters</visualscript-sidebar-header>
+          <visualscript-sidebar-header>Graph</visualscript-sidebar-header>
           <visualscript-control id="dataSelect" type="select" label="Data" persist></visualscript-control>
           <visualscript-control id=threshold type="range" label="Threshold" persist></visualscript-control>
           <visualscript-control id="transformation" type="select" label="Transformation" persist></visualscript-control>
@@ -46,13 +46,17 @@
       <visualscript-overlay></visualscript-overlay>
       <section>
 
+        <div id=datafeed>
+          <visualscript-sidebar-header>Data Feed</visualscript-sidebar-header>
+          <div id="videos"></div>
+          <div id="analyses"></div>
+        </div>
+
         <div id="graph">
           <visualscript-sidebar-header>Graph</visualscript-sidebar-header>
         </div>
         <div id="popout">
           <visualscript-sidebar-header>Alphabet</visualscript-sidebar-header>
-          <div id="videos"></div>
-          <div id="analyses"></div>
           <div id="alphabet"></div>
         </div>
       <!-- <div id=circles>

@@ -1,12 +1,21 @@
-import * as visualscript from "./visualscript/index.esm.js"
+import * as visualscript from "./visualscript/esm/index.js"
 import AudioManager from './AudioManager'
 import transformations from "./transformations"
+import info from "./alphabetize/info.js"
+import { getFFTSubset } from "./utils.js"
 
 export const overlay = document.querySelector('visualscript-overlay')
 export const overlayDiv = document.createElement('div')
 overlay.insertAdjacentElement('beforeend', overlayDiv)
 
 let features = []
+
+export const file = {
+  started: false
+}
+
+export const hzPerBin = () => (audio.context.sampleRate) / (2 * audio.analyser.frequencyBinCount);
+
 
 
 // Model Design Tab Initialization
@@ -48,29 +57,54 @@ if (transformation){
 
 // ---------------------- Data ----------------------
 
+const shape = {
+  type: 'line',
+  xref: 'x',
+  yref: 'paper',
+  x0: 0,
+  y0: 0,
+  x1: 0,
+  y1: 1,
+  opacity: 1,
+  line: {
+    width: 2,
+    color: 'white'
+  },
+}
+
+export const updatePlotTime = (time) => {
+  const shapes = spectrogram.div.layout.shapes ?? []
+  shape.x0 = shape.x1 = (time) / info.secondsPerBin
+  if (!shapes.includes(shape)) shapes.push(shape)
+
+  spectrogram.Plotly.relayout(spectrogram.div, { shapes })
+}
+
 export const plotData = (data=audio.fftData, which=dataSelect.element.value, how=transformation.element.value, thresh=threshold.element.value) => {
 
-  return new Promise(resolve => {
-  if (data[0]){
+  const subset = getFFTSubset(data, info)
 
-      overlayDiv.innerHTML = `<h3>Plotting ${data[0].length} FFT windows...</h3>`
+  return new Promise(resolve => {
+  if (subset[0]){
+
+      overlayDiv.innerHTML = `<h3>Plotting ${subset[0].length} FFT windows...</h3>`
       overlay.open = true
       setTimeout(() => {
           let plottedData;
           switch(which){
               case 'Right Channel':
                   transformation.style.display = 'none'
-                  plottedData = data[0]
+                  plottedData = subset[0]
               break;
 
               case 'Left Channel':
                   transformation.style.display = 'none'
-                  plottedData = data[1]
+                  plottedData = subset[1]
               break;
 
               case 'Combined':
                   transformation.style.display = ''
-                  plottedData = transformFFTData(data, transformations[how])
+                  plottedData = transformFFTData(subset, transformations[how])
           }
 
           if (plottedData) {

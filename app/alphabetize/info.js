@@ -53,10 +53,11 @@ const info = {
     const inputs = [
         {el: durationRange, variable: 'duration', label: (val) => {
           if (info.secondsPerBin) {
-            return `<span>${(info.secondsPerBin * val).toFixed(3)}s</span>`
+            if (val) return `<span>${(info.secondsPerBin * val).toFixed(3)}s</span>`
+            else 'In Bins'
           } else return '<span>In Bins</span>'
         }},
-        {el: freqWindowRange, variable: 'freqWindow'},
+        {el: freqWindowRange, variable: 'freqWindow', allowUndefined: true},
         {el: fftRange, variable: 'maximumFFTs', allowUndefined: true},
         {el: euclideanDistanceInput, variable: 'distanceMax'},
         {el: maximumFrequencyInput, variable: 'maxFreq', allowUndefined: true},

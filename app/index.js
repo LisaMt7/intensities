@@ -1,10 +1,11 @@
 
-import * as visualscript from "./visualscript/index.esm.js"
+import * as visualscript from "./visualscript/esm/index.js"
 import './controls'
 import * as controls from './controls'
 import ripThroughFile from './ripThroughFile'
 
 const showRealtime = false
+const showVideo = true
 
   // Bypass the usual requirement for user action
   const start = document.getElementById('start')
@@ -15,16 +16,18 @@ const showRealtime = false
   var fileInput = document.getElementById('files');
   var videos = document.getElementById('videos');
   var analysesDiv = document.getElementById('analyses');
+  var dataFeedDiv = document.getElementById('datafeed');
 
+  if (!showRealtime && !showVideo) dataFeedDiv.style.display = 'none'
+
+
+  const sourceRegistry = {}
 
   if (showRealtime){
-
 
   navigator.mediaDevices.enumerateDevices()
     .then(gotDevices)
   // .catch(errorCallback);
-
-  const sourceRegistry = {}
 
   // video.controls = true
 
@@ -83,7 +86,13 @@ const showRealtime = false
           else {
             o.video.controls = true
           }
-          o.video.autoplay = true
+          // o.video.autoplay = true
+        }
+
+        o.video.ontimeupdate = (ev) => {
+
+          // Update plot
+          controls.updatePlotTime(o.video.currentTime)
         }
 
         
@@ -102,6 +111,8 @@ const showRealtime = false
   let count = 0
   let files = []
 
+  const hasRan = false
+
   runAnalysis.onclick = async (ev) => {
     controls.audio.initializeContext()
     count = 0 // Reset count with new file...
@@ -114,21 +125,25 @@ const showRealtime = false
           video = document.createElement('video')
           video.src = URL.createObjectURL(file)
           source = controls.audio.context.createMediaElementSource(video);
-          ripThroughFile(file)
-      } else {
-        source = await ripThroughFile(file);
-      }
-
+          await ripThroughFile(file)
+      } else source = await ripThroughFile(file);
   
-      if (showRealtime){
+      if (!controls.file.started && showVideo){
+        controls.audio.listen(true)
         if (video) videos.insertAdjacentElement('beforeend', video)
         controls.audio.addSource(source, (type) => addDisplay({video}, type))// Get Audio Features + Wire Audio Analysis + Create Display
+        for (let key in sourceRegistry) sourceRegistry[key].video.play() // Play video
       }
+
+      controls.file.started = true
     }
 
   }
 
-  fileInput.onChange = async (ev) => files = ev.target.files
+  fileInput.onChange = async (ev) => {
+    files = ev.target.files
+    controls.file.started = false
+  }
 
   if (start) start.onClick = () => {
 
@@ -145,6 +160,7 @@ const showRealtime = false
       const microphone = controls.audio.context.createMediaStreamSource(stream);
       videos.insertAdjacentElement('beforeend', video)
       controls.audio.addSource(microphone, (type) => addDisplay({video, stream}, type))
+      for (let key in sourceRegistry) sourceRegistry[key].video.play() // Play video
     })
   }
 

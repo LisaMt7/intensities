@@ -88,6 +88,23 @@ html, body {
         max-height: 65vh;
     }
 
+    #popout visualscript-sidebar-header {
+        position: sticky; 
+        top: 0;
+        left: 0;
+        z-index: 2;
+    }
+
+    #popout {
+        position: relative;
+        overflow: scroll;
+        height: 40vh;
+    }
+
+    #alphabet {
+        height: 100%;
+    }
+
     #popout, #alphabet {
         display: flex;
         flex-wrap: wrap;
@@ -95,8 +112,6 @@ html, body {
         /* height: 100%; */
         align-items: center;
         flex-grow: 1;
-        max-height: 40vh;
-        overflow: scroll;
     }
 
     .letter span , .container h3{

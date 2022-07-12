@@ -205,9 +205,8 @@ export default class AudioManager {
           //   o3.spectrogram.data = res
           // })
 
-          // ------------- Alphabet Generation -------------
-          const o4 = alphabetize.init(10)
-          this.integrate('alphabet', [0, 1], async (arr) => await alphabetize.process(arr, o4), alphabetize.visualize)
+          // const o4 = alphabetize.init(10)
+          // this.integrate('alphabet', [0, 1], async (arr) => await alphabetize.process(arr, o4), alphabetize.visualize)
   
           const thisGain = this.context.createGain()
           splitInfo.output.connect(thisGain); 
@@ -288,8 +287,8 @@ export default class AudioManager {
 
         this.integrations[key] = {
           function: async () => {
-            const o2 = await integrator(iArr.map(i => this.analyses[i].output))
-            after(o2)
+              const o2 = await integrator(iArr.map(i => this.analyses[i].output))
+              after(o2)
           },
           output: null
         }

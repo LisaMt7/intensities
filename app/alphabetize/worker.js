@@ -54,18 +54,20 @@ async function process(arr, info) {
             const tic = performance.now()
             // const allZeros = Array.from({ length: info.duration * info.freqWindow * people }, e => 0).join(',')
 
-            const freqBins = Array.from({length: Math.ceil(info.frequencies / info.freqWindow)}, (e,i) => i*info.freqWindow)
-
+            console.log('Freq', info.freqWindow, info.frequencies)
+            const freqBins = (info.freqWindow) ? Array.from({length: Math.ceil(info.frequencies / info.freqWindow)}, (e,i) => i*info.freqWindow) : [0]
+            
             // Compare bins in parallel
             const promises = freqBins.forEach(async freqBin => {
 
                 const start = freqBin
-                const end = freqBin + info.freqWindow
+                let end = freqBin + (info.freqWindow ?? info.frequencies) // might change to be smaller
 
                 if (!info.patterns[start]) info.patterns[start] = []
                 const freqPatterns = info.patterns[start]
 
-                if (end < info.frequencies){
+                if (end > info.frequencies) end = info.frequencies
+                // if (end < info.frequencies){
 
                     let informativeBox = []
 
@@ -107,6 +109,7 @@ async function process(arr, info) {
                             matches = [pattern]
                             freqPatterns.push(pattern)
                         } else {
+
                             matches.forEach(o => {
                                 o.times.push({t: timeInSeconds, i, original: informativeBox})
                                 o.average[0] = matrix.average(o.average[0], informativeBox[0])
@@ -149,7 +152,7 @@ async function process(arr, info) {
                         }
                     })
                     // }
-                }
+                // }
                 
             })
 
@@ -159,7 +162,7 @@ async function process(arr, info) {
             postMessage(['progress', ratio, toc-tic, patterns])
         })
 
-        console.log('outer promises', promises)
+        // console.log('outer promises', promises)
         // await Promise.allSettled(promises)
 
     return info

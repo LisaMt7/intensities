@@ -1,11 +1,11 @@
 import * as controls from './controls'
 import * as alphabetize from "./alphabetize"
+import { getFFTSubset } from './utils'
 
 
 const fileFFTs = {}
 
 var binToFreq = (bin, hzPerBin) => ((bin) * hzPerBin) // Lower frequency of bin
-var freqToBin = (freq, hzPerBin) => Math.ceil((freq) / hzPerBin) // TODO: Check
 
 
 const getFileFFT = (file) => {
@@ -63,46 +63,24 @@ const ripThroughFile = async (file) => {
 
     const type = file.type.split('/')[0]
 
-
     const alreadyPlotted = !!fileFFTs[file.name]
     const fftInfo = await getFileFFT(file)
     controls.overlay.open = true
 
 
             let info = alphabetize.init()
-            const hzPerBin = (controls.audio.context.sampleRate) / (2 * controls.audio.analyser.frequencyBinCount);
-            const fftWindowWidth = controls.audio.analyser.fftSize
-            info.secondsPerBin = (fftWindowWidth)/fftInfo.data.sampleRate 
+            info.secondsPerBin = fftInfo.data.duration / fftInfo.ffts[0].length
             info.updateLabels() // displaying seconds on duration control
 
-            const maxFreqBin = freqToBin(info.worker.maxFreq, hzPerBin)
-            const minFreqBin = freqToBin(info.worker.minFreq, hzPerBin)
-
-            // console.log('maxFreqBin', maxFreqBin, info.worker, info.worker.maxFreq)
-
-            const ffts = Object.assign({}, fftInfo.ffts)
-            const len = (ffts[0].length - 1)
-
+            const len = (fftInfo.ffts[0].length - 1)
             let filePct = 0
             let fileLength = 0
+            fileLength = fftInfo.data.duration
             let maxFFTs = info.worker.maximumFFTs ?? len // Set as length when undefined
-
-            console.log('info.worker.maximumFFTs', maxFFTs, len)
-
-            for (let key in ffts) {
-                
-                // Get Data Slice Info
-                filePct = maxFFTs / len
-                console.log('filePct', filePct)
-
-                fileLength = (len * fftWindowWidth)/fftInfo.data.sampleRate
-
-                // Slice the Data
-                ffts[key] = ffts[key].slice(0, maxFFTs) // length
-                if (maxFreqBin) ffts[key] = ffts[key].map(arr => arr.slice(0, maxFreqBin)) // max freq
-                if (minFreqBin) ffts[key] = ffts[key].map(arr => arr.slice(minFreqBin)) // min freq
-            }
-
+            filePct = maxFFTs / len 
+            
+            const ffts = getFFTSubset(fftInfo.ffts, info)
+            info.ffts = ffts[0].length // corrected length
 
             // Get the Alphabet
             const arrInput = []
@@ -125,7 +103,7 @@ const ripThroughFile = async (file) => {
             setOverlay()
 
             const tic = Date.now()
-            console.log('Passing', arrInput, info)
+            delete info.startTime
             info = await alphabetize.process(arrInput, info, (msg, ratio, performance, patterns) => {
                 if (msg === 'progress') {
                     performanceArr.push(performance)
@@ -136,8 +114,6 @@ const ripThroughFile = async (file) => {
             })
 
             const toc = Date.now()
-
-
 
             console.log(`Got Alphabet in ${((toc-tic)/1000).toFixed(2)}s`, info.worker)
 
@@ -152,20 +128,21 @@ const ripThroughFile = async (file) => {
                 })
 
                 // Map Bin to Frequency
-                const firstFreq = binToFreq(minFreqBin + o.bin, hzPerBin)
-                o.frequencies = [firstFreq, binToFreq(
-                    minFreqBin + o.bin + info.worker.freqWindow, // Add one to get the top frequency
-                    hzPerBin
+                const freqInc = info.worker.freqWindow ?? info.worker.frequencies
+                const firstFreq = info.worker.minFreq + binToFreq(o.bin, controls.hzPerBin())
+                o.frequencies = [firstFreq, info.worker.minFreq + binToFreq(
+                    o.bin + freqInc, // Add one to get the top frequency
+                    controls.hzPerBin()
                     )]
             })
+
+            console.log('FFTs', ffts)
+            if (!alreadyPlotted) await controls.plotData(ffts)
 
             alphabetize.visualize(info, (ratio) => {
                 controls.overlayDiv.innerHTML = `<h3>Visualizing the alphabet</h3> - ${(100*ratio).toFixed(2)}%`
             })
-            
-            console.log('FFTs', ffts)
-             if (!alreadyPlotted) await controls.plotData(ffts)
-            
+                        
               controls.overlay.open = false
               
               if (type === 'audio'){
