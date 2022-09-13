@@ -72,12 +72,16 @@ const shape = {
   },
 }
 
-export const updatePlotTime = (time) => {
-  const shapes = spectrogram.div.layout.shapes ?? []
-  shape.x0 = shape.x1 = (time) / info.secondsPerBin
-  if (!shapes.includes(shape)) shapes.push(shape)
+const syncPlotTime = false
 
-  spectrogram.Plotly.relayout(spectrogram.div, { shapes })
+export const updatePlotTime = (time) => {
+  if (syncPlotTime){
+    const shapes = spectrogram.div.layout.shapes ?? []
+    shape.x0 = shape.x1 = (time) / info.secondsPerBin
+    if (!shapes.includes(shape)) shapes.push(shape)
+
+    spectrogram.Plotly.relayout(spectrogram.div, { shapes })
+  }
 }
 
 export const plotData = (data=audio.fftData, which=dataSelect.element.value, how=transformation.element.value, thresh=threshold.element.value) => {

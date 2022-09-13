@@ -95,7 +95,7 @@ const ripThroughFile = async (file) => {
                         <h3>Deriving an alphabet <small>${(100*ratio).toFixed(2)}%</small></h3>
                         <small>${maxFFTs} FFTs | ${(fileLength*filePct).toFixed(1)}s of the file</small>
                         <p><b>Unique Patterns Found:</b> ${patterns}</p>
-                        <p><b>Comparison Time per Duration:</b> ${performanceAverage.toFixed(0)}ms</p>
+                        <p><b>Last Comparison Time:</b> ${performanceAverage.toFixed(0)}ms</p>
                     </div>
                 `
             }
@@ -122,8 +122,8 @@ const ripThroughFile = async (file) => {
             info.worker.alphabetData.forEach(o => {
 
                 // Map to video time
-                o.times = o.times.map(obj => {
-                    obj.t = obj.i * info.secondsPerBin * info.worker.duration
+                o.instances = o.instances.map(obj => {
+                    obj.info.time.t = obj.info.time.i * info.secondsPerBin * info.worker.duration
                     return obj
                 })
 
@@ -133,7 +133,7 @@ const ripThroughFile = async (file) => {
                 o.frequencies = [firstFreq, info.worker.minFreq + binToFreq(
                     o.bin + freqInc, // Add one to get the top frequency
                     controls.hzPerBin()
-                    )]
+                )]
             })
 
             console.log('FFTs', ffts)
@@ -147,7 +147,7 @@ const ripThroughFile = async (file) => {
               
               if (type === 'audio'){
                 const source = controls.audio.context.createBufferSource(); // Get audio to play in the AudioContext
-                source.buffer = data;
+                source.buffer = fftInfo.data;
                 return source
               } else return
     };

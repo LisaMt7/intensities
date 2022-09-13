@@ -5,13 +5,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>Intensities | Breathe Together</title>
+  <title>Transindividual</title>
   <link rel="stylesheet" href="./styles.css">
   <script src="https://cdn.plot.ly/plotly-2.12.1.min.js"></script>
 </head>
 
 <body>
-  <visualscript-app id="app" name="Intensity">
+  <visualscript-app id="app" name="Main App">
     <visualscript-dashboard>
     <visualscript-sidebar>
         <div>
@@ -22,7 +22,7 @@
           <visualscript-control id=freqWindow type="input"  label="Frequency Window" persist>In Bins</visualscript-control>
           <visualscript-control id=duration type="input"  label="Duration" value=30 persist></visualscript-control>
           <visualscript-control id=ffts  type="input"  label="FFTs from File" persist></visualscript-control>
-          <visualscript-control id=distance  type="input"  label="Maximum Euclidean Distance" value=100 persist></visualscript-control>
+          <visualscript-control id=distance  type="input"  label="Maximum Euclidean Distance" value=150 persist></visualscript-control>
           <visualscript-control id=maxFreq  type="input"  label="Maximum Frequency" value=1000 persist></visualscript-control>
           <visualscript-control id=minFreq  type="input"  label="Minimum Frequency" value=100 persist></visualscript-control>
           <visualscript-control id=shuffle  type="switch"  label="Shuffle Bins" value=true persist></visualscript-control>
@@ -55,10 +55,6 @@
         <div id="graph">
           <visualscript-sidebar-header>Graph</visualscript-sidebar-header>
         </div>
-        <div id="popout">
-          <visualscript-sidebar-header>Alphabet</visualscript-sidebar-header>
-          <div id="alphabet"></div>
-        </div>
       <!-- <div id=circles>
         <div><div></div></div>
         <div><div></div></div>
@@ -72,12 +68,30 @@
     </visualscript-dashboard>
   </visualscript-app>
 
-  <!-- <visualscript-dashboard>
-    <visualscript-nav>Visualscript</visualscript-nav>
+  <visualscript-dashboard toggletext="Advanced Mode">
+    <visualscript-nav>Transindividual</visualscript-nav>
   <visualscript-sidebar></visualscript-sidebar>
   <visualscript-main id="main">
 
-    <visualscript-tab id="realtime" name="Stream Analysis">
+    <visualscript-tab id="alphabetAnalysis" name="Alphabet">
+      <section id="alphabet">
+      
+      </section>
+
+      <section id="alphabetInstances">
+      
+      </section>
+
+      <section id="alphabetHistory">
+      
+      </section>
+
+      <section id="alphabetList">
+      
+      </section>
+    </visualscript-tab>
+
+    <!-- <visualscript-tab id="realtime" name="Stream Analysis">
       <section id="data">
         <div id="videos"></div>
         <div id="analyses"></div>
@@ -92,11 +106,11 @@
       <visualscript-control id="colorscale" type="select" label="Color Scale" persist></visualscript-control>
       <visualscript-control type="input" label="Model File Name" persist></visualscript-control>
       <visualscript-control type="button" label="Download Model" persist>Download</visualscript-control>
-    </visualscript-tab>
+    </visualscript-tab> -->
 
   </visualscript-main>
   <visualscript-footer>Garrett Flynn and Lisa Müller-Trede | 2022</visualscript-footer>
-  </visualscript-dashboard> -->
+  </visualscript-dashboard>
 </body>
 <script src="dist/index.js" defer=true></script>
 </html>

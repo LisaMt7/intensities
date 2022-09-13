@@ -1,12 +1,12 @@
 {
-  "name": "intensities",
+  "name": "transindividual",
   "version": "0.0.0",
   "description": "Breathe together",
   "type": "module",
   "main": "src/index.js",
   "author": "Garrett Flynn <garrettmflynn@gmail.com>",
   "contributors": [
-    "Joshua Brewster <brewster.joshua1@gmail.com>"
+    "Lisa Mueller Trede"
   ],
   "scripts": {
     "start": "tinybuild",
@@ -23,8 +23,8 @@
   ],
   "license": "AGPL-3.0-or-later",
   "bugs": {
-    "url": "https://github.com/garrettmflynn/intensities/issues"
+    "url": "https://github.com/lisamuellertrede/transindividual/issues"
   },
-  "homepage": "https://github.com/garrettmflynn/intensities",
+  "homepage": "https://github.com/lisamuellertrede/transindividual",
   "private": false
 }

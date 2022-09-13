@@ -12,32 +12,74 @@ const info = {
       })
     },
 
-    createContainer: (key) => {
+    createContainer: (key, parent=alphabetDiv, {width, height}) => {
       
       const container = document.createElement('div')
       const canvas = document.createElement('canvas')
-      canvas.width = 200
-      canvas.height = 200
+      const baseSize = 200
+      canvas.width = baseSize
+      canvas.height = baseSize
+
+      const ratio = width / baseSize
+      canvas.style.width = `${width || 200}px`
+      canvas.style.height = `${height || width || 200}px`
+      container.style.fontSize = `${100*ratio}%`
+      
       const readout = document.createElement('div')
       const count = document.createElement('span')
       // container.classList.add('container')
       container.classList.add('letter')
-  
+
+      const toggleable = document.createElement('div')
+      const instances = document.createElement('div')
+      const history = document.createElement('div')
+      instances.style.display = history.style.display = "flex"
+      instances.style.flexWrap = history.style.flexWrap = "wrap"
+
+      toggleable.style.display = 'none'
+      toggleable.insertAdjacentHTML('beforeend', `<h4>Instances</h4>`)
+      toggleable.insertAdjacentElement('beforeend', instances)
+      toggleable.insertAdjacentHTML('beforeend', `<h4>History</h4>`)
+      toggleable.insertAdjacentElement('beforeend', history)
+
       // Populate Container
       container.insertAdjacentElement('beforeend', count)
       container.insertAdjacentElement('beforeend', canvas)
+      container.insertAdjacentElement('beforeend', toggleable)
       container.insertAdjacentElement('beforeend', readout)
+
+      // Add Interactivity
+      let selected = false
+      let baseContainerHTML
+      canvas.onclick = () => {
+          if (!selected) {
+            toggleable.style.display = ""
+              if (!baseContainerHTML) baseContainerHTML = count.innerHTML
+              count.innerHTML = baseContainerHTML + ` <small>(shown)</small>`
+              if (toggleable.onOpen) toggleable.onOpen()
+              selected = true
+          } else {
+            toggleable.style.display = "none"
+              count.innerHTML = baseContainerHTML
+              if (toggleable.onClose) toggleable.onClose()
+              selected = false
+          }
+      }
   
       // Add Container to Alphabet List
-      alphabetDiv.insertAdjacentElement('beforeend', container)
+      parent.insertAdjacentElement('beforeend', container)
       info.containers[key] = {
         container,
         readout,
         count,
         canvas,
+        toggleable,
+        instances,
+        history,
         context: canvas.getContext("2d")
       }
-      return container
+      
+      return info.containers[key]
     },
     containers: {},
   }

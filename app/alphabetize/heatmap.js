@@ -2,10 +2,10 @@ export default function heatmap({canvas, context}, rows, cols, boxInfo){
 
     const rowsPerPerson = rows
 
-    const people = boxInfo.average.length
+    const people = boxInfo.data.length
     rows = people * rows
 
-    const max = Math.max(...boxInfo.average.flat(2))
+    const max = Math.max(...boxInfo.data.flat(2))
 
     var bw = canvas.width;
     var bh = canvas.height;
@@ -27,7 +27,7 @@ export default function heatmap({canvas, context}, rows, cols, boxInfo){
             context.stroke();
         }
         lastPerson = person
-        const data = boxInfo.average[person]
+        const data = boxInfo.data[person]
 
         const personRow = (row % rowsPerPerson)
         if (boxInfo.start > personRow || boxInfo.end <= personRow) {

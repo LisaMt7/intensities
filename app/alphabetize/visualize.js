@@ -12,85 +12,96 @@ const visualize = (o, callback) => {
 
         let i = 0
 
-        const maxToVisualize = 30
+        console.log('o.worker.alphabetData', o.worker.alphabetData)
+
+        const maxToVisualize = 500
 
         if (sorted.length > maxToVisualize) console.warn(`Only visualizing ${maxToVisualize}/${sorted.length} patterns`)
         
-        const shapes = []
 
+        const create = (pattern, parentNode, info, callback) => {
+            const container = o.createContainer(i, parentNode, info) // Create display container
+            heatmap(container, o.worker.frequencies, o.worker.duration, pattern);
+            const baseContainerText = (info.body) ? `<b>${info.header}:</b> ${info.body}` : `<b>${info.header}</b>`
+            container.count.innerHTML = baseContainerText
+            if (callback) callback(pattern, container)
+            return container
+          }
+
+        const shapes = []
         sorted.forEach((count, identifier) => {
 
             if (i < maxToVisualize){
 
-            o.createContainer(i) // Create display container
+             const boxInfo =  o.worker.alphabetData.get(identifier)
 
-            const container = o.containers[i]
-            const boxInfo =  o.worker.alphabetData.get(identifier)
-            heatmap(container, o.worker.frequencies, o.worker.duration, boxInfo);
-            const baseContainerText = `<b>${boxInfo.times.length}:</b> ${boxInfo.frequencies[0].toFixed(0)}hz to ${boxInfo.frequencies[1].toFixed(0)}hz`
-            container.count.innerHTML = baseContainerText
+              const container = create(boxInfo, undefined, {header: boxInfo.instances.length, body: `${boxInfo.frequencies[0].toFixed(0)}hz to ${boxInfo.frequencies[1].toFixed(0)}hz`}, (pattern, container) => {
+                const patternShapes = []
+                pattern.instances.forEach(instance => {
 
-            const patternShapes = []
-            boxInfo.times.forEach(info => {
+                    const shape = {
+                        type: 'rect',
+                        xref: 'x',
+                        yref: 'y',
+                        x0: (instance.info.time.i - 0.5)*o.worker.duration,
+                        y0: pattern.bin,
+                        x1: (instance.info.time.i+0.5) * o.worker.duration,
+                        y1: pattern.bin + freqInc,
+                        opacity: 1,
+                        line: {
+                          width: 1,
+                          color: 'gray'
+                        },
+                      }
 
+                    patternShapes.push(shape)
+                    shapes.push(shape)
+                })
 
-              console.log('boxInfo.bin', boxInfo.bin, freqInc, boxInfo.bin + freqInc)
-                const shape = {
-                    type: 'rect',
-                    xref: 'x',
-                    yref: 'y',
-                    x0: (info.i - 0.5)*o.worker.duration,
-                    y0: boxInfo.bin,
-                    x1: (info.i+0.5) * o.worker.duration,
-                    y1: boxInfo.bin + freqInc,
-                    opacity: 1,
-                    line: {
-                      width: 1,
-                      color: 'gray'
-                    },
-                  }
+                // Add Interactivity
+                let created = false
+                container.toggleable.onOpen = () =>{
+                      if (created === false)  {
 
-                patternShapes.push(shape)
-                shapes.push(shape)
-            })
+                        // Show List of Instances
+                        pattern.instances.forEach(o =>  {
+                          create(o.info, container.instances, {
+                          header: `${o.info.time.t.toFixed(2)}s`,
+                          body: o.distance ? o.distance.toFixed(1) : '',
+                          width: 75,
+                          height: 75
+                        })
+                      })
 
+                        if (pattern.history) pattern.history.forEach((data, i) =>  create({
+                          ...pattern,
+                          data,
+                        }, container.history, {
+                          header: i,
+                          width: 75,
+                          height: 75
+                        }))
 
-            // Show Times
-            const list = document.createElement('ol')
-            list.style.display = 'none'
-            boxInfo.times.forEach(o => {
-                const li = document.createElement('li')
-                li.innerHTML = `${o.t.toFixed(4)}s`
-                list.appendChild(li)
-            })
-            o.containers[i].canvas.insertAdjacentElement('afterend', list)
-
-
-            // Add Interactivity to Shapes
-            let selected = false
-            container.canvas.onclick = () => {
-                if (!selected) {
-                    list.style.display = ""
-                    patternShapes.forEach(s => s.line.color = 'white')
-                    spectrogram.Plotly.relayout(spectrogram.div, { shapes })
-                    container.count.innerHTML = baseContainerText + ` <small>(shown)</small>`
-                    selected = true
-                } else {
-                  list.style.display = "none"
-                    patternShapes.forEach(s => s.line.color = 'gray')
-                    spectrogram.Plotly.relayout(spectrogram.div, { shapes })
-                    container.count.innerHTML = baseContainerText
-                    selected = false
+                        created = true
+                      }
+                      patternShapes.forEach(s => s.line.color = 'white')
+                      spectrogram.Plotly.relayout(spectrogram.div, { shapes })
                 }
-            }
-        
-            // container.canvas.onmouseout = () => {
-            //     patternShapes.forEach(s => s.line.color = 'white')
-            //     spectrogram.Plotly.relayout(spectrogram.div, { shapes })
-            // }
 
-            i++
-            if (callback instanceof Function) callback((i+1)/sorted.size)
+                container.toggleable.onClose = () =>{
+                        patternShapes.forEach(s => s.line.color = 'gray')
+                        spectrogram.Plotly.relayout(spectrogram.div, { shapes })
+                }
+
+                // container.canvas.onmouseout = () => {
+                //     patternShapes.forEach(s => s.line.color = 'white')
+                //     spectrogram.Plotly.relayout(spectrogram.div, { shapes })
+                // }
+
+                i++
+                if (callback instanceof Function) callback((i+1)/sorted.size)
+            // } //else console.log('SKIPPING')
+          })
         }
         })
 

@@ -1,7 +1,5 @@
-# intensities
+# transindividual
 Breathe together
-
-> **Note:** Also published under `intensity` on NPM for now.
 
 ## Roadmap
 1. Adapt Josh's [Breathcapture.js](https://github.com/moothyknight/BreathCapture.js) library

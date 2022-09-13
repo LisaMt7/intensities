@@ -89,7 +89,7 @@ const showVideo = true
           // o.video.autoplay = true
         }
 
-        o.video.ontimeupdate = (ev) => {
+        if (o.video) o.video.ontimeupdate = (ev) => {
 
           // Update plot
           controls.updatePlotTime(o.video.currentTime)
@@ -111,11 +111,14 @@ const showVideo = true
   let count = 0
   let files = []
 
-  const hasRan = false
-
+  let canRun = true
   runAnalysis.onclick = async (ev) => {
+
+    if (canRun){
     controls.audio.initializeContext()
     count = 0 // Reset count with new file...
+
+    canRun = false // disable start button until complete
 
     for (let file of files) {
       const type = file.type.split('/')[0]
@@ -127,16 +130,22 @@ const showVideo = true
           source = controls.audio.context.createMediaElementSource(video);
           await ripThroughFile(file)
       } else source = await ripThroughFile(file);
-  
+
+      canRun = true
+
       if (!controls.file.started && showVideo){
         controls.audio.listen(true)
         if (video) videos.insertAdjacentElement('beforeend', video)
         controls.audio.addSource(source, (type) => addDisplay({video}, type))// Get Audio Features + Wire Audio Analysis + Create Display
-        for (let key in sourceRegistry) sourceRegistry[key].video.play() // Play video
+        for (let key in sourceRegistry) {
+          const video = sourceRegistry[key].video
+          if (video) video.play() // Play video
+        }
       }
 
       controls.file.started = true
     }
+  }
 
   }
 
