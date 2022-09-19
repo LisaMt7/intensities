@@ -200,8 +200,8 @@ async function process(arr, info) {
     firstPersonFreqs.forEach((_, i) => {
         if (info.history[0].length === info.duration) {
             historySlices.push(Object.assign({}, info.history))
-            // info.history.forEach(histArr => histArr.shift()) // All overlap
-            info.history = info.history.map(_ => []) // No overlap
+            info.history.forEach(histArr => histArr.shift()) // All overlap
+            // info.history = info.history.map(_ => []) // No overlap
         }
 
         arr.map(o => o.frequencies[i]).forEach((frequencies, person) => {
